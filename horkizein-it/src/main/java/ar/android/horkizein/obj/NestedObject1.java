@@ -124,7 +124,9 @@ public class NestedObject1 implements XmlPushable, XmlWritable {
 	public boolean equals(Object obj) {
 		if (obj == this) return true;
 		if((obj == null) || (obj.getClass() != this.getClass())) return false;
-		return mFlatObject.equals(((NestedObject1)obj).mIsFlatObject);
+		
+		NestedObject1 o = (NestedObject1)obj;
+		return (mFlatObject == o.mFlatObject || (mFlatObject != null && mFlatObject.equals(o.mFlatObject)));
 	}
 
     /**
