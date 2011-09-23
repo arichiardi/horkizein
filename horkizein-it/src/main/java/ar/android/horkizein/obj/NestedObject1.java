@@ -27,119 +27,119 @@ import ar.android.horkizein.test.Constants;
 public class NestedObject1 implements XmlPushable, XmlWritable {
 
     // This object tag
-	public final static String TAG = "nested_obj1";
+    public final static String TAG = "nested_obj1";
 
-	// watch dog
-	private boolean mIsMine;
-	private boolean mIsFlatObject;
+    // watch dog
+    private boolean mIsMine;
+    private boolean mIsFlatObject;
 
-	// child
-	public FlatObject mFlatObject;
-	// creator
-	private FlatObjectCreator mFlatCreator;
+    // child
+    public FlatObject mFlatObject;
+    // creator
+    private FlatObjectCreator mFlatCreator;
 
-	/**
-	 * Creates a NestedObject1 that contains a shallow copy of a FlatObject
-	 * @param mMyChild
-	 */
-	public NestedObject1(FlatObjectCreator flatCreator) {
-		mFlatCreator = flatCreator;
-	}
-	
-	/**
-	 * Creates an empty NetstedObject1
-	 */
-	public NestedObject1() {}
+    /**
+     * Creates a NestedObject1 that contains a shallow copy of a FlatObject
+     * @param mMyChild
+     */
+    public NestedObject1(FlatObjectCreator flatCreator) {
+        mFlatCreator = flatCreator;
+    }
 
-	/**
-	 * @see ar.android.horkizein.xml.XmlPushable#getTag()
-	 */
-	public String getTag() {
-		return TAG;
-	}
+    /**
+     * Creates an empty NetstedObject1
+     */
+    public NestedObject1() {}
 
-	/**
-	 * @see ar.android.horkizein.xml.XmlPushable#pushAttribute(java.lang.String, java.lang.String, java.lang.String)
-	 */
-	public void pushAttribute(String tag, String name, String value) {
-		Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushAttribute() - TAG: " + tag + " NAME: " + name +  " TEXT: " + value);
+    /**
+     * @see ar.android.horkizein.xml.XmlPushable#getTag()
+     */
+    public String getTag() {
+        return TAG;
+    }
 
-		if (mIsMine) {
+    /**
+     * @see ar.android.horkizein.xml.XmlPushable#pushAttribute(java.lang.String, java.lang.String, java.lang.String)
+     */
+    public void pushAttribute(String tag, String name, String value) {
+        Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushAttribute() - TAG: " + tag + " NAME: " + name +  " TEXT: " + value);
+
+        if (mIsMine) {
             if (mIsFlatObject) {
                 mFlatObject.pushAttribute(tag, name, value);
             }
         }
-	}
+    }
 
-	/**
-	 * @see ar.android.horkizein.xml.XmlPushable#pushText(java.lang.String, java.lang.String)
-	 */
-	public void pushText(String tag, String text) {
-		Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushText() - TAG: " + tag + " TEXT: " + text);
+    /**
+     * @see ar.android.horkizein.xml.XmlPushable#pushText(java.lang.String, java.lang.String)
+     */
+    public void pushText(String tag, String text) {
+        Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushText() - TAG: " + tag + " TEXT: " + text);
 
-		if (mIsMine) {
-		    if (mIsFlatObject) {
-		        mFlatObject.pushText(tag, text);
-		    }
-		}
-	}
+        if (mIsMine) {
+            if (mIsFlatObject) {
+                mFlatObject.pushText(tag, text);
+            }
+        }
+    }
 
-	/**
-	 * @see ar.android.horkizein.xml.XmlPushable#pushEndTag(java.lang.String)
-	 */
-	public void pushEndTag(String tag) {
-		if (tag.equals(TAG))
-			mIsMine = false;
+    /**
+     * @see ar.android.horkizein.xml.XmlPushable#pushEndTag(java.lang.String)
+     */
+    public void pushEndTag(String tag) {
+        if (tag.equals(TAG))
+            mIsMine = false;
 
-		if(mIsMine) {
+        if(mIsMine) {
             if (tag.equals(FlatObject.TAG)) {
                 mIsFlatObject = false;
             }
         }
-	}
+    }
 
-	/**
-	 * @see ar.android.horkizein.xml.XmlPushable#pushStartTag(java.lang.String)
-	 */
-	public void pushStartTag(String tag) {
-		if (tag.equals(TAG))
-			mIsMine = true;
+    /**
+     * @see ar.android.horkizein.xml.XmlPushable#pushStartTag(java.lang.String)
+     */
+    public void pushStartTag(String tag) {
+        if (tag.equals(TAG))
+            mIsMine = true;
 
-		if(mIsMine) {
-		    if (tag.equals(FlatObject.TAG)) {
-		        
-		        if (mFlatCreator != null)
-		        	mFlatObject = mFlatCreator.create();
-		        
-		        if (mFlatObject != null) {
-		        	mFlatObject.pushStartTag(tag);
-		        	mIsFlatObject = true;
-	    		}
-		    }
-		}
-		
-	}
+        if(mIsMine) {
+            if (tag.equals(FlatObject.TAG)) {
 
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == this) return true;
-		if((obj == null) || (obj.getClass() != this.getClass())) return false;
-		
-		NestedObject1 o = (NestedObject1)obj;
-		return (mFlatObject == o.mFlatObject || (mFlatObject != null && mFlatObject.equals(o.mFlatObject)));
-	}
+                if (mFlatCreator != null)
+                    mFlatObject = mFlatCreator.create();
+
+                if (mFlatObject != null) {
+                    mFlatObject.pushStartTag(tag);
+                    mIsFlatObject = true;
+                }
+            }
+        }
+
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if((obj == null) || (obj.getClass() != this.getClass())) return false;
+
+        NestedObject1 o = (NestedObject1)obj;
+        return (mFlatObject == o.mFlatObject || (mFlatObject != null && mFlatObject.equals(o.mFlatObject)));
+    }
 
     /**
      * @see ar.android.horkizein.xml.XmlWritable#writeXml(org.xmlpull.v1.XmlSerializer)
      */
     public void writeXml(XmlSerializer out) throws IOException, IllegalStateException, IllegalArgumentException {
 
-    	out.startTag("", TAG);
+        out.startTag("", TAG);
 
-    	if(mFlatObject != null)
-    	    mFlatObject.writeXml(out);
+        if(mFlatObject != null)
+            mFlatObject.writeXml(out);
 
-		out.endTag("", TAG);
+        out.endTag("", TAG);
     }
 }
 

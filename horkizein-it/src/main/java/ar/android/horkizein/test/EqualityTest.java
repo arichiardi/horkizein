@@ -35,48 +35,48 @@ import ar.android.horkizein.test.util.XmlDataReader;
  */
 public class EqualityTest extends AndroidTestCase {
 
-	private static final String TAG = "EqualityTest";
+    private static final String TAG = "EqualityTest";
 
-	private static final String TEMPORARY_FILE = "equality.xml";
+    private static final String TEMPORARY_FILE = "equality.xml";
 
-	private FlatObject mFlatSrc;
-	private FlatObject mFlatDst;
+    private FlatObject mFlatSrc;
+    private FlatObject mFlatDst;
 
-	private NestedObject1 mNested1Src;
-	private NestedObject1 mNested1Dst;
-	
+    private NestedObject1 mNested1Src;
+    private NestedObject1 mNested1Dst;
+
     public EqualityTest() {}
 
-	@Override
+    @Override
     protected void setUp() {
 
-    	Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".setUp() entering.");
+        Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".setUp() entering.");
 
-    	Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".setUp() creating FlatObject src");
-    	mFlatSrc = new FlatObject();
-    	mFlatSrc.mBooleanAttr = false;
-    	mFlatSrc.mIntegerAttr = 666;
-    	mFlatSrc.mDoubleAttr = 0.666;
-    	mFlatSrc.mStringAttr = new String("666");
-
-    	mFlatSrc.mBooleanTag = true;
-    	mFlatSrc.mIntegerTag = 42;
-    	mFlatSrc.mDoubleTag = 0.42;
-    	mFlatSrc.mStringTag = new String("42");
+        Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".setUp() creating FlatObject src");
+        mFlatSrc = new FlatObject();
+        mFlatSrc.mBooleanAttr = false;
+        mFlatSrc.mIntegerAttr = 666;
+        mFlatSrc.mDoubleAttr = 0.666;
+        mFlatSrc.mStringAttr = new String("666");
+        
+        mFlatSrc.mBooleanTag = true;
+        mFlatSrc.mIntegerTag = 42;
+        mFlatSrc.mDoubleTag = 0.42;
+        mFlatSrc.mStringTag = new String("42");
     }
 
-	@MediumTest
+    @MediumTest
     public void testFlatObjEquality() throws IllegalArgumentException, IllegalStateException, FileNotFoundException, XmlPullParserException, IOException {
 
         Log.i(Constants.PACKAGE_TAG_TEST, "--- [" + TAG + ".testFlatObjEquality] ---");
 
-    	Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".run() open Android file: " + TEMPORARY_FILE);
-    	XmlDataCommitter committer = new XmlDataCommitter();
-    	committer.commitData(getContext(), TEMPORARY_FILE, mFlatSrc);
+        Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".run() open Android file: " + TEMPORARY_FILE);
+        XmlDataCommitter committer = new XmlDataCommitter();
+        committer.commitData(getContext(), TEMPORARY_FILE, mFlatSrc);
 
         mFlatDst = new FlatObject();
         Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".run() fill FlatObject dst");
-    	// save the object
+        // save the object
 
         XmlDataReader reader = new XmlDataReader();
         reader.grabData(getContext(), mFlatDst, TEMPORARY_FILE);
@@ -86,21 +86,21 @@ public class EqualityTest extends AndroidTestCase {
         Log.i(Constants.PACKAGE_TAG_TEST, "-----------------------------------------");
     }
 
-	@MediumTest
+    @MediumTest
     public void testFilledNestedObj1Equality() throws IllegalArgumentException, IllegalStateException, FileNotFoundException, XmlPullParserException, IOException {
 
         Log.i(Constants.PACKAGE_TAG_TEST, "--- [" + TAG + ".testNestedObj1Equality] ---");
 
         Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".setUp() creating NestedObject1 src");
         mNested1Src = new NestedObject1(new FlatObjectCreator(mFlatSrc));
-        
-    	Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".run() open Android file: " + TEMPORARY_FILE);
-    	XmlDataCommitter committer = new XmlDataCommitter();
-    	committer.commitData(getContext(), TEMPORARY_FILE, mNested1Src);
 
-    	mNested1Dst = new NestedObject1();
+        Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".run() open Android file: " + TEMPORARY_FILE);
+        XmlDataCommitter committer = new XmlDataCommitter();
+        committer.commitData(getContext(), TEMPORARY_FILE, mNested1Src);
+
+        mNested1Dst = new NestedObject1();
         Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".run() fill NestedObject1 dst");
-    	// save the object
+        // save the object
 
         XmlDataReader reader = new XmlDataReader();
         reader.grabData(getContext(), mNested1Dst, TEMPORARY_FILE);
@@ -109,12 +109,12 @@ public class EqualityTest extends AndroidTestCase {
         assertTrue(mNested1Dst.equals(mNested1Src));
         Log.i(Constants.PACKAGE_TAG_TEST, "-----------------------------------------");
     }
-	
-	
+
+
     @Override
     protected void tearDown() throws Exception {
-    	Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".tearDown() delete file: " + TEMPORARY_FILE);
-    	mContext.deleteFile(TEMPORARY_FILE);
+        Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".tearDown() delete file: " + TEMPORARY_FILE);
+        mContext.deleteFile(TEMPORARY_FILE);
         super.tearDown();
     }
 

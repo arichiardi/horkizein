@@ -20,10 +20,12 @@ import android.content.Context;
 import android.test.InstrumentationTestRunner;
 import android.test.InstrumentationTestSuite;
 
+/**
+ * Main Horkizein test class 
+ */
 public final class HorkizeinTestRunner extends InstrumentationTestRunner {
 
 	Context mContext;
-
 
 	@Override
 	public TestSuite getAllTests() {

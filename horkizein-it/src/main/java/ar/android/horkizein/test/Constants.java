@@ -16,9 +16,8 @@
 package ar.android.horkizein.test;
 
 public final class Constants {
-	/**
-	 * Package main tag
-	 */
-	public static final String PACKAGE_TAG_TEST = "horkizein-test";
-
+    /**
+     * Package main tag
+     */
+    public static final String PACKAGE_TAG_TEST = "horkizein-test";
 }
