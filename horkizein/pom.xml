@@ -29,7 +29,6 @@
   <packaging>jar</packaging>
   <name>Horkizein Open Source Android Library</name>
 
-
   <dependencies>
     <dependency>
       <groupId>com.google.android</groupId>

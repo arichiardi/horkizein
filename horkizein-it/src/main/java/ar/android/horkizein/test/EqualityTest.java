@@ -31,7 +31,7 @@ import ar.android.horkizein.test.util.XmlDataCommitter;
 import ar.android.horkizein.test.util.XmlDataReader;
 
 /**
- * Testing the exact match of a written and then read XmlPushable without children (just tags and attributes)
+ * This class tests the exact match of a written and then read XmlPushable.
  */
 public class EqualityTest extends AndroidTestCase {
 
@@ -47,6 +47,9 @@ public class EqualityTest extends AndroidTestCase {
 
     public EqualityTest() {}
 
+    /**
+     * @see android.test.AndroidTestCase#setUp()
+     */
     @Override
     protected void setUp() {
 
@@ -65,6 +68,14 @@ public class EqualityTest extends AndroidTestCase {
         mFlatSrc.mStringTag = new String("42");
     }
 
+    /**
+     * Tests the equality of a FlatObject.
+     * @throws IllegalArgumentException
+     * @throws IllegalStateException
+     * @throws FileNotFoundException
+     * @throws XmlPullParserException
+     * @throws IOException
+     */
     @MediumTest
     public void testFlatObjEquality() throws IllegalArgumentException, IllegalStateException, FileNotFoundException, XmlPullParserException, IOException {
 
@@ -86,6 +97,14 @@ public class EqualityTest extends AndroidTestCase {
         Log.i(Constants.PACKAGE_TAG_TEST, "-----------------------------------------");
     }
 
+    /**
+     * Tests the equality of a NestedObject1.
+     * @throws IllegalArgumentException
+     * @throws IllegalStateException
+     * @throws FileNotFoundException
+     * @throws XmlPullParserException
+     * @throws IOException
+     */
     @MediumTest
     public void testFilledNestedObj1Equality() throws IllegalArgumentException, IllegalStateException, FileNotFoundException, XmlPullParserException, IOException {
 
@@ -110,7 +129,9 @@ public class EqualityTest extends AndroidTestCase {
         Log.i(Constants.PACKAGE_TAG_TEST, "-----------------------------------------");
     }
 
-
+    /**
+     * @see android.test.AndroidTestCase#tearDown()
+     */
     @Override
     protected void tearDown() throws Exception {
         Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".tearDown() delete file: " + TEMPORARY_FILE);

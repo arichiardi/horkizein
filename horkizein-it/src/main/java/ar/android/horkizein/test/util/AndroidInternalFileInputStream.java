@@ -23,21 +23,35 @@ import java.io.InputStreamReader;
 
 import android.content.Context;
 
+/**
+ * A wrapper for the Android internal FileInputStream.
+ */
 public class AndroidInternalFileInputStream extends InputStreamReader implements Closeable {
 
 	public FileInputStream input;
 
+	/**
+	 * Ctor.
+	 * @param context Android Context.
+	 * @param filePath Path.
+	 * @throws FileNotFoundException if the file cannot be opened.
+	 */
 	public AndroidInternalFileInputStream(Context context, String filePath) throws FileNotFoundException {
 		super(context.openFileInput(filePath));
 		input = context.openFileInput(filePath);
 	}
 
+	/**
+	 * @see java.io.InputStreamReader#close()
+	 */
 	public void close() throws IOException {
 		input.close();
 		input = null;
 	}
 
-
+    /**
+     * @see java.io.InputStreamReader#read()
+     */
 	@Override
 	public int read() throws IOException {
 		return super.read();

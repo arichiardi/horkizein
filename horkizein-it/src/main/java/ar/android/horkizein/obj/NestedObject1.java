@@ -24,6 +24,9 @@ import ar.android.horkizein.XmlPushable;
 import ar.android.horkizein.XmlWritable;
 import ar.android.horkizein.test.Constants;
 
+/**
+ * Implementation of an XmlPushable which contains a FlatObject.
+ */
 public class NestedObject1 implements XmlPushable, XmlWritable {
 
     // This object tag
@@ -120,6 +123,9 @@ public class NestedObject1 implements XmlPushable, XmlWritable {
 
     }
 
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
     @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;

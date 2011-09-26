@@ -17,6 +17,9 @@ package ar.android.horkizein.obj;
 
 import ar.android.horkizein.XmlPushableCreator;
 
+/**
+ * Creator implementation for building FlatObjects.
+ */
 public class FlatObjectCreator implements XmlPushableCreator<FlatObject> {
 
     // This object tag
@@ -25,11 +28,22 @@ public class FlatObjectCreator implements XmlPushableCreator<FlatObject> {
     // Shallow copy source
     private FlatObject mCopySrc;
 
+    /**
+     * This constructor accept a FlatObject and store its reference. Just for testing purpose.
+     * @param src
+     */
     public FlatObjectCreator(FlatObject src) {
         mCopySrc = src;
     }
+    
+    /**
+     * Ctor.
+     */
     public FlatObjectCreator() {}
 
+    /**
+     * @see ar.android.horkizein.Creator#create()
+     */
     @Override
     public FlatObject create() {
         FlatObject tmp;
@@ -44,6 +58,9 @@ public class FlatObjectCreator implements XmlPushableCreator<FlatObject> {
         return tmp;
     }
 
+    /**
+     * @see ar.android.horkizein.XmlPushableCreator#getTag()
+     */
     @Override
     public String getTag() {
         return TAG;

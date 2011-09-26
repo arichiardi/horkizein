@@ -24,6 +24,9 @@ import ar.android.horkizein.XmlPushable;
 import ar.android.horkizein.XmlWritable;
 import ar.android.horkizein.test.Constants;
 
+/**
+ * Implementation of an object without any XmlPushable child. It contains just four attributes: a boolean, an integer, a double, a String.
+ */
 public class FlatObject implements XmlPushable, XmlWritable {
     // This object tag
     public final static String TAG = "flat_obj";

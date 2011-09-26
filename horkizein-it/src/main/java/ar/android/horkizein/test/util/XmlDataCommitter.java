@@ -24,35 +24,46 @@ import org.xmlpull.v1.XmlSerializer;
 import android.content.Context;
 import ar.android.horkizein.XmlWritable;
 
+/**
+ * Very simple class to simplify the Xml file building from XmlWritable objects. 
+ */
 public final class XmlDataCommitter {
 
 	public XmlDataCommitter() {	}
 
-	private void commitData(OutputStream output, XmlWritable data) throws IllegalArgumentException, IllegalStateException, IOException {
+	/**
+	 * Internal writer, given an OutputStream and a XmlWritable object.
+	 * @param output A generic OutputStream.
+	 * @param object The XmlWritable object to write.
+	 * @throws IllegalArgumentException
+	 * @throws IllegalStateException
+	 * @throws IOException
+	 */
+	private void commitData(OutputStream output, XmlWritable object) throws IllegalArgumentException, IllegalStateException, IOException {
 
 	    XmlSerializer serializer = android.util.Xml.newSerializer();
 
 	    serializer.setOutput(output, "UTF-8");
 	    serializer.startDocument("UTF-8", true);
 	    // write the file
-	    data.writeXml(serializer);
+	    object.writeXml(serializer);
 
 	    serializer.endDocument();
 	    serializer.flush();
 	}
 
 	/**
-	 * A useful Android specific method base that use commitData.
+	 * A useful Android specific method that writes XmlWritables on file.
 	 * @param context An Android Context.
-	 * @param inFilename The input filename.
-	 * @param inObject The list to write into the file.
+	 * @param filename The input filename.
+	 * @param object The list to write into the file.
 	 * @return True if successful, false if not.
 	 */
-	public void commitData(Context inContext, String inFilename, XmlWritable inObject) throws IllegalArgumentException, IllegalStateException, IOException {
+	public void commitData(Context context, String filename, XmlWritable object) throws IllegalArgumentException, IllegalStateException, IOException {
 
-	    BufferedOutputStream buf = new BufferedOutputStream(inContext.openFileOutput(inFilename, Context.MODE_PRIVATE));
+	    BufferedOutputStream buf = new BufferedOutputStream(context.openFileOutput(filename, Context.MODE_PRIVATE));
 	    // do it
-	    commitData(buf, inObject);
+	    commitData(buf, object);
 	    buf.close();
 	}
 }

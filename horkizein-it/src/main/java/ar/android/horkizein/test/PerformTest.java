@@ -29,6 +29,9 @@ import ar.android.horkizein.obj.FlatObject;
 import ar.android.horkizein.obj.FlatObjectCreator;
 import ar.android.horkizein.obj.NestedObject1;
 
+/**
+ * This class tests performance of read/write Horkizein functions.
+ */
 public class PerformTest extends AndroidTestCase implements PerformanceTestCase {
 
     private static final String TEMPORARY_FILE = "performance.xml";
@@ -38,16 +41,25 @@ public class PerformTest extends AndroidTestCase implements PerformanceTestCase 
     private FlatObject mFlat;
     private NestedObject1 mNested1;
 
+    /**
+     * @see android.test.PerformanceTestCase#startPerformance(android.test.PerformanceTestCase.Intermediates)
+     */
     @Override
     public int startPerformance(Intermediates intermediates) {
-        return 1;
+        return 0;
     }
 
+    /**
+     * @see android.test.PerformanceTestCase#isPerformanceOnly()
+     */
     @Override
     public boolean isPerformanceOnly() {
         return false;
     }
 
+    /**
+     * @see android.test.AndroidTestCase#setUp()
+     */
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -71,7 +83,7 @@ public class PerformTest extends AndroidTestCase implements PerformanceTestCase 
     }
 
     /**
-     * Read performance on a plain object
+     * Read performance of a FlatObject.
      */
     @MediumTest
     public void runFlatObjectRead() throws IllegalArgumentException, IllegalStateException, IOException {
@@ -97,7 +109,7 @@ public class PerformTest extends AndroidTestCase implements PerformanceTestCase 
     }
 
     /**
-     * Read performance on a nested object (1)
+     * Read performance of a NestedObject1.
      */
     @MediumTest
     public void runNestedObject1Read() throws IllegalArgumentException, IllegalStateException, IOException {
@@ -122,6 +134,9 @@ public class PerformTest extends AndroidTestCase implements PerformanceTestCase 
         Log.i(Constants.PACKAGE_TAG_TEST, "-----------------------------------------");
     }
 
+    /**
+     * @see android.test.AndroidTestCase#tearDown()
+     */
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();

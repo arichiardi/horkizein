@@ -17,8 +17,6 @@ package ar.android.horkizein;
 
 /**
  * The contract for an XmlPushable object.
- * TODO Prefix handling.
- * @author Andrea Richiardi
  */
 public interface XmlPushable {
 

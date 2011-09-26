@@ -15,6 +15,9 @@
  */
 package ar.android.horkizein.test;
 
+/**
+ * Test package constants. 
+ */
 public final class Constants {
     /**
      * Package main tag

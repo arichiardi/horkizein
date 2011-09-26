@@ -21,12 +21,15 @@ import android.test.InstrumentationTestRunner;
 import android.test.InstrumentationTestSuite;
 
 /**
- * Main Horkizein test class 
+ * Main Horkizein InstrumentationTestRunner.
  */
 public final class HorkizeinTestRunner extends InstrumentationTestRunner {
 
 	Context mContext;
 
+	/**
+	 * @see android.test.InstrumentationTestRunner#getAllTests()
+	 */
 	@Override
 	public TestSuite getAllTests() {
 
@@ -40,6 +43,9 @@ public final class HorkizeinTestRunner extends InstrumentationTestRunner {
 	    return suite;
 	}
 
+	/**
+	 * @see android.test.InstrumentationTestRunner#getLoader()
+	 */
 	@Override
 	public ClassLoader getLoader() {
 		return HorkizeinTestRunner.class.getClassLoader();

@@ -30,25 +30,35 @@ import ar.android.horkizein.test.util.AndroidInternalFileInputStream;
 import ar.android.horkizein.XmlFiller;
 import ar.android.horkizein.XmlPushable;
 
+/**
+ * Very simple class to simplify the Xml to XmlPushable binding.  
+ */
 public class XmlDataReader {
 
 	public XmlDataReader() {}
 
-	private void grabData(XmlPushable outObject, Reader inStream) throws XmlPullParserException, IOException {
+	/**
+	 * Internal reader, given a XmlPushable object and a Reader.
+	 * @param object The XmlPushable object to fill.
+	 * @param stream A generic Reader.
+	 * @throws XmlPullParserException
+	 * @throws IOException
+	 */
+	private void grabData(XmlPushable object, Reader stream) throws XmlPullParserException, IOException {
 
 	    XmlPullParserFactory xmlFactory = XmlPullParserFactory.newInstance();
 	    xmlFactory.setNamespaceAware(true);
 	    XmlPullParser xmlParser = xmlFactory.newPullParser();
 	    XmlFiller filler = new XmlFiller(xmlParser, new HashMap<String, XmlPushable>() );
 
-	    filler.registerNode(outObject);
-	    xmlParser.setInput(inStream);
+	    filler.registerNode(object);
+	    xmlParser.setInput(stream);
 	    // do it
 	    filler.fill();
 	}
 
 	/**
-	 * Grabs data. Android specific.
+	 * A useful Android specific method that fills XmlPushables.
 	 * @param inContext A context.
 	 * @param outObject The out object to fill.
 	 * @param inFileName The input file name.

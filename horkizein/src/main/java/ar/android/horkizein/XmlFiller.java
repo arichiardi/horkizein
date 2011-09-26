@@ -22,7 +22,10 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 /**
- * This class does Xml to XmlPushable binding. You can decide the storage you want to use.
+ * This class does parsing and XmlPushable objects binding. You can pass a Map
+ * for registered XmlPushable objects. The Map is modified during parsing as
+ * already filled XmlPushables are removed from it.
+ * Consequently, only leaf nodes should be registered into it.
  */
 public class XmlFiller {
     /**
@@ -32,19 +35,20 @@ public class XmlFiller {
     /**
      * Storage for registered XmlPushables.
      */
-    protected Map<String, XmlPushable> mRegisteredItems;
+    protected Map<String, XmlPushable> mPushableMap;
 
     /**
      * Constructor.
      * @param parser Preferred XmlPullParser.
+     * @param pushableMap Registered objects Map.
      */
-    public XmlFiller(XmlPullParser parser, Map<String, XmlPushable> registeredList) {
+    public XmlFiller(XmlPullParser parser, Map<String, XmlPushable> pushableMap) {
         mParser = parser;
-        mRegisteredItems = registeredList;
+        mPushableMap = pushableMap;
     }
 
     /**
-     * Starts the filling process of registered objects. It first fills registered Lists, then Items.
+     * Starts the filling process of registered objects.
      * @throws XmlPushableException	Thrown by this class, mostly related to parser positioning.
      * @throws XmlPullParserException Thrown by the XmlPullParser directly.
      * @throws IOException	Thrown by the XmlPullParser directly.
@@ -52,7 +56,7 @@ public class XmlFiller {
     final public void fill() throws XmlPushableException, XmlPullParserException, IOException {
 
         if (mParser == null) throw new XmlPushableException("The XmlPullParser has not been set");
-        if (mRegisteredItems == null) throw new XmlPushableException("The Registered Items Map has not been set");
+        if (mPushableMap == null) throw new XmlPushableException("The Registered Items Map has not been set");
 
         String tag;
         int eventType = mParser.getEventType();
@@ -60,18 +64,18 @@ public class XmlFiller {
 
         XmlPushable registeredItem;
 
-        while (!mRegisteredItems.isEmpty() && (eventType != XmlPullParser.END_DOCUMENT)) {
+        while (!mPushableMap.isEmpty() && (eventType != XmlPullParser.END_DOCUMENT)) {
 
             if(eventType == XmlPullParser.START_TAG) {
 
                 tag = mParser.getName();
                 // Then looks for a registered item
-                if (mRegisteredItems.size() > 0) {
-                    registeredItem = mRegisteredItems.get(tag);
+                if (mPushableMap.size() > 0) {
+                    registeredItem = mPushableMap.get(tag);
 
                     if (registeredItem != null) {
                         fillItem(tag, registeredItem);
-                        mRegisteredItems.remove(tag);
+                        mPushableMap.remove(tag);
                     }
                 }
             } else if (eventType == XmlPullParser.END_TAG) {
@@ -94,11 +98,11 @@ public class XmlFiller {
      * Registers an XmlPushable object to fill with xml data.
      */
     public <E extends XmlPushable> void registerNode(XmlPushable item) {
-        mRegisteredItems.put(item.getTag(), item);
+        mPushableMap.put(item.getTag(), item);
     }
 
     /**
-     * Internal routine to fill Items.
+     * Internal routine to fill an XmlPushable.
      * @param startTag Item's tag.
      * @param pullable Object to fill.
      * @throws XmlPushableException

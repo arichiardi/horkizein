@@ -21,7 +21,7 @@ package ar.android.horkizein;
 public interface Creator<T> {
 
     /**
-     * Creation method.
+     * Create factory method.
      * @return The new object.
      */
     T create();
