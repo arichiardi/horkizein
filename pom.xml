@@ -24,7 +24,9 @@
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Horkizein Open Source Android Library Project</name>
-
+    <url>http://code.google.com/p/horkizein/</url>
+    <inceptionYear>2011</inceptionYear>
+    
     <modules>
         <module>horkizein</module>
         <module>horkizein-it</module>
@@ -41,6 +43,11 @@
 			<distribution>repo</distribution>
 		</license>
     </licenses>
+  
+    <scm>
+        <connection>scm:git:git@https://code.google.com/p/horkizein</connection>
+        <url>git@http://code.google.com/p/horkizein/source/browse</url>
+    </scm>
   
     <dependencyManagement>
         <dependencies>
