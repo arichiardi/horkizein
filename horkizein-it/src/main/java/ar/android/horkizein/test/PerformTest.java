@@ -26,7 +26,6 @@ import android.test.PerformanceTestCase;
 import android.test.suitebuilder.annotation.MediumTest;
 import android.util.Log;
 import ar.android.horkizein.obj.FlatObject;
-import ar.android.horkizein.obj.FlatObjectCreator;
 import ar.android.horkizein.obj.NestedObject1;
 
 /**
@@ -79,7 +78,7 @@ public class PerformTest extends AndroidTestCase implements PerformanceTestCase 
         mFlat.mStringTag = new String("42");
 
         Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".setUp() creating NestedObject1 src");
-        mNested1 = new NestedObject1(new FlatObjectCreator(mFlat));
+        mNested1 = new NestedObject1(mFlat);
     }
 
     /**

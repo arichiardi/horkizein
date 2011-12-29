@@ -16,7 +16,7 @@
 package ar.android.horkizein;
 
 /**
- * The contract for an XmlPushable object.
+ * XmlPushable objects contract.
  */
 public interface XmlPushable {
 

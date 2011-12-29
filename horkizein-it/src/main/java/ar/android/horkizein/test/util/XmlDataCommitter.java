@@ -17,7 +17,7 @@ package ar.android.horkizein.test.util;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
+import java.util.Collection;
 
 import org.xmlpull.v1.XmlSerializer;
 
@@ -29,28 +29,7 @@ import ar.android.horkizein.XmlWritable;
  */
 public final class XmlDataCommitter {
 
-	public XmlDataCommitter() {	}
-
-	/**
-	 * Internal writer, given an OutputStream and a XmlWritable object.
-	 * @param output A generic OutputStream.
-	 * @param object The XmlWritable object to write.
-	 * @throws IllegalArgumentException
-	 * @throws IllegalStateException
-	 * @throws IOException
-	 */
-	private void commitData(OutputStream output, XmlWritable object) throws IllegalArgumentException, IllegalStateException, IOException {
-
-	    XmlSerializer serializer = android.util.Xml.newSerializer();
-
-	    serializer.setOutput(output, "UTF-8");
-	    serializer.startDocument("UTF-8", true);
-	    // write the file
-	    object.writeXml(serializer);
-
-	    serializer.endDocument();
-	    serializer.flush();
-	}
+	private XmlDataCommitter() {}
 
 	/**
 	 * A useful Android specific method that writes XmlWritables on file.
@@ -59,11 +38,32 @@ public final class XmlDataCommitter {
 	 * @param object The list to write into the file.
 	 * @return True if successful, false if not.
 	 */
-	public void commitData(Context context, String filename, XmlWritable object) throws IllegalArgumentException, IllegalStateException, IOException {
+	public static void commitData(Context context, String filename, String encoding, XmlWritable object) throws IllegalArgumentException, IllegalStateException, IOException {
 
 	    BufferedOutputStream buf = new BufferedOutputStream(context.openFileOutput(filename, Context.MODE_PRIVATE));
+	    		
+	    XmlSerializer serializer = android.util.Xml.newSerializer();
+	    serializer.setOutput(buf, encoding);
 	    // do it
-	    commitData(buf, object);
+	    object.writeXml(serializer);
+
+	    serializer.endDocument();
+	    serializer.flush();
+	    buf.close();
+	}
+	
+	public static void commitData(Context context, String filename, String encoding, Collection<XmlWritable> objects) throws IllegalArgumentException, IllegalStateException, IOException {
+		BufferedOutputStream buf = new BufferedOutputStream(context.openFileOutput(filename, Context.MODE_PRIVATE));
+	    
+	    XmlSerializer serializer = android.util.Xml.newSerializer();
+	    serializer.setOutput(buf, encoding);
+	    // do it
+	    for (XmlWritable object : objects) {
+	    	object.writeXml(serializer);
+	    }
+
+	    serializer.endDocument();
+	    serializer.flush();
 	    buf.close();
 	}
 }

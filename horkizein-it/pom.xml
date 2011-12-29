@@ -22,12 +22,12 @@
     <parent>
         <groupId>ar.android</groupId>
         <artifactId>horkizein-project</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.2-alpha</version>
     </parent>
 
     <groupId>ar.android</groupId>
     <artifactId>horkizein-it</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.2-alpha</version>
     <name>Horkizein Open Source Integration Tests</name>
     <packaging>apk</packaging>
     
@@ -44,15 +44,13 @@
         <dependency>
             <groupId>ar.android</groupId>
             <artifactId>horkizein</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>0.0.2-alpha</version>
             <type>jar</type>
-            <!-- <scope>provided</scope>-->
         </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>3.8.1</version>
-            <scope>test</scope>
+            <version>4.8.1</version>
         </dependency>
     </dependencies>
     
@@ -60,7 +58,7 @@
         <plugins>
             <plugin>
                 <groupId>com.jayway.maven.plugins.android.generation2</groupId>
-                <artifactId>maven-android-plugin</artifactId>
+                <artifactId>android-maven-plugin</artifactId>
                 <configuration>
                     <androidManifestFile>${project.basedir}/AndroidManifest.xml</androidManifestFile>
                     <sourceDirectory>${project.basedir}/src</sourceDirectory>
@@ -79,6 +77,19 @@
                     <source>1.6</source>
                     <target>1.6</target>
                 </configuration>
+            </plugin>
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>javadoc</goal>
+                        </goals>
+                        <phase>package</phase>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

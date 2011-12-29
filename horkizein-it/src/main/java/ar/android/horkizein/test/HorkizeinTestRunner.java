@@ -36,10 +36,14 @@ public final class HorkizeinTestRunner extends InstrumentationTestRunner {
 		mContext = getContext();
 
 		InstrumentationTestSuite suite = new InstrumentationTestSuite(this);
-		// Object Read Write TestS
-		suite.addTestSuite(EqualityTest.class);
+		// Object Read Write Tests
+		//suite.addTestSuite(EqualityTest.class);
+		// Object Read Write Tests Custom Parser
+		//suite.addTestSuite(EqualityCustomParserTest.class);
+		// Object Error Tests
+		suite.addTestSuite(ErrorTest.class);
 		// Performance Tests
-		suite.addTestSuite(PerformTest.class);
+		//suite.addTestSuite(PerformTest.class);
 	    return suite;
 	}
 

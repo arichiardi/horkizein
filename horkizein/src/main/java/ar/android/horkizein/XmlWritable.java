@@ -19,7 +19,7 @@ import java.io.IOException;
 import org.xmlpull.v1.XmlSerializer;
 
 /**
- * The contract to be a XmlWritable object.
+ * XmlWritable objects contract.
  */
 public interface XmlWritable {
 

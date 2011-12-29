@@ -18,12 +18,11 @@ package ar.android.horkizein.test.util;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.Reader;
+import java.util.Collection;
 import java.util.HashMap;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
-import org.xmlpull.v1.XmlPullParserFactory;
 
 import android.content.Context;
 import ar.android.horkizein.test.util.AndroidInternalFileInputStream;
@@ -35,42 +34,125 @@ import ar.android.horkizein.XmlPushable;
  */
 public class XmlDataReader {
 
-	public XmlDataReader() {}
+	private XmlDataReader() {}
 
 	/**
-	 * Internal reader, given a XmlPushable object and a Reader.
-	 * @param object The XmlPushable object to fill.
-	 * @param stream A generic Reader.
+	 * A useful Android specific method that fills an XmlPushable (without reading XML Metadata) 
+	 * @param inParser The parser we want to use.
+	 * @param inContext A context.
+	 * @param outObject The XmlPushable object to fill.
+	 * @param inFileName The input file name.
+	 * @throws FileNotFoundException
 	 * @throws XmlPullParserException
 	 * @throws IOException
 	 */
-	private void grabData(XmlPushable object, Reader stream) throws XmlPullParserException, IOException {
-
-	    XmlPullParserFactory xmlFactory = XmlPullParserFactory.newInstance();
-	    xmlFactory.setNamespaceAware(true);
-	    XmlPullParser xmlParser = xmlFactory.newPullParser();
-	    XmlFiller filler = new XmlFiller(xmlParser, new HashMap<String, XmlPushable>() );
-
-	    filler.registerNode(object);
-	    xmlParser.setInput(stream);
-	    // do it
-	    filler.fill();
+	public static void grabData(XmlPullParser inParser, Context inContext, XmlPushable outObject, String inFileName) throws FileNotFoundException, XmlPullParserException, IOException {
+		grabData(inParser, inContext, outObject, inFileName, false);
 	}
-
+	
 	/**
-	 * A useful Android specific method that fills XmlPushables.
+	 * A useful Android specific method that fills an XmlPushable (without reading XML Metadata)
+	 * @param inParser The parser we want to use.
 	 * @param inContext A context.
-	 * @param outObject The out object to fill.
+	 * @param outObjects Collection of XmlPushables objects to fill.
 	 * @param inFileName The input file name.
-	 * @return True on success, false otherwise.
+	 * @throws FileNotFoundException
+	 * @throws XmlPullParserException
+	 * @throws IOException
 	 */
-    public void grabData(Context inContext, XmlPushable outObject, String inFileName) throws FileNotFoundException, XmlPullParserException, IOException {
-
+	public static void grabData(XmlPullParser inParser, Context inContext, Collection<? extends XmlPushable> outObjects, String inFileName) throws FileNotFoundException, XmlPullParserException, IOException {
+		grabData(inParser, inContext, outObjects, inFileName, false);
+	}
+		
+	/**
+	 * A useful Android specific method that fills an XmlPushable.
+	 * @param inParser The parser we want to use.
+	 * @param inContext A context.
+	 * @param outObject The XmlPushable object to fill.
+	 * @param inFileName The input file name.
+	 * @param includeMetadata True if you want to read XML Metadata as well.
+	 * @throws FileNotFoundException
+	 * @throws XmlPullParserException
+	 * @throws IOException
+	 */
+    public static void grabData(XmlPullParser inParser, Context inContext, XmlPushable outObject, String inFileName, boolean includeMetadata) throws FileNotFoundException, XmlPullParserException, IOException {
+    	// Prints the file for debugging.
+//    	try {
+//        	AndroidInternalFileInputStream inputStream = new AndroidInternalFileInputStream(inContext, inFileName);
+//            BufferedReader bufReader = new BufferedReader(inputStream);
+//            
+//        	String inputLine;
+//
+//        	while ((inputLine = bufReader.readLine()) != null) {
+//        		Log.i(Constants.PACKAGE_TAG_TEST, inputLine);
+//        	}
+//        	bufReader.close();
+//        } catch (IOException e) {
+//        	Log.i(Constants.PACKAGE_TAG_TEST, e.getMessage());
+//        }
+    	
         // Opens the file, buffers it and starts!
         AndroidInternalFileInputStream inputStream = new AndroidInternalFileInputStream(inContext, inFileName);
         BufferedReader bufReader = new BufferedReader(inputStream);
-        //do it
-        grabData(outObject, bufReader);
+	    XmlFiller filler = new XmlFiller(inParser, new HashMap<String, XmlPushable>() );
+	    // register
+	    filler.registerNode(outObject);
+	    inParser.setInput(bufReader);
+	    // do it
+	    if (!includeMetadata) {
+	    	filler.fill();
+	    } else {
+	    	filler.fillToken();
+	    }
+	    
         bufReader.close();
     }
+    
+    /**
+     * A useful Android specific method that fills XmlPushables.
+     * @param inParser The parser we want to use.
+     * @param inContext A context.
+     * @param outObjects Collection of XmlPushables objects to fill.
+     * @param inFileName The input file name.
+     * @param includeMetadata True if you want to read XML Metadata as well.
+     * @throws FileNotFoundException
+     * @throws XmlPullParserException
+     * @throws IOException
+     */
+    public static void grabData(XmlPullParser inParser, Context inContext, Collection<? extends XmlPushable> outObjects, String inFileName, boolean includeMetadata) throws FileNotFoundException, XmlPullParserException, IOException {
+        // Prints the file for debugging.
+//        try {
+//        	AndroidInternalFileInputStream inputStream = new AndroidInternalFileInputStream(inContext, inFileName);
+//            BufferedReader bufReader = new BufferedReader(inputStream);
+//            
+//        	String inputLine;
+//
+//        	while ((inputLine = bufReader.readLine()) != null) {
+//        		Log.i(Constants.PACKAGE_TAG_TEST, inputLine);
+//        	}
+//        	bufReader.close();
+//        } catch (IOException e) {
+//        	Log.i(Constants.PACKAGE_TAG_TEST, e.getMessage());
+//        }
+    	
+        // Opens the file, buffers it and starts!
+        AndroidInternalFileInputStream inputStream = new AndroidInternalFileInputStream(inContext, inFileName);
+        BufferedReader bufReader = new BufferedReader(inputStream);
+        
+        XmlFiller filler = new XmlFiller(inParser);
+	    // register
+	    filler.registerNode(outObjects);
+	    inParser.setInput(bufReader);
+	    
+	    // do it
+	    if (!includeMetadata) {
+	    	filler.fill();
+	    } else {
+	    	filler.fillToken();
+	    }
+        
+	    bufReader.close();
+    }
+    
+    
 }

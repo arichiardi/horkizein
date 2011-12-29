@@ -22,7 +22,6 @@ import java.io.IOException;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
-import org.xmlpull.v1.XmlPullParserFactory;
 
 import android.test.AndroidTestCase;
 import android.test.suitebuilder.annotation.MediumTest;
@@ -38,24 +37,27 @@ import ar.android.horkizein.obj.NestedObject1;
 import ar.android.horkizein.obj.ProcessingObject;
 import ar.android.horkizein.obj.TextObject;
 import ar.android.horkizein.test.Constants;
+import ar.android.horkizein.test.util.CustomKXmlParser;
 import ar.android.horkizein.test.util.XmlDataCommitter;
 import ar.android.horkizein.test.util.XmlDataReader;
 
 /**
  * This class tests the exact match of a written and then read XmlPushable.
+ * It's a clone of the EqualityTest class, but it uses the CustomKXmlParser, a customized
+ * version of the KXmlParser, in order to have multiple TEXT events.
  */
-public class EqualityTest extends AndroidTestCase {
+public class EqualityCustomParserTest extends AndroidTestCase {
 
     private static final String TAG = "EqualityTest";
 
     private static final String TEMPORARY_FILE = "equality.xml";
     private static final String METADATA_FILE = "metadata.xml";
 
-    private FlatObject mFlatSrc;
+    private FlatObject mFlatSrc = null;
 
     private XmlPullParser mParser = null;
-
-    public EqualityTest() {}
+    
+    public EqualityCustomParserTest() { }
 
     /**
      * @see android.test.AndroidTestCase#setUp()
@@ -64,14 +66,7 @@ public class EqualityTest extends AndroidTestCase {
     protected void setUp() {
         Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".setUp() entering.");
         
-        try {
-        	XmlPullParserFactory f = XmlPullParserFactory.newInstance();
-        	mParser = f.newPullParser();
-        } catch (XmlPullParserException e) {
-        	Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".setUp() exception " + e.getMessage());
-        	mParser = null;
-        }
-        assertNotNull(mParser);
+        mParser = new CustomKXmlParser();
         Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".setUp() parser: " + mParser.getClass().getName());
         
         Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".setUp() creating FlatObject src");
@@ -104,12 +99,13 @@ public class EqualityTest extends AndroidTestCase {
         XmlDataCommitter.commitData(getContext(), TEMPORARY_FILE, "UTF-8", mFlatSrc); // marshalling
 
         Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".testFlatObjEquality() fill FlatObject dst");
-        
+
         FlatObject mFlatDst = new FlatObject();
         XmlDataReader.grabData(mParser, getContext(), mFlatDst, TEMPORARY_FILE); // unmarshalling
 
         Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".testFlatObjEquality() equals test");
         assertTrue(mFlatDst.equals(mFlatSrc));
+        Log.i(Constants.PACKAGE_TAG_TEST, "---------------  TAG CHECK --------------");
         assertTrue(mFlatDst.tagCheck());
         Log.i(Constants.PACKAGE_TAG_TEST, "-----------------------------------------");
     }
@@ -224,7 +220,7 @@ public class EqualityTest extends AndroidTestCase {
         
         Log.i(Constants.PACKAGE_TAG_TEST, "-----------------------------------------");
     }
-//    
+    
     /**
      * Tests the equality of metadata objects, standard.
      * @throws IllegalArgumentException
@@ -256,7 +252,7 @@ public class EqualityTest extends AndroidTestCase {
         List<XmlPushable> dstList = new ArrayList<XmlPushable>();
         dstList.add(new DocdeclObject());
         dstList.add(new CommentObject());
-
+        
         XmlDataReader.grabData(mParser, getContext(), dstList, METADATA_FILE, true); // unmarshalling
         
         assertTrue(docdecl.equals(dstList.get(0)));
@@ -267,7 +263,7 @@ public class EqualityTest extends AndroidTestCase {
     }
     
     /**
-     * Tests the equality of metadata objects, with long text inside the COMMENT meta object.
+	 * Tests the equality of metadata objects, with long text inside the COMMENT meta object.
      * @throws IllegalArgumentException
      * @throws IllegalStateException
      * @throws FileNotFoundException
@@ -280,7 +276,7 @@ public class EqualityTest extends AndroidTestCase {
         Log.i(Constants.PACKAGE_TAG_TEST, "--- [" + TAG + ".testMetadataSplittedTextEquality2] ---");
 	    
         DocdeclObject docdecl = new DocdeclObject("version=\"1.0\" encoding=\"UTF-8\"");
-        CommentObject commentNotMultiple32 = new CommentObject("Qui desiderat pacem, bellum praeparat; nemo provocare ne offendere audet quem intelliget superiorem esse pugnaturem.");
+		  CommentObject commentNotMultiple32 = new CommentObject("Qui desiderat pacem, bellum praeparat; nemo provocare ne offendere audet quem intelliget superiorem esse pugnaturem.");
                        
         // source list containing xml objects
         ArrayList<XmlWritable> srcList = new ArrayList<XmlWritable>();
@@ -299,9 +295,10 @@ public class EqualityTest extends AndroidTestCase {
         assertTrue(commentNotMultiple32.equals(dstList.get(1)));
         assertTrue(((DocdeclObject)dstList.get(0)).tagCheck());
         assertTrue(((CommentObject)dstList.get(1)).tagCheck());
+        
         Log.i(Constants.PACKAGE_TAG_TEST, "-----------------------------------------");
     }
-
+    
     /**
      * Tests the equality of metadata objects mixed with tags (CustomKXmlParser)
      * @throws IllegalArgumentException
