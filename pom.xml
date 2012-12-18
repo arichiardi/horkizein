@@ -19,11 +19,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>ar.android</groupId>
+    <groupId>com.googlecode.horkizein</groupId>
     <artifactId>horkizein-project</artifactId>
-    <version>0.0.2-alpha</version>
+    <version>0.0.4-alpha</version>
     <packaging>pom</packaging>
-    <name>Horkizein Open Source Android Library Project</name>
+    <name>Horkizein</name>
+    <description>An open source XML binding library for the Android Platform.</description>
     <url>http://code.google.com/p/horkizein/</url>
     <inceptionYear>2011</inceptionYear>
     
@@ -34,6 +35,13 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <!-- specify your java version here for the maven-compiler-plugin -->
+        <java.version>1.6</java.version>
+        <!-- specify your android platform number here for the android-maven-plugin -->
+		<android.platform>7</android.platform>
+		<!-- specify your android sdk version here for the android-maven-plugin -->
+		<android.version>2.1.2</android.version>
     </properties>
 
     <licenses>
@@ -43,7 +51,20 @@
 			<distribution>repo</distribution>
 		</license>
     </licenses>
-  
+
+	<developers>
+		<developer>
+			<name>Andrea Richiardi</name>
+			<email>andrea.richiardi@gmail.com</email>
+			<id>andrea.richiardi</id>
+			<url>ca.linkedin.com/pub/andrea-richiardi/46/581/947/</url>
+			<timezone>-5</timezone>
+			<roles>
+				<role>developer</role>
+			</roles>
+		</developer>
+	</developers>
+
     <scm>
         <connection>scm:git:git@https://code.google.com/p/horkizein</connection>
         <url>git@http://code.google.com/p/horkizein/source/browse</url>
@@ -54,13 +75,13 @@
             <dependency>
                 <groupId>com.google.android</groupId>
                 <artifactId>android</artifactId>
-                <version>2.1.2</version>
+                <version>${android.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.google.android</groupId>
                 <artifactId>android-test</artifactId>
-                <version>2.1.2</version>
+                <version>${android.version}</version>
                 <scope>provided</scope>
             </dependency>
         </dependencies>
@@ -72,46 +93,30 @@
                 <plugin>
                     <groupId>com.jayway.maven.plugins.android.generation2</groupId>
                     <artifactId>android-maven-plugin</artifactId>
-                    <version>3.0.0</version>
+                    <version>3.4.1</version>
                 </plugin>
 			
-			      <plugin>
+                <plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-source-plugin</artifactId>
+					<version>2.2.1</version>
+				</plugin>
+				
+			    <plugin>
 			        <groupId>org.apache.maven.plugins</groupId>
 			        <artifactId>maven-javadoc-plugin</artifactId>
-			        <version>2.8</version>
-			      </plugin>
+			        <version>2.9</version>
+			    </plugin>
 			      
-			      <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
-			      <plugin>
-			      	<groupId>org.eclipse.m2e</groupId>
-			      	<artifactId>lifecycle-mapping</artifactId>
-			      	<version>1.0.0</version>
-			      	<configuration>
-			      		<lifecycleMappingMetadata>
-			      			<pluginExecutions>
-			      				<pluginExecution>
-			      					<pluginExecutionFilter>
-			      						<groupId>
-			      							com.jayway.maven.plugins.android.generation2
-			      						</groupId>
-			      						<artifactId>
-			      							android-maven-plugin
-			      						</artifactId>
-			      						<versionRange>
-			      							[3.0.0,)
-			      						</versionRange>
-			      						<goals>
-			      							<goal>proguard</goal>
-			      						</goals>
-			      					</pluginExecutionFilter>
-			      					<action>
-			      						<ignore></ignore>
-			      					</action>
-			      				</pluginExecution>
-			      			</pluginExecutions>
-			      		</lifecycleMappingMetadata>
-			      	</configuration>
-			      </plugin>
+			    <plugin>
+			        <groupId>org.apache.maven.plugins</groupId>
+                	<artifactId>maven-compiler-plugin</artifactId>
+	                <version>3.0</version>
+	                <configuration>
+	                    <source>${java.version}</source>
+	                    <target>${java.version}</target>
+	                </configuration>
+            	</plugin>
             </plugins>
         </pluginManagement>
     </build>

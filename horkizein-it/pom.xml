@@ -20,14 +20,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>ar.android</groupId>
+        <groupId>com.googlecode.horkizein</groupId>
         <artifactId>horkizein-project</artifactId>
-        <version>0.0.2-alpha</version>
+        <version>0.0.3-alpha</version>
     </parent>
 
-    <groupId>ar.android</groupId>
     <artifactId>horkizein-it</artifactId>
-    <version>0.0.2-alpha</version>
     <name>Horkizein Open Source Integration Tests</name>
     <packaging>apk</packaging>
     
@@ -42,10 +40,9 @@
         </dependency>
         <!-- DuplicateFileException problem: see http://code.google.com/p/maven-android-plugin/issues/detail?id=132 --> 
         <dependency>
-            <groupId>ar.android</groupId>
+            <groupId>com.googlecode.horkizein</groupId>
             <artifactId>horkizein</artifactId>
-            <version>0.0.2-alpha</version>
-            <type>jar</type>
+            <version>0.0.4-alpha</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -60,36 +57,17 @@
                 <groupId>com.jayway.maven.plugins.android.generation2</groupId>
                 <artifactId>android-maven-plugin</artifactId>
                 <configuration>
+                    <release>false</release>
                     <androidManifestFile>${project.basedir}/AndroidManifest.xml</androidManifestFile>
                     <sourceDirectory>${project.basedir}/src</sourceDirectory>
                     <resourceDirectory>${project.basedir}/res</resourceDirectory>
                     <sdk>
-                        <platform>7</platform>
+                        <platform>${android.platform}</platform>
                     </sdk>
                     <deleteConflictingFiles>true</deleteConflictingFiles>
                     <undeployBeforeDeploy>true</undeployBeforeDeploy>
                 </configuration>
                 <extensions>true</extensions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
-                </configuration>
-            </plugin>
-            
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>javadoc</goal>
-                        </goals>
-                        <phase>package</phase>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

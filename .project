@@ -3,6 +3,8 @@
 	<name>horkizein-project</name>
 	<comment></comment>
 	<projects>
+		<project>horkizein</project>
+		<project>horkizein-it</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

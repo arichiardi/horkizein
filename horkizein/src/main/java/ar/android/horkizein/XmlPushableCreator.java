@@ -19,13 +19,9 @@ import ar.android.horkizein.Creator;
 
 /**
  * This interface provides a factory method, useful for nested XmlPushable objects.
- * @param <T> An XmlPushable.
+ * @param <T> XmlPushable sub-class.
  */
-public interface XmlPushableCreator<T extends XmlPushable> extends Creator<T> {
+public interface XmlPushableCreator<T extends XmlPushable> extends Taggable, Creator<T> {
 
-    /**
-     * The tag this factory can produce item of.
-     * @return The tag.
-     */
-    String getTag();
+    /** placeholder **/
 }

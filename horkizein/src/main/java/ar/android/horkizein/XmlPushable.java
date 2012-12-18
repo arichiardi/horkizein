@@ -16,40 +16,33 @@
 package ar.android.horkizein;
 
 /**
- * XmlPushable objects contract.
+ * XmlPushable object contract.
  */
-public interface XmlPushable {
+public interface XmlPushable extends Taggable {
 
     /**
-     * @brief Tag Getter
-     * @return Tag name
-     */
-    String getTag();
-
-    /**
-     * Passes the current Start tag.
+     * Pushes the opening tag event.
      * @param tag Tag name.
      */
     void pushStartTag(String tag);
 
     /**
-     * Adds the attribute value of the given tag to the current object 
-     * @param tag	Tag name
-     * @param prefix Prefix of the attribute name, if any, otherwise null
-     * @param name	Attribute name
-     * @param value	Attribute value
+     * Pushes attribute name/value to the current object.
+     * @param tag	Tag name.
+     * @param name	Attribute name.
+     * @param value	Attribute value.
      */
     void pushAttribute(String tag, String name, String value);
 
     /**
-     * Sets the text related to the tag
-     * @param tag	Tag name
-     * @param text	Tag text
+     * Pushes the tag text.
+     * @param tag	Tag name.
+     * @param text	Tag text.
      */
     void pushText(String tag, String text);
 
     /**
-     * Passes the current End tag.
+     * Pushes the closing tag event.
      * @param tag Tag name.
      */
     void pushEndTag(String tag);

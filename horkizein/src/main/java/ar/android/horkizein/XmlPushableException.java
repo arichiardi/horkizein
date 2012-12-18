@@ -16,7 +16,7 @@
 package ar.android.horkizein;
 
 /**
- * Custom Exception.
+ * Custom Horkizein Exception.
  */
 public class XmlPushableException extends RuntimeException
 {

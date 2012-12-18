@@ -67,7 +67,7 @@ public class CustomKXmlParser implements XmlPullParser {
 
     private boolean processNsp;
     private boolean relaxed;
-    private Hashtable entityMap;
+    private Hashtable<String, String> entityMap;
     private int depth;
     private String[] elementStack = new String[16];
     private String[] nspStack = new String[8];
@@ -91,7 +91,7 @@ public class CustomKXmlParser implements XmlPullParser {
     private int splitPos = 0;
     private char[] txtBuf = new char[128];
     private int txtPos = 0;
-    private boolean splitEarlyIncrease = false;
+    //private boolean splitEarlyIncrease = false;
 
     // Event-related
 
@@ -379,7 +379,7 @@ public class CustomKXmlParser implements XmlPullParser {
                 	break; //return; // AR
 
                 default :
-                	splitEarlyIncrease = true;
+                	//splitEarlyIncrease = true;
                 	Log.i(Constants.PACKAGE_TAG_TEST, "METADATA event");
                     type = parseLegacy(token);
                     if (type != XML_DECL)
@@ -1032,7 +1032,7 @@ public class CustomKXmlParser implements XmlPullParser {
         splitText = false;
         splitPos = 0;
         
-        entityMap = new Hashtable();
+        entityMap = new Hashtable<String, String>();
         entityMap.put("amp", "&");
         entityMap.put("apos", "'");
         entityMap.put("gt", ">");

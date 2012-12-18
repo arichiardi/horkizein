@@ -26,17 +26,17 @@ import org.xmlpull.v1.XmlPullParserException;
 import android.util.SparseArray;
 
 /**
- * This class does parsing and XmlPushable objects binding. You can pass a Map
- * for registered XmlPushable objects. The Map is modified during parsing as
- * already filled XmlPushables are removed from it. Only leaf nodes should be
- * registered because XmlFiller ignores registered children of a registered
- * parent.<br>
- * XmlFiller includes a buffer for multiple TEXT event pulled from the parser,
- * therefore pushText() is called exactly one time each tag (if there is text to push).<br>
+ * This class performs the XML binding. You can pass a Map in order to register XmlPushable objects.
+ * The Map is modified during the execution (clients should provide a copy of the original data).
+ * Note that XmlFiller ignores registered tags of a registered parent. The outermost wins.
+ * XmlFiller includes a buffer for multiple TEXT event pulled from the parser. For this reason,
+ * pushText() is called exactly once for each tag (if there is text to push).<br>
  * Metadata content is handled the same way as tags, but the developer has to call the function
- * fillToken() instead of fill(). Every time a Metadata event is pulled, XmlFiller calls both pushStartTag()
+ * <code>fillToken()</code> instead of <code>fill()</code>. Every time a Metadata event is pulled, XmlFiller calls both pushStartTag()
  * and pushEndTag(), plus pushText() if necessary. To register a Metadata XmlPushable please use
  * the static fields CDSECT_TAG, COMMENT_TAG, DOCDECL_TAG, PROCESSING_TAG in your getTag() implementation.
+ * @brief Main executing class.
+ * 
  */
 public class XmlFiller {
 	
@@ -71,7 +71,7 @@ public class XmlFiller {
     
     /**
      * Constructor.
-     * @param parser Preferred XmlPullParser.
+     * @param parser Preferred XmlPullParser class.
      */
     public XmlFiller(XmlPullParser parser) {
         mParser = parser;
@@ -82,7 +82,7 @@ public class XmlFiller {
     
     /**
      * Constructor.
-     * @param parser Preferred XmlPullParser.
+     * @param parser Preferred XmlPullParser class.
      * @param pushableMap Registered objects Map.
      */
     public XmlFiller(XmlPullParser parser, Map<String, XmlPushable> pushableMap) {
@@ -110,7 +110,6 @@ public class XmlFiller {
      * @throws XmlPushableException	Thrown by this class, mostly related to parser positioning.
      * @throws XmlPullParserException Thrown by the XmlPullParser directly.
      * @throws IOException	Thrown by the XmlPullParser directly.
-     * TODO use nextTag if it's faster
      */
     final public void fill() throws XmlPushableException, XmlPullParserException, IOException {
     	if (mParser == null) throw new XmlPushableException("The XmlPullParser has not been set");
@@ -142,9 +141,9 @@ public class XmlFiller {
      * Internal routine to fill an XmlPushable.
      * @param startTag Item's tag.
      * @param pullable Object to fill.
-     * @throws XmlPushableException
-     * @throws XmlPullParserException
-     * @throws IOException
+     * @throws XmlPushableException	Thrown by this class, mostly related to parser positioning.
+     * @throws XmlPullParserException Thrown by the XmlPullParser directly.
+     * @throws IOException	Thrown by the XmlPullParser directly.
      */
     final private void fillItem(String startTag, XmlPushable pullable) throws XmlPushableException, XmlPullParserException, IOException {
 
@@ -184,14 +183,13 @@ public class XmlFiller {
     }
     
     /**
-     * Starts the filling process of registered objects, including XML Metadata tags
-     * @note Use fillToken() if you also need to pull data from Metadata tags.
-     * TODO Register more than one Metadata object.
+     * Starts the filling process of registered objects, including registered XML Metadata tags.
+     * Use <code>fillWithToken()</code> instead of <code>fill()</code> if you also need to pull from Metadata.
      * @throws XmlPushableException	Thrown by this class, mostly related to parser positioning.
      * @throws XmlPullParserException Thrown by the XmlPullParser directly.
      * @throws IOException	Thrown by the XmlPullParser directly.
      */
-    final public void fillToken() throws XmlPushableException, XmlPullParserException, IOException {
+    final public void fillWithToken() throws XmlPushableException, XmlPullParserException, IOException {
         if (mParser == null) throw new XmlPushableException("The XmlPullParser has not been set");
         if (mPushableMap == null) throw new XmlPushableException("The Registered Item Map has not been set");
 
@@ -297,7 +295,7 @@ public class XmlFiller {
     }
 
     /**
-     * Registers an XmlPushable object to fill with xml data.
+     * Registers an XmlPushable object to fill.
      * @param item XmlPushable object.
      */
     public <E extends XmlPushable> void registerNode(E item) {
@@ -305,8 +303,8 @@ public class XmlFiller {
     }
     
     /**
-     * Registers an XmlPushable object to fill with xml data.
-     * @param item XmlPushable list of objects.
+     * Registers a list of XmlPushable objects to fill.
+     * @param items XmlPushable list.
      */
     public <E extends XmlPushable> void registerNode(Collection<E> items) {
         for (XmlPushable item : items) {

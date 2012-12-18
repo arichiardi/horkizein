@@ -102,7 +102,7 @@ public class XmlDataReader {
 	    if (!includeMetadata) {
 	    	filler.fill();
 	    } else {
-	    	filler.fillToken();
+	    	filler.fillWithToken();
 	    }
 	    
         bufReader.close();
@@ -148,7 +148,7 @@ public class XmlDataReader {
 	    if (!includeMetadata) {
 	    	filler.fill();
 	    } else {
-	    	filler.fillToken();
+	    	filler.fillWithToken();
 	    }
         
 	    bufReader.close();

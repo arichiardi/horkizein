@@ -17,18 +17,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-	   <groupId>ar.android</groupId>
-	   <artifactId>horkizein-project</artifactId>
-	   <version>0.0.2-alpha</version>
-    </parent>
+	<parent>
+		<groupId>com.googlecode.horkizein</groupId>
+		<artifactId>horkizein-project</artifactId>
+		<version>0.0.3-alpha</version>
+	</parent>
 
-	<groupId>ar.android</groupId>
 	<artifactId>horkizein</artifactId>
-	<version>0.0.2-alpha</version>
 	<packaging>jar</packaging>
 	<name>Horkizein Open Source Android Library</name>
-
+	<version>0.0.4-alpha</version>
+	
 	<dependencies>
 		<dependency>
 			<groupId>com.google.android</groupId>
@@ -41,10 +40,30 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
+				<configuration>
+          			<description>${project.description}</description>
+         			<verbose>true</verbose>
+        		</configuration>
 				<executions>
 					<execution>
 						<goals>
-							<goal>javadoc</goal>
+							<goal>jar</goal>
+						</goals>
+						<phase>package</phase>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<configuration>
+         			<attach>true</attach>
+        		</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>jar-no-fork</goal>
 						</goals>
 						<phase>package</phase>
 					</execution>
