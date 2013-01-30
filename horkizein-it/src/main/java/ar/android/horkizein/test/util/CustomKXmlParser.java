@@ -43,17 +43,21 @@ import java.util.*;
 
 import org.xmlpull.v1.*;
 
-import android.util.Log;
-import ar.android.horkizein.test.Constants;
-
 // Thanks to the open source Kxml2 project I can use and customize the XML parser for testing purpose.
-// I hacked the parser to split TEXT events if the size is more than SPLIT_STRING_SIZE.
+// I hacked the parser to split TEXT events if the size is > SPLIT_STRING_SIZE.
 
 /** A simple, pull based XML parser. This classe replaces the kXML 1
     XmlParser class and the corresponding event classes. */
 
 public class CustomKXmlParser implements XmlPullParser {
 
+	// txtbuffer - AR mod
+    static private final int SPLIT_STRING_SIZE = 32;
+    private boolean splitText = false;
+    private int splitPos = 0;
+    private char[] txtBuf = new char[128];
+    private int txtPos = 0;
+    
     private Object location;
 	static final private String UNEXPECTED_EOF = "Unexpected EOF";
     static final private String ILLEGAL_TYPE = "Wrong event type";
@@ -86,11 +90,6 @@ public class CustomKXmlParser implements XmlPullParser {
     private int column;
 
     // txtbuffer - AR mod
-    static private final int SPLIT_STRING_SIZE = 32;
-    private boolean splitText = false;
-    private int splitPos = 0;
-    private char[] txtBuf = new char[128];
-    private int txtPos = 0;
     //private boolean splitEarlyIncrease = false;
 
     // Event-related
@@ -274,8 +273,6 @@ public class CustomKXmlParser implements XmlPullParser {
      * txtPos and whitespace. Does not set the type variable */
 
     private final void nextImpl() throws IOException, XmlPullParserException {
-    	Log.i(Constants.PACKAGE_TAG_TEST, "inside nextImpl");
-    	
         if (reader == null)
             exception("No Input specified");
 
@@ -283,7 +280,6 @@ public class CustomKXmlParser implements XmlPullParser {
             depth--;
 
         while (true) {
-        	Log.i(Constants.PACKAGE_TAG_TEST, "inside while");
             attributeCount = -1;
 
 			// degenerated needs to be handled before error because of possible
@@ -325,23 +321,19 @@ public class CustomKXmlParser implements XmlPullParser {
             namespace = null;
             //            text = null;
 
-            Log.i(Constants.PACKAGE_TAG_TEST, "A) splitPos= " + splitPos + " txtPos= " + txtPos);
             // AR - Mod to simulate multiple TEXT events
         	if (splitText) {
             	if (!((splitPos + SPLIT_STRING_SIZE) < txtPos)) {
             		splitText = false;
             	} else {
         			type = TEXT;
-        			Log.i(Constants.PACKAGE_TAG_TEST, "Forced TEXT");
         		}
         	}
         	
         	if (!splitText) {
         		type = peekType();
-        		Log.i(Constants.PACKAGE_TAG_TEST, "Peek");
         	}
 
-            Log.i(Constants.PACKAGE_TAG_TEST, "type= " + type + " splitText=" + splitText);
             switch (type) {
             	
                 case ENTITY_REF :
@@ -361,7 +353,6 @@ public class CustomKXmlParser implements XmlPullParser {
 
                 case TEXT :
                 	if (!splitText) {
-                		Log.i(Constants.PACKAGE_TAG_TEST, "real TEXT event");
                 		pushText('<', !token);
                 		if (depth == 0) {
                 			if (isWhitespace)
@@ -371,16 +362,12 @@ public class CustomKXmlParser implements XmlPullParser {
                 			//    exception ("text '"+getText ()+"' not allowed outside root element");
                 		}
                 	} else {
-                		Log.i(Constants.PACKAGE_TAG_TEST, "fake TEXT event");
        	            	splitPos = Math.min(splitPos + SPLIT_STRING_SIZE, txtPos);
-       	            	Log.i(Constants.PACKAGE_TAG_TEST, "B) splitPos= " + splitPos + " txtPos= " + txtPos);
-                		
                 	}
                 	break; //return; // AR
 
                 default :
                 	//splitEarlyIncrease = true;
-                	Log.i(Constants.PACKAGE_TAG_TEST, "METADATA event");
                     type = parseLegacy(token);
                     if (type != XML_DECL)
                     	break; //return; // AR
@@ -389,7 +376,6 @@ public class CustomKXmlParser implements XmlPullParser {
             // AR - Mod to simulate multiple TEXT events
             if (!splitText && txtPos > SPLIT_STRING_SIZE &&
             		type != END_DOCUMENT && type != END_TAG) {
-            	Log.i(Constants.PACKAGE_TAG_TEST, "Splitting hack!");
             	splitText = true;
             	splitPos = 0;
             }
@@ -1295,7 +1281,6 @@ public class CustomKXmlParser implements XmlPullParser {
     }
 
     public String getText() {
-    	Log.i(Constants.PACKAGE_TAG_TEST, "T) splitPos= " + splitPos + " txtPos= " + txtPos);
     	// AR mod
     	if (splitText) {
     		return type < TEXT
@@ -1393,7 +1378,6 @@ public class CustomKXmlParser implements XmlPullParser {
     }
 
     public int next() throws XmlPullParserException, IOException {
-    	Log.i(Constants.PACKAGE_TAG_TEST, "next(): splitText: " + splitText);
         if (!splitText)
         	txtPos = 0;
         isWhitespace = true;
@@ -1419,7 +1403,6 @@ public class CustomKXmlParser implements XmlPullParser {
     public int nextToken() throws XmlPullParserException, IOException {
 
         isWhitespace = true;
-        Log.i(Constants.PACKAGE_TAG_TEST, "nextToken(): splitText: " + splitText);
         if (!splitText)
         	txtPos = 0;
 

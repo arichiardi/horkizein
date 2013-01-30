@@ -16,6 +16,8 @@
 package ar.android.horkizein.obj;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import org.xmlpull.v1.XmlSerializer;
 
@@ -35,8 +37,8 @@ public class NestedObject1 implements XmlPushable, XmlWritable {
     // watch dog
     private boolean wdPushedStartTag;
     private boolean wdPushedEndTag;
-    private boolean wdFlatObjStartTag;
-    private boolean wdFlatObjEndTag;
+    //private boolean wdFlatObjStartTag;
+    //private boolean wdFlatObjEndTag;
 
     // child
     public FlatObject mFlatObject;
@@ -62,54 +64,47 @@ public class NestedObject1 implements XmlPushable, XmlWritable {
     }
 
     /**
-     * @see ar.android.horkizein.xml.XmlPushable#getTag()
+     * @see ar.android.horkizein.XmlPushable#pushAttribute(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
      */
-    public String getTag() {
-        return TAG;
-    }
-
-    /**
-     * @see ar.android.horkizein.xml.XmlPushable#pushAttribute(java.lang.String, java.lang.String, java.lang.String)
-     */
-    public void pushAttribute(String tag, String name, String value) {
+    public void pushAttribute(String tag, String prefix, String name, String value) {
         Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushAttribute() - TAG: " + tag + " NAME: " + name +  " TEXT: " + value);
         if (wdPushedStartTag) {
-            if (wdFlatObjStartTag) {
-                mFlatObject.pushAttribute(tag, name, value);
-            }
+            //if (wdFlatObjStartTag) {
+        	mFlatObject.pushAttribute(tag, prefix, name, value);
+            //}
         }
     }
 
     /**
-     * @see ar.android.horkizein.xml.XmlPushable#pushText(java.lang.String, java.lang.String)
+     * @see ar.android.horkizein.XmlPushable#pushText(java.lang.String, java.lang.String)
      */
     public void pushText(String tag, String text) {
         Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushText() - TAG: " + tag + " TEXT: " + text);
         if (wdPushedStartTag) {
-            if (wdFlatObjStartTag) {
-                mFlatObject.pushText(tag, text);
-            }
+            //if (wdFlatObjStartTag) {
+        	mFlatObject.pushText(tag, text);
+            //}
         }
     }
 
     /**
-     * @see ar.android.horkizein.xml.XmlPushable#pushEndTag(java.lang.String)
+     * @see ar.android.horkizein.XmlPushable#pushEndTag(java.lang.String)
      */
     public void pushEndTag(String tag) {
     	Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushEndTag() - TAG: " + tag);
     	
     	if(wdPushedStartTag) {
-    		if (tag.equals(FlatObject.TAG) && wdFlatObjStartTag) {
-    			wdFlatObjEndTag = true;
+    		if (mFlatObject != null) {
+    			mFlatObject.pushEndTag(tag);
     		}
     	}
     	
-    	if (tag.equals(TAG) && wdPushedStartTag)
+    	if (tag.equals(TAG) && wdPushedStartTag == true)
     		wdPushedEndTag = true;
     }
 
     /**
-     * @see ar.android.horkizein.xml.XmlPushable#pushStartTag(java.lang.String)
+     * @see ar.android.horkizein.XmlPushable#pushStartTag(java.lang.String)
      */
     public void pushStartTag(String tag) {
     	Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushStartTag() - TAG: " + tag);
@@ -117,20 +112,18 @@ public class NestedObject1 implements XmlPushable, XmlWritable {
         	wdPushedStartTag = true;
 
         if(wdPushedStartTag) {
-        	
-            if (tag.equals(FlatObject.TAG)) {
-            	wdFlatObjStartTag = true;
-            	
+        	//if (wdFlatObjStartTag == true) {
+        	if (tag.equals(FlatObject.TAG)) {
+            //	wdFlatObjStartTag = true;
                 if (mFlatCreator != null) {
                 	Log.d(Constants.PACKAGE_TAG_TEST, TAG + ": flatObj created");
                     mFlatObject = mFlatCreator.create();
                 }
-                
-                if (mFlatObject != null) {
-                    mFlatObject.pushStartTag(tag);
-                    wdFlatObjStartTag = true;
-                }
             }
+        	
+        	if (mFlatObject != null) {
+        		mFlatObject.pushStartTag(tag);
+        	}
         }
     }
 
@@ -147,15 +140,14 @@ public class NestedObject1 implements XmlPushable, XmlWritable {
     }
 
     /**
-     * @see ar.android.horkizein.xml.XmlWritable#writeXml(org.xmlpull.v1.XmlSerializer)
+     * @see ar.android.horkizein.XmlWritable#writeXml(org.xmlpull.v1.XmlSerializer)
      */
     public void writeXml(XmlSerializer out) throws IOException, IllegalStateException, IllegalArgumentException {
-
+    	// Writing out
         out.startTag("", TAG);
-
-        if(mFlatObject != null)
+        if(mFlatObject != null) {
             mFlatObject.writeXml(out);
-
+        }
         out.endTag("", TAG);
     }
     
@@ -164,11 +156,26 @@ public class NestedObject1 implements XmlPushable, XmlWritable {
      * @return True or false.
      */
     public boolean tagCheck() {
-    	return (mFlatObject.tagCheck() ||
-    			wdFlatObjStartTag ||
-    			wdFlatObjEndTag ||
-    			wdPushedStartTag ||
+    	return (mFlatObject.tagCheck() &&
+    			wdPushedStartTag &&
     			wdPushedEndTag);
     }
+
+    /**
+	 * @see ar.android.horkizein.XmlPushable#pushableTags()
+	 */
+	public Collection<String> pushableTags() {
+		ArrayList<String> tags = new ArrayList<String>();
+    	tags.add(TAG);
+    	tags.add(FlatObject.TAG);
+        return tags;
+	}
+	
+	/**
+	 * @see ar.android.horkizein.Taggable#getTag()
+	 */
+	public String getTag() {
+		return TAG;
+	}
 }
 

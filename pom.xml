@@ -21,7 +21,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.googlecode.horkizein</groupId>
     <artifactId>horkizein-project</artifactId>
-    <version>0.0.4-alpha</version>
+    <version>0.0.5-alpha</version>
     <packaging>pom</packaging>
     <name>Horkizein</name>
     <description>An open source XML binding library for the Android Platform.</description>
@@ -42,6 +42,8 @@
 		<android.platform>7</android.platform>
 		<!-- specify your android sdk version here for the android-maven-plugin -->
 		<android.version>2.1.2</android.version>
+		 <!-- specify your android package for android:undeploy -->
+		<android.package>ar.android.horkizein.test</android.package>
     </properties>
 
     <licenses>

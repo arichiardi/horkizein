@@ -42,6 +42,13 @@ public class FlatObjectCreator implements XmlPushableCreator<FlatObject> {
     public FlatObjectCreator() {}
 
     /**
+	 * @see ar.android.horkizein.Taggable#getTag()
+	 */
+	public String getTag() {
+		return TAG;
+	}
+	
+    /**
      * @see ar.android.horkizein.Creator#create()
      */
     @Override
@@ -57,13 +64,4 @@ public class FlatObjectCreator implements XmlPushableCreator<FlatObject> {
 
         return tmp;
     }
-
-    /**
-     * @see ar.android.horkizein.XmlPushableCreator#getTag()
-     */
-    @Override
-    public String getTag() {
-        return TAG;
-    }
-
 }

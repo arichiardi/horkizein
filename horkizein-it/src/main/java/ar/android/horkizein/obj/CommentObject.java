@@ -16,6 +16,8 @@
 package ar.android.horkizein.obj;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import org.xmlpull.v1.XmlSerializer;
 
@@ -58,22 +60,24 @@ public class CommentObject implements XmlPushable, XmlWritable {
     }
     
     /**
-     * @see ar.android.horkizein.xml.XmlPushable#getTag()
+     * @see ar.android.horkizein.XmlPushable#pushAttribute(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
      */
-    public String getTag() {
-        return TAG;
+    public void pushAttribute(String tag, String prefix, String name, String value) { /* do nothing */ }
+
+    /**
+     * @see ar.android.horkizein.XmlPushable#pushStartTag(java.lang.String)
+     */
+    public void pushStartTag(String tag) {
+        if (tag.equals(TAG)) {
+        	mPushedStartTag = true;
+        }
     }
 
     /**
-     * @see ar.android.horkizein.xml.XmlPushable#pushAttribute(java.lang.String, java.lang.String, java.lang.String)
-     */
-    public void pushAttribute(String tag, String name, String value) { }
-
-    /**
-     * @see ar.android.horkizein.xml.XmlPushable#pushText(java.lang.String, java.lang.String)
+     * @see ar.android.horkizein.XmlPushable#pushText(java.lang.String, java.lang.String)
      */
     public void pushText(String tag, String text) {
-        if (mPushedStartTag) {
+    	if (tag.equals(TAG) && mPushedStartTag == true) {
             mCommentContent = text;
             Log.d (Constants.PACKAGE_TAG_TEST, TAG + " pushed: " + text);
             Log.d (Constants.PACKAGE_TAG_TEST, "---------------------");
@@ -83,19 +87,12 @@ public class CommentObject implements XmlPushable, XmlWritable {
     }
 
     /**
-     * @see ar.android.horkizein.xml.XmlPushable#pushEndTag(java.lang.String)
+     * @see ar.android.horkizein.XmlPushable#pushEndTag(java.lang.String)
      */
     public void pushEndTag(String tag) {
-        if (tag.equals(TAG) && mPushedStartTag)
+    	if (tag.equals(TAG) && mPushedStartTag == true) {
         	mPushedEndTag = true;
-    }
-
-    /**
-     * @see ar.android.horkizein.xml.XmlPushable#pushStartTag(java.lang.String)
-     */
-    public void pushStartTag(String tag) {
-        if (tag.equals(TAG))
-        	mPushedStartTag = true;
+    	}
     }
 
     @Override
@@ -109,7 +106,7 @@ public class CommentObject implements XmlPushable, XmlWritable {
     }
 
     /**
-     * @see ar.android.horkizein.xml.XmlWritable#writeXml(org.xmlpull.v1.XmlSerializer)
+     * @see ar.android.horkizein.XmlWritable#writeXml(org.xmlpull.v1.XmlSerializer)
      */
     public void writeXml(XmlSerializer out) throws IOException, IllegalStateException, IllegalArgumentException {
     	out.comment(mCommentContent);
@@ -120,7 +117,22 @@ public class CommentObject implements XmlPushable, XmlWritable {
      * @return True or false.
      */
     public boolean tagCheck() {
-    	return (mPushedStartTag || mPushedEndTag);
+    	return (mPushedStartTag && mPushedEndTag);
     }
-}
 
+    /**
+	 * @see ar.android.horkizein.XmlPushable#pushableTags()
+	 */
+	public Collection<String> pushableTags() {
+		ArrayList<String> tags = new ArrayList<String>(1);
+    	tags.add(TAG);
+        return tags;
+	}
+	
+	/**
+	 * @see ar.android.horkizein.Taggable#getTag()
+	 */
+	public String getTag() {
+		return TAG;
+	}
+}

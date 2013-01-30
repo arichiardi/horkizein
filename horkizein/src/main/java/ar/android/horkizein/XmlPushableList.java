@@ -11,12 +11,12 @@
 ** See the License for the specific language governing permissions and
 ** limitations under the License.
 */
-package ar.android.horkizein.test.util;
+package ar.android.horkizein;
 
 import java.util.AbstractList;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 import ar.android.horkizein.XmlPushable;
 import ar.android.horkizein.XmlPushableCreator;
 
@@ -24,7 +24,7 @@ import ar.android.horkizein.XmlPushableCreator;
  * Abstract list of XmlPushable objects that in turn is a XmlPushable.
  * @param <E>
  */
-public abstract class XmlPushableList<E extends XmlPushable> extends AbstractList<E> implements XmlPushable {
+public abstract class XmlPushableList<E extends XmlPushable> extends AbstractList<E> implements XmlWritable {
     
 	protected XmlPushableCreator<E> mFactory;
 	private List<E> mList;
@@ -36,7 +36,16 @@ public abstract class XmlPushableList<E extends XmlPushable> extends AbstractLis
 	 */
 	public XmlPushableList(List<E> list, XmlPushableCreator<E> factory) {
 		mFactory = factory;
-		mList = list;
+		mList = new ArrayList<E>(list);
+	}
+	
+	/**
+	 * Ctor.
+	 * @param factory Creator factory.
+	 */
+	public XmlPushableList(XmlPushableCreator<E> factory) {
+		mFactory = factory;
+		mList = new ArrayList<E>();
 	}
 	
 	/**
@@ -89,5 +98,4 @@ public abstract class XmlPushableList<E extends XmlPushable> extends AbstractLis
 	public void clear() {
 		mList.clear();
 	}
-	
 }

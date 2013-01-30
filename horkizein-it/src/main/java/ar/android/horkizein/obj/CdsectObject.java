@@ -16,6 +16,8 @@
 package ar.android.horkizein.obj;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import org.xmlpull.v1.XmlSerializer;
 
@@ -27,6 +29,10 @@ import ar.android.horkizein.test.Constants;
 
 /**
  * Implementation of the CDSECT xml section as a XmlPushable metadata object.
+ */
+/**
+ * @author kapitan
+ *
  */
 public class CdsectObject implements XmlPushable, XmlWritable {
     
@@ -54,24 +60,27 @@ public class CdsectObject implements XmlPushable, XmlWritable {
     public CdsectObject() {
     	mCdsectContent = "";
     }
+
+    /**
+     * @see ar.android.horkizein.XmlPushable#pushAttribute(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+     */
+    public void pushAttribute(String tag, String prefix, String name, String value) { /* do nothing */ }
+
+    /**
+     * @see ar.android.horkizein.XmlPushable#pushStartTag(java.lang.String)
+     */
+    public void pushStartTag(String tag) {
+    	Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushStartTag(" + tag + ")");
+        if (tag.equals(TAG)) {
+        	mPushedStartTag = true;
+        }
+    }
     
     /**
-     * @see ar.android.horkizein.xml.XmlPushable#getTag()
-     */
-    public String getTag() {
-        return TAG;
-    }
-
-    /**
-     * @see ar.android.horkizein.xml.XmlPushable#pushAttribute(java.lang.String, java.lang.String, java.lang.String)
-     */
-    public void pushAttribute(String tag, String name, String value) { }
-
-    /**
-     * @see ar.android.horkizein.xml.XmlPushable#pushText(java.lang.String, java.lang.String)
+     * @see ar.android.horkizein.XmlPushable#pushText(java.lang.String, java.lang.String)
      */
     public void pushText(String tag, String text) {
-        if (mPushedStartTag) {
+        if (tag.equals(TAG) && mPushedStartTag == true) {
             mCdsectContent = text;
             Log.d(Constants.PACKAGE_TAG_TEST, TAG + " pushed: " + text);
             Log.d(Constants.PACKAGE_TAG_TEST, "---------------------");
@@ -81,21 +90,13 @@ public class CdsectObject implements XmlPushable, XmlWritable {
     }
 
     /**
-     * @see ar.android.horkizein.xml.XmlPushable#pushEndTag(java.lang.String)
+     * @see ar.android.horkizein.XmlPushable#pushEndTag(java.lang.String)
      */
     public void pushEndTag(String tag) {
     	Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushEndTag(" + tag + ")");
-        if (tag.equals(TAG) && mPushedStartTag)
+        if (tag.equals(TAG) && mPushedStartTag == true) {
             mPushedEndTag = true;
-    }
-
-    /**
-     * @see ar.android.horkizein.xml.XmlPushable#pushStartTag(java.lang.String)
-     */
-    public void pushStartTag(String tag) {
-    	Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushStartTag(" + tag + ")");
-        if (tag.equals(TAG))
-        	mPushedStartTag = true;
+        }
     }
 
     @Override
@@ -104,12 +105,12 @@ public class CdsectObject implements XmlPushable, XmlWritable {
         if((obj == null) || (obj.getClass() != this.getClass())) return false;
 
         CdsectObject item = (CdsectObject)obj;
-        Log.d(Constants.PACKAGE_TAG_TEST, TAG + " 1: " + mCdsectContent + "- 2: " + item.mCdsectContent);
+        Log.d(Constants.PACKAGE_TAG_TEST, TAG + " mCdsectContent: " + mCdsectContent + " - item.mCdsectContent: " + item.mCdsectContent);
         return (mCdsectContent.equals(item.mCdsectContent));
     }
 
     /**
-     * @see ar.android.horkizein.xml.XmlWritable#writeXml(org.xmlpull.v1.XmlSerializer)
+     * @see ar.android.horkizein.XmlWritable#writeXml(org.xmlpull.v1.XmlSerializer)
      */
     public void writeXml(XmlSerializer out) throws IOException, IllegalStateException, IllegalArgumentException {
     	out.cdsect(mCdsectContent);
@@ -120,7 +121,23 @@ public class CdsectObject implements XmlPushable, XmlWritable {
      * @return True or false.
      */
     public boolean tagCheck() {
-    	return (mPushedStartTag || mPushedEndTag);
+    	return (mPushedStartTag && mPushedEndTag);
     }
+
+    /**
+	 * @see ar.android.horkizein.XmlPushable#pushableTags()
+	 */
+	public Collection<String> pushableTags() {
+		ArrayList<String> tags = new ArrayList<String>(1);
+    	tags.add(TAG);
+        return tags;
+	}
+
+	/**
+	 * @see ar.android.horkizein.Taggable#getTag()
+	 */
+	public String getTag() {
+		return TAG;
+	}
 }
 

@@ -22,7 +22,7 @@
     <parent>
         <groupId>com.googlecode.horkizein</groupId>
         <artifactId>horkizein-project</artifactId>
-        <version>0.0.3-alpha</version>
+        <version>0.0.5-alpha</version>
     </parent>
 
     <artifactId>horkizein-it</artifactId>
@@ -42,7 +42,7 @@
         <dependency>
             <groupId>com.googlecode.horkizein</groupId>
             <artifactId>horkizein</artifactId>
-            <version>0.0.4-alpha</version>
+            <version>0.0.6-alpha</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

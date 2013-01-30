@@ -111,7 +111,7 @@ public class ErrorTest extends AndroidTestCase {
         dstList.add(mNested1Dst);
         dstList.add(mFlatErr); // we add the wrong object to the list
 
-        XmlDataReader.grabData(mParser, getContext(), dstList, TEMPORARY_FILE); // unmarshalling
+        XmlDataReader.grabDataOutmost(mParser, getContext(), dstList, TEMPORARY_FILE); // unmarshalling
 
         // Filling check
         assertTrue(mNested1Dst.equals(mNested1Src));

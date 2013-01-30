@@ -57,7 +57,7 @@ public class EqualityCustomParserTest extends AndroidTestCase {
 
     private XmlPullParser mParser = null;
     
-    public EqualityCustomParserTest() { }
+    public EqualityCustomParserTest() { /* do nothing */ }
 
     /**
      * @see android.test.AndroidTestCase#setUp()
@@ -101,7 +101,7 @@ public class EqualityCustomParserTest extends AndroidTestCase {
         Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".testFlatObjEquality() fill FlatObject dst");
 
         FlatObject mFlatDst = new FlatObject();
-        XmlDataReader.grabData(mParser, getContext(), mFlatDst, TEMPORARY_FILE); // unmarshalling
+        XmlDataReader.grabDataOutemost(mParser, getContext(), mFlatDst, TEMPORARY_FILE); // unmarshalling
 
         Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".testFlatObjEquality() equals test");
         assertTrue(mFlatDst.equals(mFlatSrc));
@@ -131,7 +131,7 @@ public class EqualityCustomParserTest extends AndroidTestCase {
         NestedObject1 mNested1Dst = new NestedObject1();
         Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".testNestedObj1Equality() fill NestedObject1 dst");
 
-        XmlDataReader.grabData(mParser, getContext(), mNested1Dst, TEMPORARY_FILE); // unmarshalling
+        XmlDataReader.grabDataOutemost(mParser, getContext(), mNested1Dst, TEMPORARY_FILE); // unmarshalling
 
         Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".testNestedObj1Equality() equals test");
         assertTrue(mNested1Dst.equals(mNested1Src));
@@ -164,7 +164,7 @@ public class EqualityCustomParserTest extends AndroidTestCase {
 
         TextObject txtObjDst = new TextObject();
         
-        XmlDataReader.grabData(mParser, getContext(), txtObjDst, TEMPORARY_FILE); // unmarshalling
+        XmlDataReader.grabDataOutemost(mParser, getContext(), txtObjDst, TEMPORARY_FILE); // unmarshalling
 
         Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".testTextObjEquality() equals test");
         assertTrue(txtObjDst.equals(txtObjSrc));
@@ -206,7 +206,7 @@ public class EqualityCustomParserTest extends AndroidTestCase {
         dstList.add(new CommentObject());
         dstList.add(new CdsectObject());
         
-        XmlDataReader.grabData(mParser, getContext(), dstList, METADATA_FILE, true); // unmarshalling
+        XmlDataReader.grabDataOutmost(mParser, getContext(), dstList, METADATA_FILE, true); // unmarshalling
         
         assertTrue(docdecl.equals(dstList.get(0)));
         assertTrue(processing.equals(dstList.get(1)));
@@ -253,7 +253,7 @@ public class EqualityCustomParserTest extends AndroidTestCase {
         dstList.add(new DocdeclObject());
         dstList.add(new CommentObject());
         
-        XmlDataReader.grabData(mParser, getContext(), dstList, METADATA_FILE, true); // unmarshalling
+        XmlDataReader.grabDataOutmost(mParser, getContext(), dstList, METADATA_FILE, true); // unmarshalling
         
         assertTrue(docdecl.equals(dstList.get(0)));
         assertTrue(commentMultiple32.equals(dstList.get(1)));
@@ -276,7 +276,7 @@ public class EqualityCustomParserTest extends AndroidTestCase {
         Log.i(Constants.PACKAGE_TAG_TEST, "--- [" + TAG + ".testMetadataSplittedTextEquality2] ---");
 	    
         DocdeclObject docdecl = new DocdeclObject("version=\"1.0\" encoding=\"UTF-8\"");
-		  CommentObject commentNotMultiple32 = new CommentObject("Qui desiderat pacem, bellum praeparat; nemo provocare ne offendere audet quem intelliget superiorem esse pugnaturem.");
+		CommentObject commentNotMultiple32 = new CommentObject("Qui desiderat pacem, bellum praeparat; nemo provocare ne offendere audet quem intelliget superiorem esse pugnaturem.");
                        
         // source list containing xml objects
         ArrayList<XmlWritable> srcList = new ArrayList<XmlWritable>();
@@ -289,7 +289,7 @@ public class EqualityCustomParserTest extends AndroidTestCase {
         dstList.add(new DocdeclObject());
         dstList.add(new CommentObject());
 
-        XmlDataReader.grabData(mParser, getContext(), dstList, METADATA_FILE, true); // unmarshalling
+        XmlDataReader.grabDataOutmost(mParser, getContext(), dstList, METADATA_FILE, true); // unmarshalling
         
         assertTrue(docdecl.equals(dstList.get(0)));
         assertTrue(commentNotMultiple32.equals(dstList.get(1)));
@@ -313,14 +313,14 @@ public class EqualityCustomParserTest extends AndroidTestCase {
         Log.i(Constants.PACKAGE_TAG_TEST, "--- [" + TAG + ".testMetadataLongTextEquality2] ---");
 	    
         DocdeclObject docdecl = new DocdeclObject("version=\"1.0\" encoding=\"UTF-8\"");
-        CommentObject commentNotMultiple32 = new CommentObject("This is a comment. This kind of comment has to be" +
+        CommentObject commentBiggerThan32 = new CommentObject("This is a comment. This kind of comment has to be" +
         		" more than 32 char but with a length not multiple of 32 so as to test the XmlFiller merging alghoritm.");
                        
         // source list containing xml objects
         ArrayList<XmlWritable> srcList = new ArrayList<XmlWritable>();
         srcList.add(docdecl);
         srcList.add(mFlatSrc);
-        srcList.add(commentNotMultiple32);
+        srcList.add(commentBiggerThan32);
 
         XmlDataCommitter.commitData(getContext(), METADATA_FILE, "UTF-8", srcList); // marshalling
 
@@ -331,11 +331,12 @@ public class EqualityCustomParserTest extends AndroidTestCase {
         dstList.add(flatDst);
         dstList.add(new CommentObject());
 
-        XmlDataReader.grabData(mParser, getContext(), dstList, METADATA_FILE, true); // unmarshalling
+        XmlDataReader.grabDataOutmost(mParser, getContext(), dstList, METADATA_FILE, true); // unmarshalling
         
         assertTrue(docdecl.equals(dstList.get(0)));
         assertTrue(mFlatSrc.equals(dstList.get(1)));
-        assertTrue(commentNotMultiple32.equals(dstList.get(2)));
+        assertTrue(commentBiggerThan32.equals(dstList.get(2)));
+        
         assertTrue(((DocdeclObject)dstList.get(0)).tagCheck());
         assertTrue(((FlatObject)dstList.get(1)).tagCheck());
         assertTrue(((CommentObject)dstList.get(2)).tagCheck());
@@ -363,7 +364,7 @@ public class EqualityCustomParserTest extends AndroidTestCase {
         HelloWorldObject mHelloWorldDst = new HelloWorldObject();
         Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".testHelloWorldEquality() fill HelloWorldObject dst");
 
-        XmlDataReader.grabData(mParser, getContext(), mHelloWorldDst, METADATA_FILE, true); // unmarshalling
+        XmlDataReader.grabDataOutmost(mParser, getContext(), mHelloWorldDst, METADATA_FILE, true); // unmarshalling
 
         Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".testHelloWorldEquality() equals test");
         assertTrue(mHelloWorldDst.equals(mHelloWorldSrc));

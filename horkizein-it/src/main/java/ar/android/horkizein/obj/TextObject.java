@@ -16,6 +16,8 @@
 package ar.android.horkizein.obj;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import org.xmlpull.v1.XmlSerializer;
 
@@ -39,7 +41,6 @@ public class TextObject implements XmlPushable, XmlWritable {
     private boolean wdTextStartTag;
     private boolean wdTextEndTag;
     
-    private boolean mIsText;
     private String mText;
     
     /**
@@ -57,62 +58,57 @@ public class TextObject implements XmlPushable, XmlWritable {
     	mText = new String(text);
     	wdPushedEndTag = wdPushedStartTag = false;
     }
-    
-    /**
-     * @see ar.android.horkizein.xml.XmlPushable#getTag()
-     */
-    public String getTag() {
-        return TAG;
-    }
 
     /**
-     * @see ar.android.horkizein.xml.XmlPushable#pushAttribute(java.lang.String, java.lang.String, java.lang.String)
+     * @see ar.android.horkizein.XmlPushable#pushAttribute(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
      */
-    public void pushAttribute(String tag, String name, String value) {
-    	/* empty */
-    }
+    public void pushAttribute(String tag, String prefix, String name, String value) { /* do nothing */ }
 
     /**
-     * @see ar.android.horkizein.xml.XmlPushable#pushText(java.lang.String, java.lang.String)
-     */
-    public void pushText(String tag, String text) {
-        Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushText() - TAG: " + tag + " TEXT: " + text);
-        if (wdPushedStartTag) {
-            if (tag.equals(TEXT_TAG) && mIsText) {
-            	Log.d (Constants.PACKAGE_TAG_TEST, TAG + " pushed: " + text);
-    	    	Log.d (Constants.PACKAGE_TAG_TEST, "---------------------");
-                mText = new String(text);
-            }
-        }
-    }
-
-    /**
-     * @see ar.android.horkizein.xml.XmlPushable#pushEndTag(java.lang.String)
-     */
-    public void pushEndTag(String tag) {
-    	Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushEndTag(" + tag + ")");
-    	if (tag.equals(TEXT_TAG)) {
-    		mIsText = false;
-    	}
-    	if (tag.equals(TEXT_TAG) && wdTextStartTag) {
-    		wdTextEndTag = true;
-    	}
-    	if (tag.equals(TAG) && wdPushedStartTag)
-        	wdPushedEndTag = true;
-    }
-
-    /**
-     * @see ar.android.horkizein.xml.XmlPushable#pushStartTag(java.lang.String)
+     * @see ar.android.horkizein.XmlPushable#pushStartTag(java.lang.String)
      */
     public void pushStartTag(String tag) {
     	Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushStartTag(" + tag + ")");
-        if (tag.equals(TAG))
+        if (tag.equals(TAG)) {
         	wdPushedStartTag = true;
-        
-        if (tag.equals(TEXT_TAG)) {
-        	wdTextStartTag = true;
-        	mIsText = true;
         }
+        
+        if (wdPushedStartTag == true) {
+	        if (tag.equals(TEXT_TAG)) {
+	        	wdTextStartTag = true;
+	        }
+        }
+    }
+    /**
+     * @see ar.android.horkizein.XmlPushable#pushText(java.lang.String, java.lang.String)
+     */
+    public void pushText(String tag, String text) {
+        Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushText() - TAG: " + tag + " TEXT: " + text);
+        //if (tag.equals(TAG) {
+        //	no text for text_obj
+        //}
+        if (wdPushedStartTag == true) {
+	        if (tag.equals(TEXT_TAG) && wdTextStartTag == true) {
+	        	Log.d (Constants.PACKAGE_TAG_TEST, TAG + " pushed: " + text);
+	        	Log.d (Constants.PACKAGE_TAG_TEST, "---------------------");
+	        	mText = new String(text);
+	        }
+        }
+    }
+
+    /**
+     * @see ar.android.horkizein.XmlPushable#pushEndTag(java.lang.String)
+     */
+    public void pushEndTag(String tag) {
+    	Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushEndTag(" + tag + ")");
+    	if (wdPushedStartTag == true) {
+    		if (tag.equals(TEXT_TAG) && wdTextStartTag == true) {
+    			wdTextEndTag = true;
+    		}
+    	}
+    	if (tag.equals(TAG) && wdPushedStartTag == true) {
+        	wdPushedEndTag = true;
+    	}
     }
 
     @Override
@@ -125,7 +121,7 @@ public class TextObject implements XmlPushable, XmlWritable {
     }
 
     /**
-     * @see ar.android.horkizein.xml.XmlWritable#writeXml(org.xmlpull.v1.XmlSerializer)
+     * @see ar.android.horkizein.XmlWritable#writeXml(org.xmlpull.v1.XmlSerializer)
      */
     public void writeXml(XmlSerializer out) throws IOException, IllegalStateException, IllegalArgumentException {
         out.startTag("", TAG);
@@ -140,10 +136,27 @@ public class TextObject implements XmlPushable, XmlWritable {
      * @return True or false.
      */
     public boolean tagCheck() {
-    	return (wdPushedStartTag ||
-    			wdPushedEndTag ||
-    			wdTextStartTag ||
+    	return (wdPushedStartTag &&
+    			wdPushedEndTag &&
+    			wdTextStartTag &&
     			wdTextEndTag);
     }
+    
+    /**
+	 * @see ar.android.horkizein.XmlPushable#pushableTags()
+	 */
+	public Collection<String> pushableTags() {
+		ArrayList<String> tags = new ArrayList<String>(2);
+    	tags.add(TAG);
+    	tags.add(TEXT_TAG);
+        return tags;
+	}
+	
+	/**
+	 * @see ar.android.horkizein.Taggable#getTag()
+	 */
+	public String getTag() {
+		return TAG;
+	}
 }
 

@@ -16,6 +16,8 @@
 package ar.android.horkizein.obj;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import org.xmlpull.v1.XmlSerializer;
 
@@ -66,20 +68,14 @@ public class FlatObject implements XmlPushable, XmlWritable {
     public double mDoubleAttr;
     public String mStringAttr;
 
-    public FlatObject() { }
+    public FlatObject() { /* do nothing */ }
     
     /**
-     * @see ar.android.horkizein.xml.XmlPushable#getTag()
+     * @see ar.android.horkizein.XmlPushable#pushAttribute(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
      */
-    public String getTag() {
-        return TAG;
-    }
-
-    /**
-     * @see ar.android.horkizein.xml.XmlPushable#pushAttribute(java.lang.String, java.lang.String, java.lang.String)
-     */
-    public void pushAttribute(String tag, String name, String value) {
+    public void pushAttribute(String tag, String prefix, String name, String value) {
         Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushAttribute() - TAG: " + tag + " NAME: " + name +  " TEXT: " + value);
+        
         if (tag.equals(TAG)) {
             if (name.equals(BOOLEAN_ATTR)) {
                 if (value.equals(XML_TRUE))
@@ -97,43 +93,40 @@ public class FlatObject implements XmlPushable, XmlWritable {
     }
 
     /**
-     * @see ar.android.horkizein.xml.XmlPushable#pushText(java.lang.String, java.lang.String)
+     * @see ar.android.horkizein.XmlPushable#pushText(java.lang.String, java.lang.String)
      */
     public void pushText(String tag, String text) {
         Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushText() - TAG: " + tag + " TEXT: " + text);
+        
         if (wdPushedStartTag) {
-            if (tag.equals(BOOLEAN_TAG)) {
-            	wdBooleanStartTag = true;
+            if (tag.equals(BOOLEAN_TAG) && wdBooleanStartTag == true) {
                 if (text.equals(XML_TRUE))
                     mBooleanTag = true;
                 else
                     mBooleanTag = false;
-            } else if (tag.equals(INTEGER_TAG)) {
-            	wdIntegerStartTag = true;
+            } else if (tag.equals(INTEGER_TAG) && wdIntegerStartTag == true) {
                 mIntegerTag = Integer.valueOf(text);
-            } else if (tag.equals(DOUBLE_TAG)) {
-            	wdDoubleStartTag = true;
+            } else if (tag.equals(DOUBLE_TAG) && wdDoubleStartTag == true) {
                 mDoubleTag = Double.valueOf(text);
-            } else if (tag.equals(STRING_TAG)) {
-            	wdStringStartTag = true;
+            } else if (tag.equals(STRING_TAG) && wdStringStartTag == true) {
                 mStringTag = new String(text);
             }
         }
     }
 
     /**
-     * @see ar.android.horkizein.xml.XmlPushable#pushEndTag(java.lang.String)
+     * @see ar.android.horkizein.XmlPushable#pushEndTag(java.lang.String)
      */
     public void pushEndTag(String tag) {
     	Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushEndTag(" + tag + ")");
         
-        if (tag.equals(BOOLEAN_TAG) && wdBooleanStartTag) {
+        if (tag.equals(BOOLEAN_TAG) && wdBooleanStartTag == true) {
         	wdBooleanEndTag = true;
-        } else if (tag.equals(INTEGER_TAG) && wdIntegerStartTag) {
+        } else if (tag.equals(INTEGER_TAG) && wdIntegerStartTag == true) {
         	wdIntegerEndTag = true;
-        } else if (tag.equals(DOUBLE_TAG) && wdDoubleStartTag) {
+        } else if (tag.equals(DOUBLE_TAG) && wdDoubleStartTag == true) {
         	wdDoubleEndTag = true;
-        } else if (tag.equals(STRING_TAG) && wdStringStartTag) {
+        } else if (tag.equals(STRING_TAG) && wdStringStartTag == true) {
         	wdStringEndTag = true;
         }
         
@@ -143,14 +136,57 @@ public class FlatObject implements XmlPushable, XmlWritable {
     }
 
     /**
-     * @see ar.android.horkizein.xml.XmlPushable#pushStartTag(java.lang.String)
+     * @see ar.android.horkizein.XmlPushable#pushStartTag(java.lang.String)
      */
     public void pushStartTag(String tag) {
     	Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushStartTag(" + tag + ")");
-        if (tag.equals(TAG))
+        
+        if (wdPushedStartTag) {
+        	if (tag.equals(BOOLEAN_TAG)) {
+        		wdBooleanStartTag = true;
+            }
+        	if (tag.equals(INTEGER_TAG)) {
+            	wdIntegerStartTag = true;
+            }
+        	if (tag.equals(DOUBLE_TAG)) {
+        		wdDoubleStartTag = true;
+            }
+        	if (tag.equals(STRING_TAG)) {
+            	wdStringStartTag = true;
+            }
+        }
+        
+        if (tag.equals(TAG)) {
         	wdPushedStartTag = true;
+        }
     }
 
+    @Override
+    public int hashCode() {
+    	int hash = 1;
+    	hash = hash * 47 + (mBooleanTag == false ? 0 : 1);
+        hash = hash * 37 + mIntegerTag;
+        hash = hash * 31 + (int)mDoubleTag;
+        hash = hash * 17 + (mStringTag == null ? 0 : mStringTag.hashCode());
+        hash = hash * 47 + (mBooleanAttr == false ? 0 : 1);
+        hash = hash * 37 + mIntegerAttr;
+        hash = hash * 31 + (int)mDoubleAttr;
+        hash = hash * 17 + (mStringAttr == null ? 0 : mStringAttr.hashCode());
+	    return hash;
+    };
+    
+    @Override
+    public String toString() {
+    	StringBuilder sb = new StringBuilder();
+    	sb.append(TAG + " mBooleanAttr: " + mBooleanAttr);
+        sb.append(TAG + " mIntegerAttr: " + mIntegerAttr);
+        sb.append(TAG + " mDoubleAttr: " + mDoubleAttr);
+        sb.append(TAG + " mStringAttr: " + mStringAttr);
+        sb.append(TAG + " mIntegerTag: " + mIntegerTag);
+        sb.append(TAG + " mDoubleTag: " + mDoubleTag);
+        sb.append(TAG + " mStringTag: " + mStringTag);
+    	return sb.toString();
+    }
     @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
@@ -179,26 +215,27 @@ public class FlatObject implements XmlPushable, XmlWritable {
     }
 
     /**
-     * @see ar.android.horkizein.xml.XmlWritable#writeXml(org.xmlpull.v1.XmlSerializer)
+     * @see ar.android.horkizein.XmlWritable#writeXml(org.xmlpull.v1.XmlSerializer)
      */
     public void writeXml(XmlSerializer out) throws IOException, IllegalStateException, IllegalArgumentException {
 
         out.startTag("", TAG);
 
-        if (mBooleanAttr)
+        if (mBooleanAttr) {
             out.attribute("", BOOLEAN_ATTR, XML_TRUE);
-        else
+        } else {
             out.attribute("", BOOLEAN_ATTR, XML_FALSE);
-
+        }
         out.attribute("", INTEGER_ATTR, String.valueOf(mIntegerAttr));
         out.attribute("", DOUBLE_ATTR, String.valueOf(mDoubleAttr));
         out.attribute("", STRING_ATTR, mStringAttr);
 
         out.startTag("", BOOLEAN_TAG);
-        if (mBooleanTag)
+        if (mBooleanTag) {
             out.text(XML_TRUE);
-        else
+        } else {
             out.text(XML_FALSE);
+        }
         out.endTag("", BOOLEAN_TAG);
 
         out.startTag("", INTEGER_TAG);
@@ -217,16 +254,36 @@ public class FlatObject implements XmlPushable, XmlWritable {
     }
     
     public boolean tagCheck() {
-    	return (wdPushedStartTag ||
-    			wdPushedEndTag ||
-    			wdBooleanStartTag ||
-    			wdBooleanEndTag ||
-    			wdIntegerStartTag ||
-    			wdIntegerEndTag ||
-    			wdDoubleStartTag ||
-    			wdDoubleEndTag ||
-    			wdStringStartTag ||
+    	return (wdPushedStartTag &&
+    			wdPushedEndTag &&
+    			wdBooleanStartTag &&
+    			wdBooleanEndTag &&
+    			wdIntegerStartTag &&
+    			wdIntegerEndTag &&
+    			wdDoubleStartTag &&
+    			wdDoubleEndTag &&
+    			wdStringStartTag &&
     			wdStringEndTag);
     }
+
+    /**
+	 * @see ar.android.horkizein.XmlPushable#pushableTags()
+	 */
+	public Collection<String> pushableTags() {
+		ArrayList<String> tags = new ArrayList<String>(5);
+    	tags.add(TAG);
+    	tags.add(BOOLEAN_TAG);
+    	tags.add(INTEGER_TAG);
+    	tags.add(DOUBLE_TAG);
+    	tags.add(STRING_TAG);
+        return tags;
+	}
+	
+	/**
+	 * @see ar.android.horkizein.Taggable#getTag()
+	 */
+	public String getTag() {
+		return TAG;
+	}
 }
 

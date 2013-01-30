@@ -15,6 +15,8 @@
  */
 package ar.android.horkizein;
 
+import java.util.Collection;
+
 /**
  * XmlPushable object contract.
  */
@@ -29,10 +31,11 @@ public interface XmlPushable extends Taggable {
     /**
      * Pushes attribute name/value to the current object.
      * @param tag	Tag name.
+     * @param prefix Attribute prefix (ignored at the moment).
      * @param name	Attribute name.
      * @param value	Attribute value.
      */
-    void pushAttribute(String tag, String name, String value);
+    void pushAttribute(String tag, String prefix, String name, String value);
 
     /**
      * Pushes the tag text.
@@ -47,4 +50,9 @@ public interface XmlPushable extends Taggable {
      */
     void pushEndTag(String tag);
 
+    /**
+     * Return a set of tags which this object expects from the parser.
+     * @return The set of tags.
+     */
+    Collection<String> pushableTags();
 }

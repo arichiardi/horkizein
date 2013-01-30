@@ -19,7 +19,6 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.HashMap;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -46,8 +45,8 @@ public class XmlDataReader {
 	 * @throws XmlPullParserException
 	 * @throws IOException
 	 */
-	public static void grabData(XmlPullParser inParser, Context inContext, XmlPushable outObject, String inFileName) throws FileNotFoundException, XmlPullParserException, IOException {
-		grabData(inParser, inContext, outObject, inFileName, false);
+	public static void grabDataOutemost(XmlPullParser inParser, Context inContext, XmlPushable outObject, String inFileName) throws FileNotFoundException, XmlPullParserException, IOException {
+		grabDataOutmost(inParser, inContext, outObject, inFileName, false);
 	}
 	
 	/**
@@ -60,8 +59,8 @@ public class XmlDataReader {
 	 * @throws XmlPullParserException
 	 * @throws IOException
 	 */
-	public static void grabData(XmlPullParser inParser, Context inContext, Collection<? extends XmlPushable> outObjects, String inFileName) throws FileNotFoundException, XmlPullParserException, IOException {
-		grabData(inParser, inContext, outObjects, inFileName, false);
+	public static void grabDataOutmost(XmlPullParser inParser, Context inContext, Collection<? extends XmlPushable> outObjects, String inFileName) throws FileNotFoundException, XmlPullParserException, IOException {
+		grabDataOutmost(inParser, inContext, outObjects, inFileName, false);
 	}
 		
 	/**
@@ -75,37 +74,33 @@ public class XmlDataReader {
 	 * @throws XmlPullParserException
 	 * @throws IOException
 	 */
-    public static void grabData(XmlPullParser inParser, Context inContext, XmlPushable outObject, String inFileName, boolean includeMetadata) throws FileNotFoundException, XmlPullParserException, IOException {
+    public static void grabDataOutmost(XmlPullParser inParser, Context inContext, XmlPushable outObject, String inFileName, boolean includeMetadata) throws FileNotFoundException, XmlPullParserException, IOException {
     	// Prints the file for debugging.
-//    	try {
-//        	AndroidInternalFileInputStream inputStream = new AndroidInternalFileInputStream(inContext, inFileName);
-//            BufferedReader bufReader = new BufferedReader(inputStream);
-//            
-//        	String inputLine;
-//
-//        	while ((inputLine = bufReader.readLine()) != null) {
-//        		Log.i(Constants.PACKAGE_TAG_TEST, inputLine);
-//        	}
-//        	bufReader.close();
-//        } catch (IOException e) {
-//        	Log.i(Constants.PACKAGE_TAG_TEST, e.getMessage());
-//        }
+    	try {
+        	AndroidInternalFileInputStream inputStream = new AndroidInternalFileInputStream(inContext, inFileName);
+            BufferedReader bufReader = new BufferedReader(inputStream);
+            
+        	String inputLine;
+
+        	while ((inputLine = bufReader.readLine()) != null) {
+        		android.util.Log.i(ar.android.horkizein.test.Constants.PACKAGE_TAG_TEST, inputLine);
+        	}
+        	bufReader.close();
+        } catch (IOException e) {
+        	android.util.Log.i(ar.android.horkizein.test.Constants.PACKAGE_TAG_TEST, e.getMessage());
+        }
     	
         // Opens the file, buffers it and starts!
         AndroidInternalFileInputStream inputStream = new AndroidInternalFileInputStream(inContext, inFileName);
         BufferedReader bufReader = new BufferedReader(inputStream);
-	    XmlFiller filler = new XmlFiller(inParser, new HashMap<String, XmlPushable>() );
+	    XmlFiller filler = new XmlFiller(inParser);
 	    // register
 	    filler.registerNode(outObject);
 	    inParser.setInput(bufReader);
-	    // do it
-	    if (!includeMetadata) {
-	    	filler.fill();
-	    } else {
-	    	filler.fillWithToken();
-	    }
-	    
-        bufReader.close();
+	    // fill
+	    filler.outmostFill();
+        // close buffer
+	    bufReader.close();
     }
     
     /**
@@ -119,21 +114,22 @@ public class XmlDataReader {
      * @throws XmlPullParserException
      * @throws IOException
      */
-    public static void grabData(XmlPullParser inParser, Context inContext, Collection<? extends XmlPushable> outObjects, String inFileName, boolean includeMetadata) throws FileNotFoundException, XmlPullParserException, IOException {
-        // Prints the file for debugging.
-//        try {
-//        	AndroidInternalFileInputStream inputStream = new AndroidInternalFileInputStream(inContext, inFileName);
-//            BufferedReader bufReader = new BufferedReader(inputStream);
-//            
-//        	String inputLine;
-//
-//        	while ((inputLine = bufReader.readLine()) != null) {
-//        		Log.i(Constants.PACKAGE_TAG_TEST, inputLine);
-//        	}
-//        	bufReader.close();
-//        } catch (IOException e) {
-//        	Log.i(Constants.PACKAGE_TAG_TEST, e.getMessage());
-//        }
+    public static void grabDataOutmost(XmlPullParser inParser, Context inContext, Collection<? extends XmlPushable> outObjects, String inFileName, boolean includeMetadata) throws FileNotFoundException, XmlPullParserException, IOException {
+    	android.util.Log.i(ar.android.horkizein.test.Constants.PACKAGE_TAG_TEST, "List filling");
+    	// Prints the file for debugging.
+        try {
+        	AndroidInternalFileInputStream inputStream = new AndroidInternalFileInputStream(inContext, inFileName);
+            BufferedReader bufReader = new BufferedReader(inputStream);
+            
+        	String inputLine;
+
+        	while ((inputLine = bufReader.readLine()) != null) {
+        		android.util.Log.i(ar.android.horkizein.test.Constants.PACKAGE_TAG_TEST, inputLine);
+        	}
+        	bufReader.close();
+        } catch (IOException e) {
+        	android.util.Log.i(ar.android.horkizein.test.Constants.PACKAGE_TAG_TEST, e.getMessage());
+        }
     	
         // Opens the file, buffers it and starts!
         AndroidInternalFileInputStream inputStream = new AndroidInternalFileInputStream(inContext, inFileName);
@@ -143,16 +139,9 @@ public class XmlDataReader {
 	    // register
 	    filler.registerNode(outObjects);
 	    inParser.setInput(bufReader);
-	    
-	    // do it
-	    if (!includeMetadata) {
-	    	filler.fill();
-	    } else {
-	    	filler.fillWithToken();
-	    }
-        
+	    // fill
+	    filler.outmostFill();
+        // close buffer
 	    bufReader.close();
     }
-    
-    
 }
