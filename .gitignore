@@ -1,5 +1,9 @@
 /target
+/.settings
 /horkizein-it/bin
 /horkizein-it/target
+/horkizein-it/.settings
 /horkizein/target
+/horkizein/.settings
+
 
