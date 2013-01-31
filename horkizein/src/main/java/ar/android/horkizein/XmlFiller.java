@@ -36,8 +36,9 @@ import android.util.SparseArray;
  * XmlFiller calls both pushStartTag() and pushEndTag(), plus pushText() if necessary (once).
  * To register a Metadata XmlPushable please use the static fields CDSECT_TAG, COMMENT_TAG, DOCDECL_TAG,
  * PROCESSING_TAG as tag in your implementation.
- * @brief Main executing class.
- * 
+ * If some tag has been registered but not found in the source .xml file, it will still be considered as
+ * "registered". Be sure to call reset() before starting over.
+ * XmlFiller's internal data structures are not thread-safe.
  */
 public class XmlFiller {
 	/**
@@ -105,11 +106,11 @@ public class XmlFiller {
     }
     
     /**
-     * Starts the filling process of registered objects, pulling tag data from the Xml file.
-     * It always fills the outermost tag, meaning that children of registered tags will be pushed
-     * to their parent, therefore ignoring the registered object.
-     * The filling process respect the insertion order. If two objects with the same tag have been
-     * registered, they will be pushed in order (FIFO).
+     * Starts the filling process of registered objects, pulling tag data from the XmlPullParser.
+     * This function always fills the outermost tag, meaning that children of registered tags will
+     * be pushed to their parent, therefore ignoring the registered object.
+     * The filling process respect the insertion order. If two or more objects with the same tag have
+     *  been registered, they will be pushed in order (FIFO).
      * @throws XmlPushableException	Thrown by this class, mostly related to parser positioning.
      * @throws XmlPullParserException Thrown by the XmlPullParser directly.
      * @throws IOException	Thrown by the XmlPullParser directly.
@@ -222,5 +223,12 @@ public class XmlFiller {
     		}
     		stack.add(item);
     	}
+    }
+    
+    /**
+     * Resets the list of registered objects.
+     */
+    public void reset() {
+    	mPushableMap.clear();
     }
 }

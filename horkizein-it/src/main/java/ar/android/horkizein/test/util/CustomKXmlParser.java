@@ -375,7 +375,7 @@ public class CustomKXmlParser implements XmlPullParser {
             
             // AR - Mod to simulate multiple TEXT events
             if (!splitText && txtPos > SPLIT_STRING_SIZE &&
-            		type != END_DOCUMENT && type != END_TAG) {
+            		type == START_TAG && type == TEXT) {
             	splitText = true;
             	splitPos = 0;
             }

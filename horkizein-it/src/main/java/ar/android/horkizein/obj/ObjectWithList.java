@@ -38,8 +38,8 @@ public class ObjectWithList implements XmlPushable, XmlWritable {
 	protected XmlPushableCreator<FlatObject> mFactory;
 	
 	// watch dog
-    private boolean wdPushedListStartTag;
-    private boolean wdPushedListEndTag;
+    private boolean wdPushedListItemStartTag;
+    private boolean wdPushedListItemEndTag;
     private int wdPushedItemStartTagCount;
     private int wdPushedItemEndTagCount;
     
@@ -66,10 +66,13 @@ public class ObjectWithList implements XmlPushable, XmlWritable {
      * @see ar.android.horkizein.XmlPushable#pushAttribute(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
      */
 	public void pushAttribute(String tag, String prefix, String name, String value) {
-		if (mCurrentItem != null) {
-			mCurrentItem.pushAttribute(tag, prefix, name, value);
-		} else {
-			Log.d(Constants.PACKAGE_TAG_TEST, "ObjectWithList.pushAttribute(): currentItem = null");
+		if (wdPushedListItemStartTag) {
+			if (mCurrentItem != null) {
+				mCurrentItem.pushAttribute(tag, prefix, name, value);
+				Log.d(Constants.PACKAGE_TAG_TEST, "ObjectWithList.pushAttribute(): currentItem is not null");
+			} else {
+				Log.d(Constants.PACKAGE_TAG_TEST, "ObjectWithList.pushAttribute(): currentItem = null");
+			}
 		}
 	}
 
@@ -77,10 +80,13 @@ public class ObjectWithList implements XmlPushable, XmlWritable {
      * @see ar.android.horkizein.XmlPushable#pushText(java.lang.String, java.lang.String)
      */
 	public void pushText(String tag, String text) {
-		if (mCurrentItem != null) {
-			mCurrentItem.pushText(tag, text);
-		} else {
-			Log.d(Constants.PACKAGE_TAG_TEST, "ObjectWithList.pushText(): currentItem = null");
+		if (wdPushedListItemStartTag) {
+			if (mCurrentItem != null) {
+				mCurrentItem.pushText(tag, text);
+				Log.d(Constants.PACKAGE_TAG_TEST, "ObjectWithList.pushText(): currentItem is not null");
+			} else {
+				Log.d(Constants.PACKAGE_TAG_TEST, "ObjectWithList.pushText(): currentItem is null");
+			}
 		}
 	}
 
@@ -90,26 +96,24 @@ public class ObjectWithList implements XmlPushable, XmlWritable {
 	public void pushStartTag(String tag) {
 
 		if (tag.equals(TAG)) {
-			wdPushedListStartTag = true;
 			wdPushedItemStartTagCount = 0;
 			wdPushedItemEndTagCount = 0;
 		}
+		if (tag.equals(ITEM_TAG)) {
+			wdPushedListItemStartTag = true;
+			wdPushedItemStartTagCount++;
+			// build the item through the list internal factory
+			mCurrentItem = mFactory.create();
+		}
 		
-		if (wdPushedListStartTag == true) {
-			if (tag.equals(ITEM_TAG)) {
-				wdPushedItemStartTagCount++;
-				// build the item through the list internal factory
-				mCurrentItem = mFactory.create();
-
-				if (mCurrentItem != null) {
-					Log.d(Constants.PACKAGE_TAG_TEST, "ObjectWithList.pushStart(): currentItem is not null");
-					mCurrentItem.pushStartTag(tag);
-				} else {
-					Log.d(Constants.PACKAGE_TAG_TEST, "ObjectWithList.pushText(): currentItem = null");
-				}
+		if (wdPushedListItemStartTag == true) {
+			if (mCurrentItem != null) {
+				Log.d(Constants.PACKAGE_TAG_TEST, "ObjectWithList.pushStartTag(): currentItem is not null");
+				mCurrentItem.pushStartTag(tag);
+			} else {
+				Log.d(Constants.PACKAGE_TAG_TEST, "ObjectWithList.pushStartTag(): currentItem is null");
 			}
 		}
-			
 	}
 
 	/**
@@ -117,30 +121,28 @@ public class ObjectWithList implements XmlPushable, XmlWritable {
      */
 	public void pushEndTag(String tag) {
 		
-		if (wdPushedListStartTag == true) {
+		if (wdPushedListItemStartTag == true) {
+			if (mCurrentItem != null) {
+				mCurrentItem.pushEndTag(tag);
+				Log.d(Constants.PACKAGE_TAG_TEST, "ObjectWithList.pushEndTag(): currentItem is null");
+			} else {
+				Log.d(Constants.PACKAGE_TAG_TEST, "ObjectWithList.pushEndTag(): currentItem is null");
+			}
+			
 			if (tag.equals(ITEM_TAG)) {
 				wdPushedItemEndTagCount++;
-
+				wdPushedListItemEndTag = true;
+				wdPushedListItemStartTag = false;
 				if (mCurrentItem != null) {
-					try {
-						mCurrentItem.pushEndTag(tag);
-						mList.add(mCurrentItem);
-						//++mListIndex;
-					} catch (UnsupportedOperationException e) {
-						Log.d(Constants.PACKAGE_TAG_TEST, "ObjectWithList.pushEnd(): " +  e.getMessage());
-					} catch (ClassCastException e) {
-						Log.d(Constants.PACKAGE_TAG_TEST, "ObjectWithList.pushEnd(): " +  e.getMessage());
-					} catch (IllegalArgumentException e) {
-						Log.d(Constants.PACKAGE_TAG_TEST, "ObjectWithList.pushEnd(): " +  e.getMessage());
-					}
+					mList.add(mCurrentItem);
 					mCurrentItem = null;
-
-				} else {
-					Log.d(Constants.PACKAGE_TAG_TEST, "ObjectWithList.pushText(): currentItem = null");
 				}
 			}
-		} else if (tag.equals(TAG)) {
-			wdPushedListEndTag = false;
+		}
+		
+		if (tag.equals(TAG)) {
+			wdPushedListItemStartTag = false;
+			wdPushedListItemEndTag =true;
 		}
 	}
 
@@ -149,9 +151,11 @@ public class ObjectWithList implements XmlPushable, XmlWritable {
      */
     public void writeXml(XmlSerializer out) throws IOException, IllegalStateException, IllegalArgumentException {
     	out.startTag("", TAG);
-		for (FlatObject ai : mList) {
-			ai.writeXml(out);
-		}
+    	if (mList != null) {
+    		for (FlatObject ai : mList) {
+    			ai.writeXml(out);
+    		}
+    	}
 		out.endTag("", TAG);
     }
     
@@ -164,7 +168,22 @@ public class ObjectWithList implements XmlPushable, XmlWritable {
         if((obj == null) || (obj.getClass() != this.getClass())) return false;
 
         ObjectWithList o = (ObjectWithList)obj;
-        return (mList != null && mList.equals(o.mList));
+        if (mList != null && o.mList != null) {
+        	Log.d(Constants.PACKAGE_TAG_TEST, "ObjectWithList.equals(): this.mList.size() is " + this.mList.size());
+        	Log.d(Constants.PACKAGE_TAG_TEST, "ObjectWithList.equals(): o.mList.size() is " + o.mList.size());
+        	
+        	int i = 0;
+        	for (FlatObject fo : mList) {
+        		FlatObject objFo = o.mList.get(i);
+        		if (fo.equals(objFo)) {
+        			Log.d(Constants.PACKAGE_TAG_TEST, "ObjectWithList.equals(): Objects #" + i + " are equals");
+        		} else {
+        			Log.d(Constants.PACKAGE_TAG_TEST, "ObjectWithList.equals(): Objects #" + i + "are NOT equals");
+        		}
+        		i++;
+        	}
+        }
+        return (mList == o.mList || (mList != null && o.mList != null && mList.equals(o.mList)));
     }
     
     /**
@@ -179,8 +198,8 @@ public class ObjectWithList implements XmlPushable, XmlWritable {
 		}
     	
     	return (listCheck &&
-    			wdPushedListStartTag &&
-    			wdPushedListEndTag &&
+    			wdPushedListItemStartTag == false &&
+    			wdPushedListItemEndTag == true &&
     			wdPushedItemEndTagCount == mList.size() &&
     			wdPushedItemStartTagCount == mList.size());
     }

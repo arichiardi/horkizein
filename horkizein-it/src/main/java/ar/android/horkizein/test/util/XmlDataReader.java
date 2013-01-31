@@ -36,7 +36,7 @@ public class XmlDataReader {
 	private XmlDataReader() {}
 
 	/**
-	 * A useful Android specific method that fills an XmlPushable (without reading XML Metadata) 
+	 * A custom method that fills an XmlPushable.
 	 * @param inParser The parser we want to use.
 	 * @param inContext A context.
 	 * @param outObject The XmlPushable object to fill.
@@ -45,12 +45,12 @@ public class XmlDataReader {
 	 * @throws XmlPullParserException
 	 * @throws IOException
 	 */
-	public static void grabDataOutemost(XmlPullParser inParser, Context inContext, XmlPushable outObject, String inFileName) throws FileNotFoundException, XmlPullParserException, IOException {
+	public static void grabDataOutmost(XmlPullParser inParser, Context inContext, XmlPushable outObject, String inFileName) throws FileNotFoundException, XmlPullParserException, IOException {
 		grabDataOutmost(inParser, inContext, outObject, inFileName, false);
 	}
 	
 	/**
-	 * A useful Android specific method that fills an XmlPushable (without reading XML Metadata)
+	 * A custom method that fills a collection of XmlPushable.
 	 * @param inParser The parser we want to use.
 	 * @param inContext A context.
 	 * @param outObjects Collection of XmlPushables objects to fill.
@@ -64,7 +64,7 @@ public class XmlDataReader {
 	}
 		
 	/**
-	 * A useful Android specific method that fills an XmlPushable.
+	 * A custom method that fills an XmlPushable..
 	 * @param inParser The parser we want to use.
 	 * @param inContext A context.
 	 * @param outObject The XmlPushable object to fill.
@@ -104,7 +104,7 @@ public class XmlDataReader {
     }
     
     /**
-     * A useful Android specific method that fills XmlPushables.
+	 * A custom method that fills a collection of XmlPushable.
      * @param inParser The parser we want to use.
      * @param inContext A context.
      * @param outObjects Collection of XmlPushables objects to fill.

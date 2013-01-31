@@ -24,7 +24,7 @@ import org.xmlpull.v1.XmlSerializer;
 public interface XmlWritable {
 
     /**
-     * Method to implement for xml writing.
+     * Implement this method to write onto the XmlSerializer (aka .xml file).
      * @param serializer The XmlSerializer.
      * @throws IOException Launched by XmlSerializer.
      * @throws IllegalStateException Launched by XmlSerializer.

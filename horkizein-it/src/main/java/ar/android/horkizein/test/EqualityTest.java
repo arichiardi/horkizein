@@ -35,6 +35,7 @@ import ar.android.horkizein.obj.DocdeclObject;
 import ar.android.horkizein.obj.FlatObject;
 import ar.android.horkizein.obj.HelloWorldObject;
 import ar.android.horkizein.obj.NestedObject1;
+import ar.android.horkizein.obj.ObjectWithList;
 import ar.android.horkizein.obj.ProcessingObject;
 import ar.android.horkizein.obj.TextObject;
 import ar.android.horkizein.test.Constants;
@@ -76,7 +77,13 @@ public class EqualityTest extends AndroidTestCase {
         Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".setUp() parser: " + mParser.getClass().getName());
         
         Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".setUp() creating FlatObject src");
-        mFlatSrc = new FlatObject();
+        
+        buildFlatObject();
+        buildFlatObjectList();
+    }
+    
+    private void buildFlatObject() {
+    	mFlatSrc = new FlatObject();
         mFlatSrc.mBooleanAttr = false;
         mFlatSrc.mIntegerAttr = 666;
         mFlatSrc.mDoubleAttr = 0.666;
@@ -86,11 +93,9 @@ public class EqualityTest extends AndroidTestCase {
         mFlatSrc.mIntegerTag = 42;
         mFlatSrc.mDoubleTag = 0.42;
         mFlatSrc.mStringTag = new String("42");
-        
-        buildFlatObjectList();
     }
     
-    void buildFlatObjectList() {
+    private void buildFlatObjectList() {
     	mFlatList = new ArrayList<FlatObject>();
         FlatObject fo = new FlatObject();
 		fo.mBooleanAttr = false;
@@ -144,7 +149,7 @@ public class EqualityTest extends AndroidTestCase {
         Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".testFlatObjEquality() fill FlatObject dst");
         
         FlatObject mFlatDst = new FlatObject();
-        XmlDataReader.grabDataOutemost(mParser, getContext(), mFlatDst, TEMPORARY_FILE); // unmarshalling
+        XmlDataReader.grabDataOutmost(mParser, getContext(), mFlatDst, TEMPORARY_FILE); // unmarshalling
 
         Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".testFlatObjEquality() equals test");
         assertTrue(mFlatDst.equals(mFlatSrc));
@@ -172,7 +177,7 @@ public class EqualityTest extends AndroidTestCase {
         NestedObject1 mNested1Dst = new NestedObject1();
         Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".testNestedObj1Equality() fill NestedObject1 dst");
 
-        XmlDataReader.grabDataOutemost(mParser, getContext(), mNested1Dst, TEMPORARY_FILE); // unmarshalling
+        XmlDataReader.grabDataOutmost(mParser, getContext(), mNested1Dst, TEMPORARY_FILE); // unmarshalling
 
         Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".testNestedObj1Equality() equals test");
         assertTrue(mNested1Dst.equals(mNested1Src));
@@ -204,7 +209,7 @@ public class EqualityTest extends AndroidTestCase {
 
         TextObject txtObjDst = new TextObject();
         
-        XmlDataReader.grabDataOutemost(mParser, getContext(), txtObjDst, TEMPORARY_FILE); // unmarshalling
+        XmlDataReader.grabDataOutmost(mParser, getContext(), txtObjDst, TEMPORARY_FILE); // unmarshalling
 
         Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".testTextObjEquality() equals test");
         assertTrue(txtObjDst.equals(txtObjSrc));
@@ -524,14 +529,14 @@ public class EqualityTest extends AndroidTestCase {
     }
 
     /**
-     * Tests the equality of a the HelloWorldObject.
+     * Tests the equality of an object (ObjectWithList) which HAS-A List (FlatList).
      * @throws IllegalArgumentException
      * @throws IllegalStateException
      * @throws FileNotFoundException
      * @throws XmlPullParserException
      * @throws IOException
      */
-    /*@MediumTest
+    @MediumTest
      public void testObjectWithListEquality() throws IllegalArgumentException, IllegalStateException, FileNotFoundException, XmlPullParserException, IOException {
 
          Log.i(Constants.PACKAGE_TAG_TEST, "--- [" + TAG + ".testObjectWithListEquality] ---");
@@ -544,7 +549,7 @@ public class EqualityTest extends AndroidTestCase {
          ObjectWithList mObjectWithListDst = new ObjectWithList();
          Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".testObjectWithListEquality() fill ObjectWithList dst");
 
-         XmlDataReader.grabDataOuter(mParser, getContext(), mObjectWithListDst, TEMPORARY_FILE); // unmarshalling
+         XmlDataReader.grabDataOutmost(mParser, getContext(), mObjectWithListDst, TEMPORARY_FILE); // unmarshalling
 
          Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".testObjectWithListEquality() equals test");
          assertTrue(mObjectWithListDst.equals(mObjectWithListSrc));
@@ -552,7 +557,7 @@ public class EqualityTest extends AndroidTestCase {
          Log.i(Constants.PACKAGE_TAG_TEST, "-----------------------------------------");
      }
 
-     *//**
+     /**
      * Tests the equality of a the FlatObjectList.
      * @throws IllegalArgumentException
      * @throws IllegalStateException

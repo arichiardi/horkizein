@@ -50,7 +50,7 @@ public class EqualityCustomParserTest extends AndroidTestCase {
 
     private static final String TAG = "EqualityTest";
 
-    private static final String TEMPORARY_FILE = "equality.xml";
+    private static final String TEMPORARY_FILE = "temporary.xml";
     private static final String METADATA_FILE = "metadata.xml";
 
     private FlatObject mFlatSrc = null;
@@ -101,7 +101,7 @@ public class EqualityCustomParserTest extends AndroidTestCase {
         Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".testFlatObjEquality() fill FlatObject dst");
 
         FlatObject mFlatDst = new FlatObject();
-        XmlDataReader.grabDataOutemost(mParser, getContext(), mFlatDst, TEMPORARY_FILE); // unmarshalling
+        XmlDataReader.grabDataOutmost(mParser, getContext(), mFlatDst, TEMPORARY_FILE); // unmarshalling
 
         Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".testFlatObjEquality() equals test");
         assertTrue(mFlatDst.equals(mFlatSrc));
@@ -131,7 +131,7 @@ public class EqualityCustomParserTest extends AndroidTestCase {
         NestedObject1 mNested1Dst = new NestedObject1();
         Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".testNestedObj1Equality() fill NestedObject1 dst");
 
-        XmlDataReader.grabDataOutemost(mParser, getContext(), mNested1Dst, TEMPORARY_FILE); // unmarshalling
+        XmlDataReader.grabDataOutmost(mParser, getContext(), mNested1Dst, TEMPORARY_FILE); // unmarshalling
 
         Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".testNestedObj1Equality() equals test");
         assertTrue(mNested1Dst.equals(mNested1Src));
@@ -164,7 +164,7 @@ public class EqualityCustomParserTest extends AndroidTestCase {
 
         TextObject txtObjDst = new TextObject();
         
-        XmlDataReader.grabDataOutemost(mParser, getContext(), txtObjDst, TEMPORARY_FILE); // unmarshalling
+        XmlDataReader.grabDataOutmost(mParser, getContext(), txtObjDst, TEMPORARY_FILE); // unmarshalling
 
         Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".testTextObjEquality() equals test");
         assertTrue(txtObjDst.equals(txtObjSrc));
@@ -257,6 +257,7 @@ public class EqualityCustomParserTest extends AndroidTestCase {
         
         assertTrue(docdecl.equals(dstList.get(0)));
         assertTrue(commentMultiple32.equals(dstList.get(1)));
+        
         assertTrue(((DocdeclObject)dstList.get(0)).tagCheck());
         assertTrue(((CommentObject)dstList.get(1)).tagCheck());
         Log.i(Constants.PACKAGE_TAG_TEST, "-----------------------------------------");
