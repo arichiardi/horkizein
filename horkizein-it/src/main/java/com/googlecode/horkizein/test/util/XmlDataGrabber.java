@@ -1,5 +1,5 @@
 /*
-** Copyright 2011, Horkizein Open Source Android Library
+** Copyright 2013, Horkizein Open Source Android Library
 **
 ** Licensed under the Apache License, Version 2.0 (the "License");
 ** you may not use this file except in compliance with the License.
@@ -18,86 +18,88 @@ package com.googlecode.horkizein.test.util;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Collection;
+import java.io.InputStreamReader;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
+import com.googlecode.horkizein.XmlBuilder;
 import com.googlecode.horkizein.XmlFiller;
 import com.googlecode.horkizein.XmlPushable;
-import com.googlecode.horkizein.test.util.AndroidInternalFileInputStream;
 
 import android.content.Context;
 
 /**
  * Very simple class to simplify the Xml to XmlPushable binding.  
  */
-public class XmlDataReader {
+public class XmlDataGrabber {
 
-    private XmlDataReader() {}
+    public XmlDataGrabber() {}
 
     /**
      * A custom method that fills an XmlPushable.
-     * @param inParser The parser we want to use.
-     * @param inContext A context.
-     * @param outObject The XmlPushable object to fill.
-     * @param inFileName The input file name.
+     * @param parser The parser we want to use.
+     * @param context A context.
+     * @param clazz The XmlPushable class.
+     * @param builder The XmlPushable builder.
+     * @param fileName The input file name.
      * @throws FileNotFoundException
      * @throws XmlPullParserException
      * @throws IOException
      */
-    public static void grabDataOutmost(XmlPullParser inParser, Context inContext, XmlPushable outObject, String inFileName) throws FileNotFoundException, XmlPullParserException, IOException {
-        grabDataOutmost(inParser, inContext, outObject, inFileName, false);
+    public <T extends XmlPushable> void grab(XmlPullParser parser, Context context, Class<T> clazz, XmlBuilder<T> builder, String fileName) throws FileNotFoundException, XmlPullParserException, IOException {
+        grab(parser, context, clazz, builder, fileName, false);
     }
 
     /**
      * A custom method that fills a collection of XmlPushable.
-     * @param inParser The parser we want to use.
-     * @param inContext A context.
-     * @param outObjects Collection of XmlPushables objects to fill.
-     * @param inFileName The input file name.
+     * @param parser The parser we want to use.
+     * @param context A context.
+     * @param clazzez Collection of XmlPushables types.
+     * @param fileName The input file name.
      * @throws FileNotFoundException
      * @throws XmlPullParserException
      * @throws IOException
      */
-    public static void grabDataOutmost(XmlPullParser inParser, Context inContext, Collection<? extends XmlPushable> outObjects, String inFileName) throws FileNotFoundException, XmlPullParserException, IOException {
-        grabDataOutmost(inParser, inContext, outObjects, inFileName, false);
-    }
+    /*public void grabDataOutmost(XmlPullParser parser, Context context, Collection<Class<T>> clazzez, String fileName) throws FileNotFoundException, XmlPullParserException, IOException {
+        grabDataOutmost(parser, context, clazzez, fileName, false);
+    }*/
 
     /**
      * A custom method that fills an XmlPushable..
-     * @param inParser The parser we want to use.
-     * @param inContext A context.
-     * @param outObject The XmlPushable object to fill.
-     * @param inFileName The input file name.
+     * @param parser The parser we want to use.
+     * @param context A context.
+     * @param clazz The XmlPushable class.
+     * @param builder The XmlPushable builder.
+     * @param fileName The input file name.
      * @param includeMetadata True if you want to read XML Metadata as well.
      * @throws FileNotFoundException
      * @throws XmlPullParserException
      * @throws IOException
      */
-    public static void grabDataOutmost(XmlPullParser inParser, Context inContext, XmlPushable outObject, String inFileName, boolean includeMetadata) throws FileNotFoundException, XmlPullParserException, IOException {
+    public <T extends XmlPushable> void grab(XmlPullParser parser, Context context, Class<T> clazz, XmlBuilder<T> builder, String fileName, boolean includeMetadata) throws FileNotFoundException, XmlPullParserException, IOException {
         // Prints the file for debugging.
-        try {
-            AndroidInternalFileInputStream inputStream = new AndroidInternalFileInputStream(inContext, inFileName);
+        /*try {
+            InputStreamReader inputStream = new InputStreamReader(inContext.openFileInput(inFileName));
             BufferedReader bufReader = new BufferedReader(inputStream);
 
             String inputLine;
 
             while ((inputLine = bufReader.readLine()) != null) {
-                android.util.Log.i(com.googlecode.horkizein.test.Constants.PACKAGE_TAG_TEST, inputLine);
+                android.util.Log.i(Constants.PACKAGE_TAG_TEST, inputLine);
             }
             bufReader.close();
         } catch (IOException e) {
-            android.util.Log.i(com.googlecode.horkizein.test.Constants.PACKAGE_TAG_TEST, e.getMessage());
-        }
+            android.util.Log.i(Constants.PACKAGE_TAG_TEST, e.getMessage());
+        }*/
 
         // Opens the file, buffers it and starts!
-        AndroidInternalFileInputStream inputStream = new AndroidInternalFileInputStream(inContext, inFileName);
+        InputStreamReader inputStream = new InputStreamReader(context.openFileInput(fileName));
         BufferedReader bufReader = new BufferedReader(inputStream);
-        XmlFiller filler = new XmlFiller(inParser);
+        XmlFiller filler = new XmlFiller(parser);
         // register
-        filler.registerNode(outObject);
-        inParser.setInput(bufReader);
+        filler.registerNode(clazz, builder);
+        parser.setInput(bufReader);
         // fill
         filler.outmostFill();
         // close buffer
@@ -108,18 +110,18 @@ public class XmlDataReader {
      * A custom method that fills a collection of XmlPushable.
      * @param inParser The parser we want to use.
      * @param inContext A context.
-     * @param outObjects Collection of XmlPushables objects to fill.
+     * @param clazzez Collection of XmlPushables types.
      * @param inFileName The input file name.
      * @param includeMetadata True if you want to read XML Metadata as well.
      * @throws FileNotFoundException
      * @throws XmlPullParserException
      * @throws IOException
      */
-    public static void grabDataOutmost(XmlPullParser inParser, Context inContext, Collection<? extends XmlPushable> outObjects, String inFileName, boolean includeMetadata) throws FileNotFoundException, XmlPullParserException, IOException {
+    /*public void grabDataOutmost(XmlPullParser inParser, Context inContext, Collection<Class<T>> clazzez, String inFileName, boolean includeMetadata) throws FileNotFoundException, XmlPullParserException, IOException {
         android.util.Log.i(com.googlecode.horkizein.test.Constants.PACKAGE_TAG_TEST, "List filling");
         // Prints the file for debugging.
         try {
-            AndroidInternalFileInputStream inputStream = new AndroidInternalFileInputStream(inContext, inFileName);
+            InputStreamReader inputStream = new InputStreamReader(inContext.openFileInput(inFileName));
             BufferedReader bufReader = new BufferedReader(inputStream);
 
             String inputLine;
@@ -133,16 +135,16 @@ public class XmlDataReader {
         }
 
         // Opens the file, buffers it and starts!
-        AndroidInternalFileInputStream inputStream = new AndroidInternalFileInputStream(inContext, inFileName);
+        InputStreamReader inputStream = new InputStreamReader(inContext.openFileInput(inFileName));
         BufferedReader bufReader = new BufferedReader(inputStream);
 
         XmlFiller filler = new XmlFiller(inParser);
         // register
-        filler.registerNode(outObjects);
+        filler.registerNode(clazzez);
         inParser.setInput(bufReader);
         // fill
         filler.outmostFill();
         // close buffer
         bufReader.close();
-    }
+    }*/
 }

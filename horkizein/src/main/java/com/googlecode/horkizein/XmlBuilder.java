@@ -15,20 +15,17 @@
  */
 package com.googlecode.horkizein;
 
-import java.io.IOException;
-import org.xmlpull.v1.XmlSerializer;
+import com.googlecode.horkizein.XmlPushable;
 
 /**
- * XmlWritable contract.
+ * A generic object builder.
+ * @param <T> The generic type to build.
  */
-public interface XmlWritable {
-
+public interface XmlBuilder<T extends XmlPushable> {
     /**
-     * Implement this method to write onto the XmlSerializer (aka .xml file).
-     * @param serializer The XmlSerializer.
-     * @throws IOException Launched by XmlSerializer.
-     * @throws IllegalStateException Launched by XmlSerializer.
-     * @throws IllegalArgumentException Launched by XmlSerializer.
+     * Create factory method.
+     * @return The new object.
      */
-    public void writeXml(XmlSerializer serializer) throws IOException, IllegalStateException, IllegalArgumentException; 
+    T getInstance();
 }
+

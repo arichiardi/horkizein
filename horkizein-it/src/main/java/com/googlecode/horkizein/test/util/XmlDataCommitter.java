@@ -1,5 +1,5 @@
 /*
-** Copyright 2011, Horkizein Open Source Android Library
+** Copyright 2013, Horkizein Open Source Android Library
 **
 ** Licensed under the Apache License, Version 2.0 (the "License");
 ** you may not use this file except in compliance with the License.
@@ -40,7 +40,6 @@ public final class XmlDataCommitter {
      * @return True if successful, false if not.
      */
     public static void commitData(Context context, String filename, String encoding, XmlWritable object) throws IllegalArgumentException, IllegalStateException, IOException {
-
         BufferedOutputStream buf = new BufferedOutputStream(context.openFileOutput(filename, Context.MODE_PRIVATE));
 
         XmlSerializer serializer = android.util.Xml.newSerializer();

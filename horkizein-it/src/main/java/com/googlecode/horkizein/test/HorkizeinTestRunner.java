@@ -1,5 +1,5 @@
 /*
- ** Copyright 2011, Horkizein Open Source Android Library
+ ** Copyright 2013, Horkizein Open Source Android Library
  **
  ** Licensed under the Apache License, Version 2.0 (the "License");
  ** you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ public final class HorkizeinTestRunner extends InstrumentationTestRunner {
         // (the Custom parser splits TEXT  events that contain more than X chars)
         //suite.addTestSuite(EqualityCustomParserTest.class);
         // Object Error Tests
-        //suite.addTestSuite(ErrorTest.class);
+        suite.addTestSuite(ErrorTest.class);
         // Performance Tests
         //suite.addTestSuite(PerformTest.class);
         return suite;

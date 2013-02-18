@@ -1,5 +1,5 @@
 /*
- ** Copyright 2011, Horkizein Open Source Android Library
+ ** Copyright 2013, Horkizein Open Source Android Library
  **
  ** Licensed under the Apache License, Version 2.0 (the "License");
  ** you may not use this file except in compliance with the License.
@@ -60,8 +60,10 @@ public class TextObject implements XmlPushable, XmlWritable {
         wdPushedEndTag = wdPushedStartTag = false;
     }
 
+    @Override
     public void pushAttribute(String tag, String prefix, String name, String value) { /* do nothing */ }
 
+    @Override
     public void pushStartTag(String tag) {
         Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushStartTag(" + tag + ")");
         if (tag.equals(TAG)) {
@@ -75,6 +77,7 @@ public class TextObject implements XmlPushable, XmlWritable {
         }
     }
 
+    @Override
     public void pushText(String tag, String text) {
         Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushText() - TAG: " + tag + " TEXT: " + text);
         //if (tag.equals(TAG) {
@@ -89,6 +92,7 @@ public class TextObject implements XmlPushable, XmlWritable {
         }
     }
 
+    @Override
     public void pushEndTag(String tag) {
         Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushEndTag(" + tag + ")");
         if (wdPushedStartTag == true) {
@@ -110,6 +114,7 @@ public class TextObject implements XmlPushable, XmlWritable {
         return (mText.equals(item.mText));
     }
 
+    @Override
     public void writeXml(XmlSerializer out) throws IOException, IllegalStateException, IllegalArgumentException {
         out.startTag("", TAG);
         out.startTag("", TEXT_TAG);
@@ -134,11 +139,6 @@ public class TextObject implements XmlPushable, XmlWritable {
         tags.add(TAG);
         tags.add(TEXT_TAG);
         return tags;
-    }
-
-    @Override
-    public String getTag() {
-        return TAG;
     }
 }
 

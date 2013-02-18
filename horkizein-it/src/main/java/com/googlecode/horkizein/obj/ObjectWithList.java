@@ -1,5 +1,5 @@
 /*
- ** Copyright 2011, Horkizein Open Source Android Library
+ ** Copyright 2013, Horkizein Open Source Android Library
  **
  ** Licensed under the Apache License, Version 2.0 (the "License");
  ** you may not use this file except in compliance with the License.
@@ -17,11 +17,11 @@ package com.googlecode.horkizein.obj;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.xmlpull.v1.XmlSerializer;
 
+import com.googlecode.horkizein.XmlTag;
 import com.googlecode.horkizein.XmlPushable;
 import com.googlecode.horkizein.XmlPushableCreator;
 import com.googlecode.horkizein.XmlWritable;
@@ -29,16 +29,21 @@ import com.googlecode.horkizein.test.Constants;
 
 import android.util.Log;
 
+@XmlTag(
+    value = "obj_with_list",
+    enclosedPushables = FlatObject.class
+)
 public class ObjectWithList implements XmlPushable, XmlWritable {
 
-    final static String TAG = "obj_with_list";
-    final static String ITEM_TAG = FlatObject.TAG;
+    private final static String TAG = "obj_with_list";
+    private final static String ITEM_TAG = FlatObject.TAG;
 
     //private int mListIndex;
     private FlatObject mCurrentItem;
+    
+    private XmlPushableCreator<FlatObject> mFactory;
     private List<FlatObject> mList;
-    protected XmlPushableCreator<FlatObject> mFactory;
-
+    
     // watch dog
     private boolean wdPushedListItemStartTag;
     private boolean wdPushedListItemEndTag;
@@ -64,9 +69,7 @@ public class ObjectWithList implements XmlPushable, XmlWritable {
         mCurrentItem = null;
     }
 
-     /**
-
-     */
+    @Override
     public void pushAttribute(String tag, String prefix, String name, String value) {
         if (wdPushedListItemStartTag) {
             if (mCurrentItem != null) {
@@ -78,9 +81,7 @@ public class ObjectWithList implements XmlPushable, XmlWritable {
         }
     }
 
-    /**
-
-     */
+    @Override
     public void pushText(String tag, String text) {
         if (wdPushedListItemStartTag) {
             if (mCurrentItem != null) {
@@ -92,9 +93,7 @@ public class ObjectWithList implements XmlPushable, XmlWritable {
         }
     }
 
-    /**
-
-     */
+    @Override
     public void pushStartTag(String tag) {
 
         if (tag.equals(TAG)) {
@@ -105,7 +104,7 @@ public class ObjectWithList implements XmlPushable, XmlWritable {
             wdPushedListItemStartTag = true;
             wdPushedItemStartTagCount++;
             // build the item through the factory
-            mCurrentItem = mFactory.create();
+            mCurrentItem = mFactory.getInstance();
         }
 
         if (wdPushedListItemStartTag == true) {
@@ -118,9 +117,7 @@ public class ObjectWithList implements XmlPushable, XmlWritable {
         }
     }
 
-    /**
-
-     */
+    @Override
     public void pushEndTag(String tag) {
 
         if (wdPushedListItemStartTag == true) {
@@ -151,6 +148,7 @@ public class ObjectWithList implements XmlPushable, XmlWritable {
     /**
 
      */
+    @Override
     public void writeXml(XmlSerializer out) throws IOException, IllegalStateException, IllegalArgumentException {
         out.startTag("", TAG);
         if (mList != null) {
@@ -202,22 +200,5 @@ public class ObjectWithList implements XmlPushable, XmlWritable {
                 wdPushedListItemEndTag == true &&
                 wdPushedItemEndTagCount == mList.size() &&
                 wdPushedItemStartTagCount == mList.size());
-    }
-
-    /**
-
-     */
-    public Collection<String> pushableTags() {
-        ArrayList<String> tags = new ArrayList<String>(2);
-        tags.add(TAG);
-        tags.add(ITEM_TAG);
-        return tags;
-    }
-
-    /**
-
-     */
-    public String getTag() {
-        return TAG;
     }
 }

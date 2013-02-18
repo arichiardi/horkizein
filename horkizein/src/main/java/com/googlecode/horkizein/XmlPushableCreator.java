@@ -1,5 +1,5 @@
 /*
- ** Copyright 2011, Horkizein Open Source Android Library
+ ** Copyright 2013, Horkizein Open Source Android Library
  **
  ** Licensed under the Apache License, Version 2.0 (the "License");
  ** you may not use this file except in compliance with the License.
@@ -15,12 +15,12 @@
  */
 package com.googlecode.horkizein;
 
-import com.googlecode.horkizein.Creator;
+import com.googlecode.horkizein.XmlBuilder;
 
 /**
  * This interface provides a factory method, useful for nested XmlPushable objects.
  * @param <T> XmlPushable sub-class.
  */
-public interface XmlPushableCreator<T extends XmlPushable> extends Creator<T>, Taggable {
+public interface XmlPushableCreator<T extends XmlPushable> extends XmlBuilder<T> {
     /** placeholder **/
 }

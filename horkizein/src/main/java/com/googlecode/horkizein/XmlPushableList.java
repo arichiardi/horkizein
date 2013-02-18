@@ -1,5 +1,5 @@
 /*
- ** Copyright 2011, Horkizein Open Source Android Library
+ ** Copyright 2013, Horkizein Open Source Android Library
  **
  ** Licensed under the Apache License, Version 2.0 (the "License");
  ** you may not use this file except in compliance with the License.
@@ -29,10 +29,15 @@ import android.util.Log;
  * Abstract list of XmlPushable objects that in turn is a XmlPushable.
  * @param <E>
  */
+@XmlTag(
+    value = "list",
+    additionalTags = "item"
+)
 public abstract class XmlPushableList<E extends XmlPushable> extends AbstractList<E> implements XmlPushable {
 
     private static String PACKAGE = "horkizein";
-    private static String DEFAULT_ITEM_TAG = "item_tag";
+    private static String DEFAULT_TAG = "list";
+    private static String DEFAULT_ITEM_TAG = "item";
 
     protected XmlPushableCreator<E> mFactory;
     protected List<E> mList;
@@ -67,6 +72,7 @@ public abstract class XmlPushableList<E extends XmlPushable> extends AbstractLis
         return mList.size();
     }
 
+    @Override
     public boolean add(E object) {
         return mList.add(object);
     }
@@ -74,6 +80,7 @@ public abstract class XmlPushableList<E extends XmlPushable> extends AbstractLis
     /**
      * Adds in a specific location
      */
+    @Override
     public void add(int location, E object) {
         mList.add(location, object);
     };
@@ -93,11 +100,12 @@ public abstract class XmlPushableList<E extends XmlPushable> extends AbstractLis
         mList.clear();
     }
 
+    @Override
     public void pushStartTag(String tag) {
         if (tag.equals(getTag())) {
         }
         if (tag.equals(getItemTag())) {
-            mCurrentItem = mFactory.create();
+            mCurrentItem = mFactory.getInstance();
         }
 
         if (mCurrentItem != null) {
@@ -108,6 +116,7 @@ public abstract class XmlPushableList<E extends XmlPushable> extends AbstractLis
         }
     }
 
+    @Override
     public void pushAttribute(String tag, String prefix, String name, String value) {
         if (mCurrentItem != null) {
             mCurrentItem.pushAttribute(tag, prefix, name, value);
@@ -118,13 +127,24 @@ public abstract class XmlPushableList<E extends XmlPushable> extends AbstractLis
     }
 
     /**
-     * Implement this if you want to customize the name of the list item's tag .
-     * @return The list item's tag.
+     * Implement this if you want to customize the name of the tag of the list
+     * (don't forget to add annotation accordingly!).
+     * @return The tag of the list.
+     */
+    protected String getTag() {
+        return DEFAULT_TAG;
+    }
+    
+    /**
+     * Implement this if you want to customize the name of the tag of the list item
+     * (don't forget to add annotation accordingly!)
+     * @return The tag of the list item.
      */
     protected String getItemTag() {
         return DEFAULT_ITEM_TAG;
     }
 
+    @Override
     public void pushText(String tag, String text) {
         if (mCurrentItem != null) {
             mCurrentItem.pushText(tag, text);
@@ -134,6 +154,7 @@ public abstract class XmlPushableList<E extends XmlPushable> extends AbstractLis
         }
     }
 
+    @Override
     public void pushEndTag(String tag) {
         if (mCurrentItem != null) {
             mCurrentItem.pushEndTag(tag);
@@ -148,13 +169,5 @@ public abstract class XmlPushableList<E extends XmlPushable> extends AbstractLis
                 mCurrentItem = null;
             }
         }
-    }
-
-    @Override
-    public Collection<String> pushableTags() {
-        Collection<String> c = new ArrayList<String>();
-        c.add(getTag());
-        c.add(getItemTag());
-        return c;
     }
 }

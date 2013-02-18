@@ -21,14 +21,9 @@
 			<arguments>
 			</arguments>
 		</buildCommand>
-		<buildCommand>
-			<name>org.eclipse.ui.externaltools.ExternalToolBuilder</name>
-			<triggers>full,incremental,</triggers>
+        <buildCommand>
+			<name>com.android.ide.eclipse.adt.ApkBuilder</name>
 			<arguments>
-				<dictionary>
-					<key>LaunchConfigHandle</key>
-					<value>&lt;project&gt;/.externalToolBuilders/com.android.ide.eclipse.adt.ApkBuilder.launch</value>
-				</dictionary>
 			</arguments>
 		</buildCommand>
 		<buildCommand>

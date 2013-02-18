@@ -1,5 +1,5 @@
 /*
- ** Copyright 2011, Horkizein Open Source Android Library
+ ** Copyright 2013, Horkizein Open Source Android Library
  **
  ** Licensed under the Apache License, Version 2.0 (the "License");
  ** you may not use this file except in compliance with the License.
@@ -23,17 +23,19 @@ import org.xmlpull.v1.XmlSerializer;
 
 import com.googlecode.horkizein.XmlPushable;
 import com.googlecode.horkizein.XmlPushableList;
+import com.googlecode.horkizein.XmlTag;
 import com.googlecode.horkizein.XmlWritable;
 import com.googlecode.horkizein.test.Constants;
 
 import android.util.Log;
 
+@XmlTag(
+    value = "flat_obj_list",
+    enclosedPushables = FlatObject.class
+)
 public class FlatObjectList extends XmlPushableList<FlatObject> implements XmlWritable{
 
     final static String TAG = "flat_obj_list";
-
-    private int wdPushedItemStartTagCount;
-    private int wdPushedItemEndTagCount;
 
     /**
      * Ctor with input list.
@@ -50,9 +52,7 @@ public class FlatObjectList extends XmlPushableList<FlatObject> implements XmlWr
         super(new ArrayList<FlatObject>(), new FlatObjectCreator());
     }
 
-    /**
-
-     */
+    @Override
     public void writeXml(XmlSerializer out) throws IOException, IllegalStateException, IllegalArgumentException {
         out.startTag("", TAG);
         for (FlatObject ai : this) {
@@ -60,7 +60,6 @@ public class FlatObjectList extends XmlPushableList<FlatObject> implements XmlWr
         }
         out.endTag("", TAG);
     }
-
 
     @Override
     public boolean equals(Object obj) {
@@ -89,14 +88,9 @@ public class FlatObjectList extends XmlPushableList<FlatObject> implements XmlWr
         }
         return (listCheck);
     }
-
+    
     @Override
-    public String getTag() {
+    protected String getTag() {
         return TAG;
-    }
-
-    @Override
-    protected String getItemTag() {
-        return FlatObject.TAG;
     }
 }

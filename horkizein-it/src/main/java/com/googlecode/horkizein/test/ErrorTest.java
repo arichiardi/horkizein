@@ -1,5 +1,5 @@
 /*
- ** Copyright 2011, Horkizein Open Source Android Library
+ ** Copyright 2013, Horkizein Open Source Android Library
  **
  ** Licensed under the Apache License, Version 2.0 (the "License");
  ** you may not use this file except in compliance with the License.
@@ -26,10 +26,15 @@ import org.xmlpull.v1.XmlPullParserFactory;
 
 import com.googlecode.horkizein.XmlPushable;
 import com.googlecode.horkizein.obj.FlatObject;
+import com.googlecode.horkizein.obj.FlatObjectList;
 import com.googlecode.horkizein.obj.NestedObject1;
+import com.googlecode.horkizein.obj.ObjectWithList;
+import com.googlecode.horkizein.obj.ObjectWithUntagged;
+import com.googlecode.horkizein.obj.builders.FlatObjectListBuilder;
+import com.googlecode.horkizein.obj.builders.ObjectWithUntaggedBuilder;
 import com.googlecode.horkizein.test.Constants;
 import com.googlecode.horkizein.test.util.XmlDataCommitter;
-import com.googlecode.horkizein.test.util.XmlDataReader;
+import com.googlecode.horkizein.test.util.XmlDataGrabber;
 
 import android.test.AndroidTestCase;
 import android.test.suitebuilder.annotation.MediumTest;
@@ -42,7 +47,7 @@ public class ErrorTest extends AndroidTestCase {
 
     private static final String TAG = "EqualityTest";
 
-    private static final String TEMPORARY_FILE = "error.xml";
+    private static final String TEMPORARY_FILE = "temporary.xml";
     private static final String METADATA_FILE = "metadata.xml";
 
     private FlatObject mFlatSrc;
@@ -87,7 +92,7 @@ public class ErrorTest extends AndroidTestCase {
      * @throws XmlPullParserException
      * @throws IOException
      */
-    @MediumTest
+    /*@MediumTest
     public void testNestingError() throws IllegalArgumentException, IllegalStateException, FileNotFoundException, XmlPullParserException, IOException {
 
         Log.i(Constants.PACKAGE_TAG_TEST, "--- [" + TAG + ".testNestingError] ---");
@@ -109,7 +114,7 @@ public class ErrorTest extends AndroidTestCase {
         dstList.add(mNested1Dst);
         dstList.add(mFlatErr); // we add the wrong object to the list
 
-        XmlDataReader.grabDataOutmost(mParser, getContext(), dstList, TEMPORARY_FILE); // unmarshalling
+        XmlDataGrabber.grabDataOutmost(mParser, getContext(), dstList, TEMPORARY_FILE); // unmarshalling
 
         // Filling check
         assertTrue(mNested1Dst.equals(mNested1Src));
@@ -121,7 +126,7 @@ public class ErrorTest extends AndroidTestCase {
 
         Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".testNestingError() equals test");
         Log.i(Constants.PACKAGE_TAG_TEST, "-----------------------------------------");
-    }
+    }*/
 
 //    /**
 //     * Tests the unmarshalling of multiple comments within the XML file.
@@ -174,6 +179,26 @@ public class ErrorTest extends AndroidTestCase {
 //        Log.i(Constants.PACKAGE_TAG_TEST, "-----------------------------------------");
 //    }
 
+    @MediumTest
+    public void testDeclaredButNotAnnotatedError() throws IllegalArgumentException, IllegalStateException, FileNotFoundException, XmlPullParserException, IOException {
+
+      Log.i(Constants.PACKAGE_TAG_TEST, "--- [" + TAG + ".testDeclaredButNotAnnotatedError] ---");
+      boolean catched = false;
+      try {
+          ObjectWithUntagged obj = new ObjectWithUntagged();
+          XmlDataCommitter.commitData(getContext(), TEMPORARY_FILE, "UTF-8", obj); // marshalling
+          
+          XmlDataGrabber dataGrabber = new XmlDataGrabber();
+          // don't care about the builder
+          dataGrabber.grab(mParser, getContext(), ObjectWithUntagged.class, new ObjectWithUntaggedBuilder(), TEMPORARY_FILE);
+      } catch (RuntimeException expected) {
+          Log.i(Constants.PACKAGE_TAG_TEST, "Expected: " + expected.getMessage());
+          catched = true;
+      }
+      assert(catched);
+      
+    }
+    
     @Override
     protected void tearDown() throws Exception {
         Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".tearDown() delete file: " + TEMPORARY_FILE);

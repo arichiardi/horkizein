@@ -28,6 +28,7 @@
     <artifactId>horkizein-it</artifactId>
     <name>Horkizein Open Source Integration Tests</name>
     <packaging>apk</packaging>
+    <version>0.0.6-alpha</version>
     
     <dependencies>
         <dependency>
@@ -42,7 +43,7 @@
         <dependency>
             <groupId>com.googlecode.horkizein</groupId>
             <artifactId>horkizein</artifactId>
-            <version>0.0.6-alpha</version>
+            <version>0.0.7-alpha</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

@@ -1,5 +1,5 @@
 /*
- ** Copyright 2011, Horkizein Open Source Android Library
+ ** Copyright 2013, Horkizein Open Source Android Library
  **
  ** Licensed under the Apache License, Version 2.0 (the "License");
  ** you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 package com.googlecode.horkizein.obj;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
 
 import org.xmlpull.v1.XmlSerializer;
 
@@ -61,9 +59,11 @@ public class CommentObject implements XmlPushable, XmlWritable {
     }
 
 
+    @Override
     public void pushAttribute(String tag, String prefix, String name, String value) { /* do nothing */ }
 
 
+    @Override
     public void pushStartTag(String tag) {
         if (tag.equals(TAG)) {
             mPushedStartTag = true;
@@ -71,6 +71,7 @@ public class CommentObject implements XmlPushable, XmlWritable {
     }
 
 
+    @Override
     public void pushText(String tag, String text) {
         if (tag.equals(TAG) && mPushedStartTag == true) {
             mCommentContent = text;
@@ -81,7 +82,7 @@ public class CommentObject implements XmlPushable, XmlWritable {
         }
     }
 
-
+    @Override
     public void pushEndTag(String tag) {
         if (tag.equals(TAG) && mPushedStartTag == true) {
             mPushedEndTag = true;
@@ -98,7 +99,7 @@ public class CommentObject implements XmlPushable, XmlWritable {
         return (mCommentContent.equals(item.mCommentContent));
     }
 
-
+    @Override
     public void writeXml(XmlSerializer out) throws IOException, IllegalStateException, IllegalArgumentException {
         out.comment(mCommentContent);
     }
@@ -109,21 +110,5 @@ public class CommentObject implements XmlPushable, XmlWritable {
      */
     public boolean tagCheck() {
         return (mPushedStartTag && mPushedEndTag);
-    }
-
-    /**
-
-     */
-    public Collection<String> pushableTags() {
-        ArrayList<String> tags = new ArrayList<String>(1);
-        tags.add(TAG);
-        return tags;
-    }
-
-    /**
-
-     */
-    public String getTag() {
-        return TAG;
     }
 }

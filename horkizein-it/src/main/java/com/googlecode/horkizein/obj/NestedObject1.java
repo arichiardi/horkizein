@@ -1,5 +1,5 @@
 /*
- ** Copyright 2011, Horkizein Open Source Android Library
+ ** Copyright 2013, Horkizein Open Source Android Library
  **
  ** Licensed under the Apache License, Version 2.0 (the "License");
  ** you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 package com.googlecode.horkizein.obj;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
 
 import org.xmlpull.v1.XmlSerializer;
 
@@ -38,8 +36,6 @@ public class NestedObject1 implements XmlPushable, XmlWritable {
     // watch dog
     private boolean wdPushedStartTag;
     private boolean wdPushedEndTag;
-    //private boolean wdFlatObjStartTag;
-    //private boolean wdFlatObjEndTag;
 
     // child
     public FlatObject mFlatObject;
@@ -48,7 +44,7 @@ public class NestedObject1 implements XmlPushable, XmlWritable {
 
     /**
      * Creates a NestedObject1 that contains a shallow copy of a FlatObject
-     * @param mMyChild
+     * @param flatSrc The child.
      */
     public NestedObject1(FlatObject flatSrc) {
         mFlatCreator = new FlatObjectCreator();
@@ -65,6 +61,7 @@ public class NestedObject1 implements XmlPushable, XmlWritable {
     }
 
 
+    @Override
     public void pushAttribute(String tag, String prefix, String name, String value) {
         Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushAttribute() - TAG: " + tag + " NAME: " + name +  " TEXT: " + value);
         if (wdPushedStartTag) {
@@ -75,6 +72,7 @@ public class NestedObject1 implements XmlPushable, XmlWritable {
     }
 
 
+    @Override
     public void pushText(String tag, String text) {
         Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushText() - TAG: " + tag + " TEXT: " + text);
         if (wdPushedStartTag) {
@@ -85,6 +83,7 @@ public class NestedObject1 implements XmlPushable, XmlWritable {
     }
 
 
+    @Override
     public void pushEndTag(String tag) {
         Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushEndTag() - TAG: " + tag);
 
@@ -99,6 +98,7 @@ public class NestedObject1 implements XmlPushable, XmlWritable {
     }
 
 
+    @Override
     public void pushStartTag(String tag) {
         Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushStartTag() - TAG: " + tag);
         if (tag.equals(TAG))
@@ -110,7 +110,7 @@ public class NestedObject1 implements XmlPushable, XmlWritable {
             //    wdFlatObjStartTag = true;
                 if (mFlatCreator != null) {
                     Log.d(Constants.PACKAGE_TAG_TEST, TAG + ": flatObj created");
-                    mFlatObject = mFlatCreator.create();
+                    mFlatObject = mFlatCreator.getInstance();
                 }
             }
 
@@ -131,6 +131,7 @@ public class NestedObject1 implements XmlPushable, XmlWritable {
     }
 
 
+    @Override
     public void writeXml(XmlSerializer out) throws IOException, IllegalStateException, IllegalArgumentException {
         // Writing out
         out.startTag("", TAG);
@@ -149,22 +150,4 @@ public class NestedObject1 implements XmlPushable, XmlWritable {
                 wdPushedStartTag &&
                 wdPushedEndTag);
     }
-
-    /**
-
-     */
-    public Collection<String> pushableTags() {
-        ArrayList<String> tags = new ArrayList<String>();
-        tags.add(TAG);
-        tags.add(FlatObject.TAG);
-        return tags;
-    }
-
-    /**
-
-     */
-    public String getTag() {
-        return TAG;
-    }
 }
-

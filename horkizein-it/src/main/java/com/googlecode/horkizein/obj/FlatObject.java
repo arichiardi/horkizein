@@ -1,5 +1,5 @@
 /*
- ** Copyright 2011, Horkizein Open Source Android Library
+ ** Copyright 2013, Horkizein Open Source Android Library
  **
  ** Licensed under the Apache License, Version 2.0 (the "License");
  ** you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.util.Collection;
 import org.xmlpull.v1.XmlSerializer;
 
 import com.googlecode.horkizein.XmlPushable;
+import com.googlecode.horkizein.XmlTag;
 import com.googlecode.horkizein.XmlWritable;
 import com.googlecode.horkizein.test.Constants;
 
@@ -30,6 +31,7 @@ import android.util.Log;
 /**
  * Implementation of an object without any XmlPushable child. It contains four attributes and four tags.
  */
+@XmlTag("flat_obj")
 public class FlatObject implements XmlPushable, XmlWritable {
     // This object tag
     public final static String TAG = "flat_obj";

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="ar.android.horkizein.test"
+  package="com.googlecode.horkizein.test"
   android:versionCode="1"
   android:versionName="0.0.1-SNAPSHOT">
 
@@ -14,8 +14,8 @@
   <uses-sdk android:minSdkVersion="7" />
   
   <instrumentation
-    android:targetPackage="ar.android.horkizein.test"
-    android:name="ar.android.horkizein.test.HorkizeinTestRunner" />
+    android:targetPackage="com.googlecode.horkizein.test"
+    android:name="com.googlecode.horkizein.test.HorkizeinTestRunner" />
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
 
 </manifest>

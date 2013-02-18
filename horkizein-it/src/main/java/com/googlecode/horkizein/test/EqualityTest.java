@@ -1,5 +1,5 @@
 /*
- ** Copyright 2011, Horkizein Open Source Android Library
+ ** Copyright 2013, Horkizein Open Source Android Library
  **
  ** Licensed under the Apache License, Version 2.0 (the "License");
  ** you may not use this file except in compliance with the License.
@@ -35,9 +35,10 @@ import com.googlecode.horkizein.obj.NestedObject1;
 import com.googlecode.horkizein.obj.ObjectWithList;
 import com.googlecode.horkizein.obj.ProcessingObject;
 import com.googlecode.horkizein.obj.TextObject;
+import com.googlecode.horkizein.obj.builders.FlatObjectListBuilder;
 import com.googlecode.horkizein.test.Constants;
 import com.googlecode.horkizein.test.util.XmlDataCommitter;
-import com.googlecode.horkizein.test.util.XmlDataReader;
+import com.googlecode.horkizein.test.util.XmlDataGrabber;
 
 import android.test.AndroidTestCase;
 import android.test.suitebuilder.annotation.MediumTest;
@@ -53,12 +54,16 @@ public class EqualityTest extends AndroidTestCase {
     private static final String TEMPORARY_FILE = "temporary.xml";
     private static final String METADATA_FILE = "metadata.xml";
 
+    private final XmlDataGrabber mXmlDataGrabber;
+    
     private FlatObject mFlatSrc;
     private List<FlatObject> mFlatList;
 
     private XmlPullParser mParser = null;
 
-    public EqualityTest() {}
+    public EqualityTest() {
+        mXmlDataGrabber = new XmlDataGrabber();
+    }
 
     @Override
     protected void setUp() {
@@ -565,7 +570,6 @@ public class EqualityTest extends AndroidTestCase {
      */
      @MediumTest
      public void testFlatObjectListEquality() throws IllegalArgumentException, IllegalStateException, FileNotFoundException, XmlPullParserException, IOException {
-
          Log.i(Constants.PACKAGE_TAG_TEST, "--- [" + TAG + ".testFlatObjectListEquality] ---");
          FlatObjectList mFlatObjectListSrc = new FlatObjectList(mFlatList);
 
@@ -575,7 +579,7 @@ public class EqualityTest extends AndroidTestCase {
          FlatObjectList mFlatObjectListDst = new FlatObjectList();
          Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".testFlatObjectListEquality() fill FlatObjectList dst");
 
-         XmlDataReader.grabDataOutmost(mParser, getContext(), (XmlPushable) mFlatObjectListDst, TEMPORARY_FILE); // unmarshalling
+         mXmlDataGrabber.grab(mParser, getContext(), FlatObjectList.class, new FlatObjectListBuilder(), TEMPORARY_FILE); // unmarshalling
 
          Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".testFlatObjectListEquality() equals test");
          assertTrue(mFlatObjectListDst.equals(mFlatObjectListSrc));

@@ -1,5 +1,5 @@
 /*
- ** Copyright 2011, Horkizein Open Source Android Library
+ ** Copyright 2013, Horkizein Open Source Android Library
  **
  ** Licensed under the Apache License, Version 2.0 (the "License");
  ** you may not use this file except in compliance with the License.
@@ -15,13 +15,11 @@
  */
 package com.googlecode.horkizein;
 
-import java.util.Collection;
-
 /**
- * XmlPushable object contract.
+ * XmlPushable object contract. See @code Tag annotation class for a detailed explanation
+ * on how to specify the object's tags that Horkizein is going to extract from the Xml file.
  */
-public interface XmlPushable extends Taggable {
-
+public interface XmlPushable {
     /**
      * Pushes the opening tag event.
      * @param tag Tag name.
@@ -49,10 +47,4 @@ public interface XmlPushable extends Taggable {
      * @param tag Tag name.
      */
     void pushEndTag(String tag);
-
-    /**
-     * Return a set of tags which this object expects from the parser.
-     * @return The set of tags.
-     */
-    Collection<String> pushableTags();
 }

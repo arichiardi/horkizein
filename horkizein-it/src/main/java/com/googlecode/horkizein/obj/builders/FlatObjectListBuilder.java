@@ -1,5 +1,5 @@
 /*
- ** Copyright 2011, Horkizein Open Source Android Library
+ ** Copyright 2013, Horkizein Open Source Android Library
  **
  ** Licensed under the Apache License, Version 2.0 (the "License");
  ** you may not use this file except in compliance with the License.
@@ -13,17 +13,20 @@
  ** See the License for the specific language governing permissions and
  ** limitations under the License.
  */
-package com.googlecode.horkizein;
+package com.googlecode.horkizein.obj.builders;
+
+import com.googlecode.horkizein.XmlBuilder;
+import com.googlecode.horkizein.obj.FlatObjectList;
 
 /**
- * A generic object creator interface.
+ * Self-explanatory
  */
-public interface Creator<T> {
+public class FlatObjectListBuilder implements XmlBuilder<FlatObjectList> {
 
-    /**
-     * Create factory method.
-     * @return The new object.
-     */
-    T create();
+    @Override
+    public FlatObjectList getInstance() {
+        // TODO Auto-generated method stub
+        return new FlatObjectList();
+    }
+
 }
-
