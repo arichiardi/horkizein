@@ -29,15 +29,11 @@ import android.util.Log;
  * Abstract list of XmlPushable objects that in turn is a XmlPushable.
  * @param <E>
  */
-@XmlTag(
-    value = "list",
-    additionalTags = "item"
-)
 public abstract class XmlPushableList<E extends XmlPushable> extends AbstractList<E> implements XmlPushable {
 
     private static String PACKAGE = "horkizein";
-    private static String DEFAULT_TAG = "list";
-    private static String DEFAULT_ITEM_TAG = "item";
+    protected static String DEFAULT_TAG = "list";
+    protected static String DEFAULT_ITEM_TAG = "item";
 
     protected XmlPushableCreator<E> mFactory;
     protected List<E> mList;

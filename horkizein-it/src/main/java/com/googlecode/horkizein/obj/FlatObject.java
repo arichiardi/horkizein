@@ -16,8 +16,6 @@
 package com.googlecode.horkizein.obj;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
 
 import org.xmlpull.v1.XmlSerializer;
 
@@ -31,7 +29,11 @@ import android.util.Log;
 /**
  * Implementation of an object without any XmlPushable child. It contains four attributes and four tags.
  */
-@XmlTag("flat_obj")
+@XmlTag(
+        value = "flat_obj",
+        additionalTags = { FlatObject.BOOLEAN_TAG, FlatObject.STRING_TAG, 
+            FlatObject.INTEGER_TAG, FlatObject.DOUBLE_TAG }
+)
 public class FlatObject implements XmlPushable, XmlWritable {
     // This object tag
     public final static String TAG = "flat_obj";
@@ -74,6 +76,7 @@ public class FlatObject implements XmlPushable, XmlWritable {
     public FlatObject() { /* do nothing */ }
 
 
+    @Override
     public void pushAttribute(String tag, String prefix, String name, String value) {
         Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushAttribute() - TAG: " + tag + " NAME: " + name +  " TEXT: " + value);
 
@@ -94,6 +97,7 @@ public class FlatObject implements XmlPushable, XmlWritable {
     }
 
 
+    @Override
     public void pushText(String tag, String text) {
         Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushText() - TAG: " + tag + " TEXT: " + text);
 
@@ -114,6 +118,7 @@ public class FlatObject implements XmlPushable, XmlWritable {
     }
 
 
+    @Override
     public void pushEndTag(String tag) {
         Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushEndTag(" + tag + ")");
 
@@ -133,6 +138,7 @@ public class FlatObject implements XmlPushable, XmlWritable {
     }
 
 
+    @Override
     public void pushStartTag(String tag) {
         Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushStartTag(" + tag + ")");
 
@@ -173,15 +179,16 @@ public class FlatObject implements XmlPushable, XmlWritable {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(TAG + " mBooleanAttr: " + mBooleanAttr);
-        sb.append(TAG + " mIntegerAttr: " + mIntegerAttr);
-        sb.append(TAG + " mDoubleAttr: " + mDoubleAttr);
-        sb.append(TAG + " mStringAttr: " + mStringAttr);
-        sb.append(TAG + " mIntegerTag: " + mIntegerTag);
-        sb.append(TAG + " mDoubleTag: " + mDoubleTag);
-        sb.append(TAG + " mStringTag: " + mStringTag);
+        sb.append(TAG + " mBooleanAttr: " + mBooleanAttr + "\n");
+        sb.append(TAG + " mIntegerAttr: " + mIntegerAttr + "\n");
+        sb.append(TAG + " mDoubleAttr: " + mDoubleAttr + "\n");
+        sb.append(TAG + " mStringAttr: " + mStringAttr + "\n");
+        sb.append(TAG + " mIntegerTag: " + mIntegerTag + "\n");
+        sb.append(TAG + " mDoubleTag: " + mDoubleTag + "\n");
+        sb.append(TAG + " mStringTag: " + mStringTag + "\n");
         return sb.toString();
     }
+    
     @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
@@ -209,7 +216,7 @@ public class FlatObject implements XmlPushable, XmlWritable {
                 mStringTag.equals(item.mStringTag));
     }
 
-
+    @Override
     public void writeXml(XmlSerializer out) throws IOException, IllegalStateException, IllegalArgumentException {
 
         out.startTag("", TAG);
@@ -257,26 +264,6 @@ public class FlatObject implements XmlPushable, XmlWritable {
                 wdDoubleEndTag &&
                 wdStringStartTag &&
                 wdStringEndTag);
-    }
-
-    /**
-
-     */
-    public Collection<String> pushableTags() {
-        ArrayList<String> tags = new ArrayList<String>(5);
-        tags.add(TAG);
-        tags.add(BOOLEAN_TAG);
-        tags.add(INTEGER_TAG);
-        tags.add(DOUBLE_TAG);
-        tags.add(STRING_TAG);
-        return tags;
-    }
-
-    /**
-
-     */
-    public String getTag() {
-        return TAG;
     }
 }
 

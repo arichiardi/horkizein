@@ -126,55 +126,61 @@ public final class XmlFiller {
         mFilledObjects = new HashMap<String, XmlPushable>();
         String currentTag = "";
         String startTag = "";
-        XmlPushable registeredItem = null;
+        XmlPushable rootItem = null;
         StringBuilder currentText = new StringBuilder();
-        boolean acceptedTag = false;
+        List<String> rootAcceptedTags = null;;
         
         while (currentEvent != XmlPullParser.END_DOCUMENT) {
             if(currentEvent == XmlPullParser.START_TAG) {
                 currentTag = mParser.getName();
                 currentText.setLength(0);
                 ///////////////////////////////////////////////////////////
-                if (registeredItem == null) {
+                if (rootItem == null) {
                     // Looking for a registered item and get the builder
                     XmlBuilder<XmlPushable> builder = mPushableMap.get(currentTag);
-                    registeredItem = builder.getInstance();
-                    mFilledObjects.put(currentTag, registeredItem);
+                    rootItem = builder.getInstance();
+                    mFilledObjects.put(currentTag, rootItem);
+                    // Getting the accepted tag list.
+                    rootAcceptedTags = mTagMap.get(currentTag);
                     startTag = currentTag;
                 }
-                if (registeredItem != null) {
+                if (rootItem != null) {
                     // Pushing just if the currentTag is part of the "accepted" tags.
-                    if (mTagMap.get(startTag).contains(currentTag)) {
-                        registeredItem.pushStartTag(currentTag);
+                    if (rootAcceptedTags.contains(currentTag)) {
+                        rootItem.pushStartTag(currentTag);
                         for (int i = 0; i < mParser.getAttributeCount(); ++i) {
-                            registeredItem.pushAttribute(currentTag, mParser.getAttributePrefix(i), mParser.getAttributeName(i), mParser.getAttributeValue(i));
+                            rootItem.pushAttribute(currentTag, mParser.getAttributePrefix(i), mParser.getAttributeName(i), mParser.getAttributeValue(i));
                         }
-                        acceptedTag = true;
                     }
                 } else {
                     mParser.nextTag();
                 }
                 ///////////////////////////////////////////////////////////
             } else if(currentEvent == XmlPullParser.TEXT) {
-                currentText.append(mParser.getText());
+                if (rootAcceptedTags.contains(currentTag)) {
+                    currentText.append(mParser.getText());
+                }
             } else if (mMetadataMap.indexOfKey(currentEvent) > -1) {
                 currentTag = mMetadataMap.get(currentEvent); //...entry point for a registered Metadata tag
                 ///////////////////////////////////////////////////////////
-                if (registeredItem == null) {
+                if (rootItem == null) {
                     // Looking for a registered item and get the builder
                     XmlBuilder<XmlPushable> builder = mPushableMap.get(currentTag);
-                    registeredItem = builder.getInstance();
-                    mFilledObjects.put(currentTag, registeredItem);
+                    rootItem = builder.getInstance();
+                    mFilledObjects.put(currentTag, rootItem);
+                    // Getting the accepted tag list.
+                    rootAcceptedTags = mTagMap.get(currentTag);
                     startTag = currentTag;
                 }
-                if (registeredItem != null) {
+                if (rootItem != null) {
                     // Pushing just if the currentTag is part of the "accepted" tags.
-                    if (mTagMap.get(startTag).contains(currentTag)) {
-                        registeredItem.pushStartTag(currentTag);
-                        registeredItem.pushText(currentTag, mParser.getText());
-                        registeredItem.pushEndTag(currentTag);
+                    if (rootAcceptedTags.contains(currentTag)) {
+                        rootItem.pushStartTag(currentTag);
+                        rootItem.pushText(currentTag, mParser.getText());
+                        rootItem.pushEndTag(currentTag);
                         if (startTag.equals(currentTag)) {
-                            registeredItem = null;
+                            rootItem = null;
+                            rootAcceptedTags = null;
                             startTag = "";
                         }
                     }
@@ -185,15 +191,15 @@ public final class XmlFiller {
             } else if(currentEvent == XmlPullParser.END_TAG) {
                 currentTag = mParser.getName();
 
-                if (registeredItem != null) {
-                    if (acceptedTag == true) {
-                        registeredItem.pushText(currentTag, currentText.toString());
-                        registeredItem.pushEndTag(currentTag);
-                        acceptedTag = false;
+                if (rootItem != null) {
+                    if (rootAcceptedTags.contains(currentTag)) {
+                        rootItem.pushText(currentTag, currentText.toString());
+                        rootItem.pushEndTag(currentTag);
                     }
                 }
                 if (startTag.equals(currentTag)) {
-                    registeredItem = null;
+                    rootItem = null;
+                    rootAcceptedTags = null;
                     startTag = "";
                 }
             }

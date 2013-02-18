@@ -66,13 +66,17 @@ public class FlatObjectList extends XmlPushableList<FlatObject> implements XmlWr
 
         Log.d(Constants.PACKAGE_TAG_TEST, "this.size() is: " + this.size());
         Log.d(Constants.PACKAGE_TAG_TEST, "----------------");
+        int i = 0;
         for (XmlPushable o : this) {
-            Log.d(Constants.PACKAGE_TAG_TEST, o.toString());
+            Log.d(Constants.PACKAGE_TAG_TEST, i + ") " + o.toString());
+            i++;
         }
         Log.d(Constants.PACKAGE_TAG_TEST, "o.size() is: " + ((FlatObjectList)obj).size());
-        Log.d(Constants.PACKAGE_TAG_TEST, "+++++++++++++");
+        Log.d(Constants.PACKAGE_TAG_TEST, "++++++++++++++++");
+        i = 0;
         for (XmlPushable o : (FlatObjectList)obj) {
-            Log.d(Constants.PACKAGE_TAG_TEST, o.toString());
+            Log.d(Constants.PACKAGE_TAG_TEST, i + ") " + o.toString());
+            i++;
         }
         return super.equals(obj);
     }
@@ -92,5 +96,10 @@ public class FlatObjectList extends XmlPushableList<FlatObject> implements XmlWr
     @Override
     protected String getTag() {
         return TAG;
+    }
+    
+    @Override
+    protected String getItemTag() {
+        return FlatObject.TAG;
     }
 }
