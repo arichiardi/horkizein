@@ -13,14 +13,15 @@
  ** See the License for the specific language governing permissions and
  ** limitations under the License.
  */
-package com.googlecode.horkizein.obj;
+package com.googlecode.horkizein.obj.builders;
 
-import com.googlecode.horkizein.XmlPushableCreator;
+import com.googlecode.horkizein.XmlBuilder;
+import com.googlecode.horkizein.obj.FlatObject;
 
 /**
  * Creator implementation for building FlatObjects.
  */
-public class FlatObjectCreator implements XmlPushableCreator<FlatObject> {
+public class FlatObjectBuilder implements XmlBuilder<FlatObject> {
 
     // Shallow copy source
     private FlatObject mCopySrc;
@@ -29,14 +30,14 @@ public class FlatObjectCreator implements XmlPushableCreator<FlatObject> {
      * This constructor accept a FlatObject and store its reference. Just for testing purpose.
      * @param src
      */
-    public FlatObjectCreator(FlatObject src) {
+    public FlatObjectBuilder(FlatObject src) {
         mCopySrc = src;
     }
 
     /**
      * Ctor.
      */
-    public FlatObjectCreator() {}
+    public FlatObjectBuilder() {}
 
     @Override
     public FlatObject getInstance() {

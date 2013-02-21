@@ -20,7 +20,9 @@ import java.io.IOException;
 import org.xmlpull.v1.XmlSerializer;
 
 import com.googlecode.horkizein.XmlPushable;
+import com.googlecode.horkizein.XmlTag;
 import com.googlecode.horkizein.XmlWritable;
+import com.googlecode.horkizein.obj.builders.FlatObjectBuilder;
 import com.googlecode.horkizein.test.Constants;
 
 import android.util.Log;
@@ -28,6 +30,10 @@ import android.util.Log;
 /**
  * Implementation of an XmlPushable which contains a FlatObject.
  */
+@XmlTag (
+    value = "nested_obj1",
+    enclosedPushables = FlatObject.class
+)
 public class NestedObject1 implements XmlPushable, XmlWritable {
 
     // This object tag
@@ -40,24 +46,22 @@ public class NestedObject1 implements XmlPushable, XmlWritable {
     // child
     public FlatObject mFlatObject;
     // creator
-    private FlatObjectCreator mFlatCreator;
+    private FlatObjectBuilder mFlatCreator;
 
     /**
      * Creates a NestedObject1 that contains a shallow copy of a FlatObject
      * @param flatSrc The child.
      */
     public NestedObject1(FlatObject flatSrc) {
-        mFlatCreator = new FlatObjectCreator();
+        mFlatCreator = new FlatObjectBuilder();
         mFlatObject = flatSrc; // test purpose
-        wdPushedEndTag = wdPushedStartTag = false;
     }
 
     /**
      * Creates an empty NetstedObject1
      */
     public NestedObject1() {
-        mFlatCreator = new FlatObjectCreator();
-        wdPushedEndTag = wdPushedStartTag = false;
+        mFlatCreator = new FlatObjectBuilder();
     }
 
 
@@ -93,8 +97,10 @@ public class NestedObject1 implements XmlPushable, XmlWritable {
             }
         }
 
-        if (tag.equals(TAG) && wdPushedStartTag == true)
+        if (tag.equals(TAG) && wdPushedStartTag == true) {
+            wdPushedStartTag = false;
             wdPushedEndTag = true;
+        }
     }
 
 
@@ -147,7 +153,7 @@ public class NestedObject1 implements XmlPushable, XmlWritable {
      */
     public boolean tagCheck() {
         return (mFlatObject.tagCheck() &&
-                wdPushedStartTag &&
+                !wdPushedStartTag &&
                 wdPushedEndTag);
     }
 }

@@ -25,6 +25,7 @@ import com.googlecode.horkizein.XmlPushable;
 import com.googlecode.horkizein.XmlPushableList;
 import com.googlecode.horkizein.XmlTag;
 import com.googlecode.horkizein.XmlWritable;
+import com.googlecode.horkizein.obj.builders.FlatObjectBuilder;
 import com.googlecode.horkizein.test.Constants;
 
 import android.util.Log;
@@ -42,14 +43,14 @@ public class FlatObjectList extends XmlPushableList<FlatObject> implements XmlWr
      * @param list
      */
     public FlatObjectList(List<FlatObject> list) {
-        super(list, new FlatObjectCreator());
+        super(list, new FlatObjectBuilder());
     }
 
     /**
      * Plain Ctor. The internal list is empty.
      */
     public FlatObjectList() {
-        super(new ArrayList<FlatObject>(), new FlatObjectCreator());
+        super(new ArrayList<FlatObject>(), new FlatObjectBuilder());
     }
 
     @Override

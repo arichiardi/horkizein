@@ -16,8 +16,6 @@
 package com.googlecode.horkizein.obj;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
 
 import org.xmlpull.v1.XmlSerializer;
 
@@ -57,10 +55,10 @@ public class DocdeclObject implements XmlPushable, XmlWritable {
         mPushedEndTag = mPushedStartTag = false;
     }
 
-
+    @Override
     public void pushAttribute(String tag, String prefix, String name, String value) { /* do nothing */ }
 
-
+    @Override
     public void pushStartTag(String tag) {
         Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushStartTag(" + tag + ")");
         if (tag.equals(TAG)) {
@@ -68,7 +66,7 @@ public class DocdeclObject implements XmlPushable, XmlWritable {
         }
     }
 
-
+    @Override
     public void pushText(String tag, String text) {
         if (tag.equals(TAG) && mPushedStartTag == true) {
             mDocdeclContent = text;
@@ -79,7 +77,7 @@ public class DocdeclObject implements XmlPushable, XmlWritable {
         }
     }
 
-
+    @Override
     public void pushEndTag(String tag) {
         Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushEndTag(" + tag + ")");
         if (tag.equals(TAG) && mPushedStartTag == true) {
@@ -97,7 +95,7 @@ public class DocdeclObject implements XmlPushable, XmlWritable {
         return (mDocdeclContent.equals(o.mDocdeclContent));
     }
 
-
+    @Override
     public void writeXml(XmlSerializer out) throws IOException, IllegalStateException, IllegalArgumentException {
         out.docdecl(mDocdeclContent);
     }
@@ -108,22 +106,6 @@ public class DocdeclObject implements XmlPushable, XmlWritable {
      */
     public boolean tagCheck() {
         return (mPushedStartTag && mPushedEndTag);
-    }
-
-    /**
-
-     */
-    public Collection<String> pushableTags() {
-        ArrayList<String> tags = new ArrayList<String>(1);
-        tags.add(TAG);
-        return tags;
-    }
-
-    /**
-
-     */
-    public String getTag() {
-        return TAG;
     }
 }
 

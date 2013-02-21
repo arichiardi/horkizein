@@ -73,8 +73,8 @@ public class FlatObject implements XmlPushable, XmlWritable {
     public double mDoubleAttr;
     public String mStringAttr;
 
+    
     public FlatObject() { /* do nothing */ }
-
 
     @Override
     public void pushAttribute(String tag, String prefix, String name, String value) {

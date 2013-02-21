@@ -16,10 +16,12 @@
 package com.googlecode.horkizein;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -69,13 +71,13 @@ public final class XmlFiller {
      * Storage for accepted tags. The first one will always be the root tag, then additionalTags
      * and what is recursively found in eclosedPushables follows.
      */
-    private final Map<String, List<String>> mTagMap;
+    private final Map<String, Set<String>> mTagMap;
     /**
      * Storage for handled Metadata tags.
      */
     protected final SparseArray<String> mMetadataMap;
     /**
-     * The result of the Xml parsing. Brand new root objects.
+     * The result of the Xml parsing. Brand new objects.
      */
     protected Map<String, XmlPushable> mFilledObjects;
     
@@ -83,20 +85,23 @@ public final class XmlFiller {
      * Constructor.
      * @param parser Preferred XmlPullParser class.
      */
-    public XmlFiller(XmlPullParser parser) {
-        this(parser,  new HashMap<String, XmlBuilder<XmlPushable>>());
-    }
+    //public XmlFiller(XmlPullParser parser) {
+    //    this(parser, new HashMap<String, XmlBuilder<XmlPushable>>());
+    //}
     
     /**
      * Constructor.
      * @param parser Preferred XmlPullParser class.
      * @param pushableMap Registered objects Map.
      */
-    public XmlFiller(XmlPullParser parser, Map<String, XmlBuilder<XmlPushable>> pushableMap) {
+    public XmlFiller(XmlPullParser parser) {
         mParser = parser;
-        mPushableMap = new HashMap<String, XmlBuilder<XmlPushable>>(pushableMap);
+        mPushableMap = new HashMap<String, XmlBuilder<XmlPushable>>();
         // TODO fill mTagMap here for the input pushableMap
-        mTagMap = new HashMap<String, List<String>>();
+        mTagMap = new HashMap<String, Set<String>>();
+        // List of filled objects
+        mFilledObjects = new HashMap<String, XmlPushable>();
+        
         // building the Metadata lookup table
         mMetadataMap = new SparseArray<String>();
         mMetadataMap.put(XmlPullParser.CDSECT, CDSECT_TAG);
@@ -107,13 +112,15 @@ public final class XmlFiller {
 
     /**
      * Starts the filling process of registered objects, pulling tag data from the XmlPullParser.
-     * This function always fills the outermost tag, meaning that children of registered tags will
-     * be pushed to their parent, therefore ignoring the registered object.
-     * The filling process respect the insertion order. If two or more objects with the same tag have
-     *  been registered, they will be pushed in order (FIFO).
-     * @throws XmlPushableException    Thrown by this class, mostly related to parser positioning.
+     * This function will always fill a registered object starting from the outermost start tag
+     * found descending the Xml hierarchy.
+     * Once this tag is found, no other registered tag is taken into consideration until an end tag
+     * is found.
+     * The filling process respect the insertion order. If two or more objects with the same tag
+     * have been registered, they will be pushed in order (FIFP, first in first pushed).
+     * @throws XmlPushableException Thrown by this class, mostly related to parser positioning.
      * @throws XmlPullParserException Thrown by the XmlPullParser directly.
-     * @throws IOException    Thrown by the XmlPullParser directly.
+     * @throws IOException Thrown by the XmlPullParser directly.
      */
     final public <E extends XmlPushable> void outmostFill() throws XmlPushableException, XmlPullParserException, IOException {
 
@@ -123,17 +130,18 @@ public final class XmlFiller {
 
         int currentEvent = mParser.getEventType();
         
-        mFilledObjects = new HashMap<String, XmlPushable>();
+        //
+        List<StringBuilder> textStack = new LinkedList<StringBuilder>();
         String currentTag = "";
         String startTag = "";
         XmlPushable rootItem = null;
-        StringBuilder currentText = new StringBuilder();
-        List<String> rootAcceptedTags = null;;
+        Set<String> acceptedTags = null;
+        StringBuilder textBuilder = null;
         
         while (currentEvent != XmlPullParser.END_DOCUMENT) {
             if(currentEvent == XmlPullParser.START_TAG) {
                 currentTag = mParser.getName();
-                currentText.setLength(0);
+                
                 ///////////////////////////////////////////////////////////
                 if (rootItem == null) {
                     // Looking for a registered item and get the builder
@@ -141,24 +149,24 @@ public final class XmlFiller {
                     rootItem = builder.getInstance();
                     mFilledObjects.put(currentTag, rootItem);
                     // Getting the accepted tag list.
-                    rootAcceptedTags = mTagMap.get(currentTag);
+                    acceptedTags = mTagMap.get(currentTag);
                     startTag = currentTag;
                 }
                 if (rootItem != null) {
                     // Pushing just if the currentTag is part of the "accepted" tags.
-                    if (rootAcceptedTags.contains(currentTag)) {
+                    if (acceptedTags.contains(currentTag)) {
                         rootItem.pushStartTag(currentTag);
                         for (int i = 0; i < mParser.getAttributeCount(); ++i) {
                             rootItem.pushAttribute(currentTag, mParser.getAttributePrefix(i), mParser.getAttributeName(i), mParser.getAttributeValue(i));
                         }
+                        textBuilder = new StringBuilder();
+                        textStack.add(textBuilder);
                     }
-                } else {
-                    mParser.nextTag();
                 }
                 ///////////////////////////////////////////////////////////
             } else if(currentEvent == XmlPullParser.TEXT) {
-                if (rootAcceptedTags.contains(currentTag)) {
-                    currentText.append(mParser.getText());
+                if (acceptedTags.contains(currentTag)) {
+                    textBuilder.append(mParser.getText());
                 }
             } else if (mMetadataMap.indexOfKey(currentEvent) > -1) {
                 currentTag = mMetadataMap.get(currentEvent); //...entry point for a registered Metadata tag
@@ -169,37 +177,35 @@ public final class XmlFiller {
                     rootItem = builder.getInstance();
                     mFilledObjects.put(currentTag, rootItem);
                     // Getting the accepted tag list.
-                    rootAcceptedTags = mTagMap.get(currentTag);
+                    acceptedTags = mTagMap.get(currentTag);
                     startTag = currentTag;
                 }
                 if (rootItem != null) {
                     // Pushing just if the currentTag is part of the "accepted" tags.
-                    if (rootAcceptedTags.contains(currentTag)) {
+                    if (acceptedTags.contains(currentTag)) {
                         rootItem.pushStartTag(currentTag);
                         rootItem.pushText(currentTag, mParser.getText());
                         rootItem.pushEndTag(currentTag);
                         if (startTag.equals(currentTag)) {
                             rootItem = null;
-                            rootAcceptedTags = null;
+                            acceptedTags = null;
                             startTag = "";
                         }
                     }
-                } else {
-                    mParser.nextTag();
                 }
-                ///////////////////////////////////////////////////////////
             } else if(currentEvent == XmlPullParser.END_TAG) {
                 currentTag = mParser.getName();
 
                 if (rootItem != null) {
-                    if (rootAcceptedTags.contains(currentTag)) {
-                        rootItem.pushText(currentTag, currentText.toString());
+                    if (acceptedTags.contains(currentTag)) {
+                        rootItem.pushText(currentTag, textBuilder.toString());
                         rootItem.pushEndTag(currentTag);
+                        textStack.remove(textStack.size() - 1);
                     }
                 }
                 if (startTag.equals(currentTag)) {
                     rootItem = null;
-                    rootAcceptedTags = null;
+                    acceptedTags = null;
                     startTag = "";
                 }
             }
@@ -221,10 +227,10 @@ public final class XmlFiller {
             // Registers the builder.
             mPushableMap.put(rootTag, (XmlBuilder<XmlPushable>) builder);
             // Creats the tag list
-            List<String> stack = new ArrayList<String>();
-            mTagMap.put(rootTag, stack);
+            Set<String> tagSet = new HashSet<String>();
+            mTagMap.put(rootTag, tagSet);
             // Starts to recursively collect the additional tags
-            collectTags(clazz, stack);
+            collectTags(clazz, tagSet);
         } else {
             throw new RuntimeException(clazz.getCanonicalName() + " is declared XmlPushable but it doesn't have any @XmlTag annotation.");
         }
@@ -253,7 +259,41 @@ public final class XmlFiller {
         mTagMap.clear();
     }
     
-    private <T extends XmlPushable> void collectTags(Class<T> clazz, List<String> tagStack) {
+    /**
+     * Gets an instance of the desidered XmlPushable class, if at least one instance has been correctly
+     * pulled out of the XmlPullParser.
+     * @param clazz The XmlPushable class type.
+     * @return A filled instance of the specified class, if any. Null if none was found.
+     */
+    public <T extends XmlPushable> T getInstance(Class<T> clazz) {
+        String rootTag = "";
+        // Gets the root annotation
+        if (clazz.isAnnotationPresent(XmlTag.class)) {
+            XmlTag xmlTag = clazz.getAnnotation(XmlTag.class);
+            rootTag = xmlTag.value();
+        }
+        return getInstance(rootTag);
+    }
+    
+    /**
+     * Gets an instance of the desidered XmlPushable class, if at least one instance has been correctly
+     * pulled out of the XmlPullParser.
+     * @param tagName The tag of a previously registered XmlPushable.
+     * @return A filled instance of the specified tag, if any. Null if none was found.
+     */
+    public <T extends XmlPushable> T getInstance(String tagName) {
+        T instance = (T) mFilledObjects.get(tagName);
+        mFilledObjects.remove(tagName);
+        return instance;
+        
+    }
+    
+    /**
+     * Internal recursive method to collect the tags accepted by the XmlPushable object.
+     * @param clazz
+     * @param tagStack
+     */
+    private <T extends XmlPushable> void collectTags(Class<T> clazz, Set<String> tagStack) {
         // Gets the root annotation
         if (clazz.isAnnotationPresent(XmlTag.class)) {
             XmlTag xmlTag = clazz.getAnnotation(XmlTag.class);

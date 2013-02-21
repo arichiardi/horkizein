@@ -32,9 +32,9 @@ import android.content.Context;
 /**
  * Very simple class to simplify the Xml to XmlPushable binding.  
  */
-public class XmlDataGrabber {
+public class XmlDataReader {
 
-    public XmlDataGrabber() {}
+    private XmlDataReader() {}
 
     /**
      * A custom method that fills an XmlPushable.
@@ -43,12 +43,13 @@ public class XmlDataGrabber {
      * @param clazz The XmlPushable class.
      * @param builder The XmlPushable builder.
      * @param fileName The input file name.
+     * @return An instance of the requested object.
      * @throws FileNotFoundException
      * @throws XmlPullParserException
      * @throws IOException
      */
-    public <T extends XmlPushable> void grab(XmlPullParser parser, Context context, Class<T> clazz, XmlBuilder<T> builder, String fileName) throws FileNotFoundException, XmlPullParserException, IOException {
-        grab(parser, context, clazz, builder, fileName, false);
+    public static <T extends XmlPushable> T read(XmlPullParser parser, Context context, Class<T> clazz, XmlBuilder<T> builder, String fileName) throws FileNotFoundException, XmlPullParserException, IOException {
+       return read(parser, context, clazz, builder, fileName, false);
     }
 
     /**
@@ -73,11 +74,12 @@ public class XmlDataGrabber {
      * @param builder The XmlPushable builder.
      * @param fileName The input file name.
      * @param includeMetadata True if you want to read XML Metadata as well.
+     * @return An instance of the requested object.
      * @throws FileNotFoundException
      * @throws XmlPullParserException
      * @throws IOException
      */
-    public <T extends XmlPushable> void grab(XmlPullParser parser, Context context, Class<T> clazz, XmlBuilder<T> builder, String fileName, boolean includeMetadata) throws FileNotFoundException, XmlPullParserException, IOException {
+    public static <T extends XmlPushable> T read(XmlPullParser parser, Context context, Class<T> clazz, XmlBuilder<T> builder, String fileName, boolean includeMetadata) throws FileNotFoundException, XmlPullParserException, IOException {
         // Prints the file for debugging.
         /*try {
             InputStreamReader inputStream = new InputStreamReader(inContext.openFileInput(inFileName));
@@ -104,6 +106,8 @@ public class XmlDataGrabber {
         filler.outmostFill();
         // close buffer
         bufReader.close();
+        
+        return filler.getInstance(clazz);
     }
 
     /**

@@ -34,7 +34,7 @@ import com.googlecode.horkizein.obj.builders.FlatObjectListBuilder;
 import com.googlecode.horkizein.obj.builders.ObjectWithUntaggedBuilder;
 import com.googlecode.horkizein.test.Constants;
 import com.googlecode.horkizein.test.util.XmlDataCommitter;
-import com.googlecode.horkizein.test.util.XmlDataGrabber;
+import com.googlecode.horkizein.test.util.XmlDataReader;
 
 import android.test.AndroidTestCase;
 import android.test.suitebuilder.annotation.MediumTest;
@@ -188,9 +188,8 @@ public class ErrorTest extends AndroidTestCase {
           ObjectWithUntagged obj = new ObjectWithUntagged();
           XmlDataCommitter.commitData(getContext(), TEMPORARY_FILE, "UTF-8", obj); // marshalling
           
-          XmlDataGrabber dataGrabber = new XmlDataGrabber();
           // don't care about the builder
-          dataGrabber.grab(mParser, getContext(), ObjectWithUntagged.class, new ObjectWithUntaggedBuilder(), TEMPORARY_FILE);
+          XmlDataReader.read(mParser, getContext(), ObjectWithUntagged.class, new ObjectWithUntaggedBuilder(), TEMPORARY_FILE);
       } catch (RuntimeException expected) {
           Log.i(Constants.PACKAGE_TAG_TEST, "Expected: " + expected.getMessage());
           catched = true;

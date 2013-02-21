@@ -36,7 +36,7 @@ import com.googlecode.horkizein.obj.TextObject;
 import com.googlecode.horkizein.test.Constants;
 import com.googlecode.horkizein.test.util.CustomKXmlParser;
 import com.googlecode.horkizein.test.util.XmlDataCommitter;
-import com.googlecode.horkizein.test.util.XmlDataGrabber;
+import com.googlecode.horkizein.test.util.XmlDataReader;
 
 import android.test.AndroidTestCase;
 import android.test.suitebuilder.annotation.MediumTest;

@@ -21,7 +21,6 @@ import java.util.Collection;
 import java.util.List;
 
 import com.googlecode.horkizein.XmlPushable;
-import com.googlecode.horkizein.XmlPushableCreator;
 
 import android.util.Log;
 
@@ -35,26 +34,26 @@ public abstract class XmlPushableList<E extends XmlPushable> extends AbstractLis
     protected static String DEFAULT_TAG = "list";
     protected static String DEFAULT_ITEM_TAG = "item";
 
-    protected XmlPushableCreator<E> mFactory;
+    protected XmlBuilder<E> mItemBuilder;
     protected List<E> mList;
     protected E mCurrentItem;
 
     /**
      * Ctor.
      * @param list Backed list.
-     * @param factory Creator factory.
+     * @param itemBuilder Creator factory.
      */
-    public XmlPushableList(List<E> list, XmlPushableCreator<E> factory) {
-        mFactory = factory;
+    public XmlPushableList(List<E> list, XmlBuilder<E> itemBuilder) {
+        mItemBuilder = itemBuilder;
         mList = list;
     }
 
     /**
      * Ctor. The class internally uses an ArrayList if this constructor is called.
-     * @param factory Creator factory.
+     * @param itemBuilder Creator factory.
      */
-    public XmlPushableList(XmlPushableCreator<E> factory) {
-        mFactory = factory;
+    public XmlPushableList(XmlBuilder<E> itemBuilder) {
+        mItemBuilder = itemBuilder;
         mList = new ArrayList<E>();
     }
 
@@ -101,7 +100,7 @@ public abstract class XmlPushableList<E extends XmlPushable> extends AbstractLis
         if (tag.equals(getTag())) {
         }
         if (tag.equals(getItemTag())) {
-            mCurrentItem = mFactory.getInstance();
+            mCurrentItem = mItemBuilder.getInstance();
         }
 
         if (mCurrentItem != null) {

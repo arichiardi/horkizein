@@ -16,12 +16,12 @@
 package com.googlecode.horkizein.obj;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
 
 import org.xmlpull.v1.XmlSerializer;
 
+import com.googlecode.horkizein.XmlFiller;
 import com.googlecode.horkizein.XmlPushable;
+import com.googlecode.horkizein.XmlTag;
 import com.googlecode.horkizein.XmlWritable;
 import com.googlecode.horkizein.test.Constants;
 
@@ -32,6 +32,11 @@ import android.util.Log;
  * implementation. The code is enclosed in a CDATA section. The attribute "favourite" specifies which one is
  * preferred by a fictitious application.
  */
+@XmlTag (
+    value = "helloWorld",
+    additionalTags = { "c", "java", XmlFiller.CDSECT_TAG }
+)
+
 public class HelloWorldObject implements XmlPushable, XmlWritable {
 
     private static final String TAG = "helloWorld";
@@ -85,7 +90,7 @@ public class HelloWorldObject implements XmlPushable, XmlWritable {
                 "}");
     }
 
-
+    @Override
     public void pushAttribute(String tag, String prefix, String name, String value) {
         Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushAttribute() - TAG: " + tag + " NAME: " + name +  " TEXT: " + value);
         if (wdPushedStartTag) {
@@ -95,7 +100,7 @@ public class HelloWorldObject implements XmlPushable, XmlWritable {
         }
     }
 
-
+    @Override
     public void pushStartTag(String tag) {
         Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushStartTag() - TAG: " + tag);
         if (tag.equals(TAG)) {
@@ -121,6 +126,7 @@ public class HelloWorldObject implements XmlPushable, XmlWritable {
         }
     }
 
+    @Override
     public void pushText(String tag, String text) {
         Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushText() - TAG: " + tag + " TEXT: " + text);
         if (wdPushedStartTag) {
@@ -143,6 +149,7 @@ public class HelloWorldObject implements XmlPushable, XmlWritable {
     }
 
 
+    @Override
     public void pushEndTag(String tag) {
         Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushEndTag() - TAG: " + tag);
         if(wdPushedStartTag) {
@@ -169,7 +176,6 @@ public class HelloWorldObject implements XmlPushable, XmlWritable {
         }
     }
 
-
     @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
@@ -188,7 +194,7 @@ public class HelloWorldObject implements XmlPushable, XmlWritable {
                 (mHelloWorld_c == o.mHelloWorld_c || (mHelloWorld_c != null && mHelloWorld_c.equals(o.mHelloWorld_c))));
     }
 
-
+    @Override
     public void writeXml(XmlSerializer out) throws IOException, IllegalStateException, IllegalArgumentException {
         out.startTag("", TAG);
         out.attribute("", FAVOURITE_ATTR, mFavouriteLanguage);
@@ -221,24 +227,6 @@ public class HelloWorldObject implements XmlPushable, XmlWritable {
                 wdIsJavaEndTag &&
                 !wdPushedStartTag &&
                 wdPushedEndTag);
-    }
-
-    /**
-
-     */
-    public Collection<String> pushableTags() {
-        ArrayList<String> tags = new ArrayList<String>(3);
-        tags.add(TAG);
-        tags.add(C_TAG);
-        tags.add(JAVA_TAG);
-        return tags;
-    }
-
-    /**
-
-     */
-    public String getTag() {
-        return TAG;
     }
 }
 

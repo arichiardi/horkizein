@@ -16,12 +16,11 @@
 package com.googlecode.horkizein.obj;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
 
 import org.xmlpull.v1.XmlSerializer;
 
 import com.googlecode.horkizein.XmlPushable;
+import com.googlecode.horkizein.XmlTag;
 import com.googlecode.horkizein.XmlWritable;
 import com.googlecode.horkizein.test.Constants;
 
@@ -30,6 +29,10 @@ import android.util.Log;
 /**
  * Implementation of XmlPushable which contains just text.
  */
+@XmlTag (
+    value = "text_obj",
+    additionalTags = "text"
+)
 public class TextObject implements XmlPushable, XmlWritable {
 
     // This object tag
@@ -132,13 +135,6 @@ public class TextObject implements XmlPushable, XmlWritable {
                 wdPushedEndTag &&
                 wdTextStartTag &&
                 wdTextEndTag);
-    }
-
-    public Collection<String> pushableTags() {
-        ArrayList<String> tags = new ArrayList<String>(2);
-        tags.add(TAG);
-        tags.add(TEXT_TAG);
-        return tags;
     }
 }
 

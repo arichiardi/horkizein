@@ -21,10 +21,11 @@ import java.util.List;
 
 import org.xmlpull.v1.XmlSerializer;
 
+import com.googlecode.horkizein.XmlBuilder;
 import com.googlecode.horkizein.XmlTag;
 import com.googlecode.horkizein.XmlPushable;
-import com.googlecode.horkizein.XmlPushableCreator;
 import com.googlecode.horkizein.XmlWritable;
+import com.googlecode.horkizein.obj.builders.FlatObjectBuilder;
 import com.googlecode.horkizein.test.Constants;
 
 import android.util.Log;
@@ -41,7 +42,7 @@ public class ObjectWithList implements XmlPushable, XmlWritable {
     //private int mListIndex;
     private FlatObject mCurrentItem;
     
-    private XmlPushableCreator<FlatObject> mFactory;
+    private XmlBuilder<FlatObject> mFactory;
     private List<FlatObject> mList;
     
     // watch dog
@@ -55,7 +56,7 @@ public class ObjectWithList implements XmlPushable, XmlWritable {
      * @param list
      */
     public ObjectWithList(List<FlatObject> list) {
-        mFactory = new FlatObjectCreator();
+        mFactory = new FlatObjectBuilder();
         mList = list;
         mCurrentItem = null;
     }
@@ -64,7 +65,7 @@ public class ObjectWithList implements XmlPushable, XmlWritable {
      * Plain Ctor. The internal list is empty.
      */
     public ObjectWithList() {
-        mFactory = new FlatObjectCreator();
+        mFactory = new FlatObjectBuilder();
         mList = new ArrayList<FlatObject>();
         mCurrentItem = null;
     }
