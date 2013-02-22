@@ -159,8 +159,8 @@ public final class XmlFiller {
                         for (int i = 0; i < mParser.getAttributeCount(); ++i) {
                             rootItem.pushAttribute(currentTag, mParser.getAttributePrefix(i), mParser.getAttributeName(i), mParser.getAttributeValue(i));
                         }
-                        textBuilder = new StringBuilder();
                         textStack.add(textBuilder);
+                        textBuilder = new StringBuilder();
                     }
                 }
                 ///////////////////////////////////////////////////////////
@@ -198,9 +198,11 @@ public final class XmlFiller {
 
                 if (rootItem != null) {
                     if (acceptedTags.contains(currentTag)) {
-                        rootItem.pushText(currentTag, textBuilder.toString());
+                        if (textBuilder.length() > 0) {
+                            rootItem.pushText(currentTag, textBuilder.toString());
+                        }
                         rootItem.pushEndTag(currentTag);
-                        textStack.remove(textStack.size() - 1);
+                        textBuilder = textStack.remove(textStack.size() - 1);
                     }
                 }
                 if (startTag.equals(currentTag)) {
@@ -226,7 +228,7 @@ public final class XmlFiller {
             String rootTag = xmlTag.value();
             // Registers the builder.
             mPushableMap.put(rootTag, (XmlBuilder<XmlPushable>) builder);
-            // Creats the tag list
+            // Creates the tag list
             Set<String> tagSet = new HashSet<String>();
             mTagMap.put(rootTag, tagSet);
             // Starts to recursively collect the additional tags

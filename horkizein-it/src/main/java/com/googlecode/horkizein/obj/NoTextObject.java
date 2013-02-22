@@ -28,7 +28,10 @@ public class NoTextObject implements XmlPushable, XmlWritable {
     private boolean wdPushedEndTag;
     private boolean wdPushedTextObjEndTag;
     
-    public NoTextObject() { /* do nothing */ }
+    public NoTextObject() { 
+        mNoText = TEST_TEXT;
+        mTextObject = new TextObject();
+    }
     
     public NoTextObject(TextObject textObj) {
         mNoText = TEST_TEXT;
@@ -50,9 +53,13 @@ public class NoTextObject implements XmlPushable, XmlWritable {
             mTextObject = new TextObject();
         }
 
-        if (wdPushedStartTag == true && mTextObject != null && tag.equals(TextObject.TAG)) {
-            mTextObject.pushStartTag(tag);
-            wdPushedTextObjStartTag = true;
+        if (wdPushedStartTag == true && mTextObject != null) {
+            if (tag.equals(TextObject.TAG)) {
+                wdPushedTextObjStartTag = true;
+            }
+            if (wdPushedTextObjStartTag == true) {
+                mTextObject.pushStartTag(tag);
+            }
         }
     }
 
@@ -75,10 +82,12 @@ public class NoTextObject implements XmlPushable, XmlWritable {
     @Override
     public void pushEndTag(String tag) {
         
-        if (wdPushedStartTag == true && mTextObject != null && tag.equals(TextObject.TAG)) {
+        if (wdPushedStartTag == true && mTextObject != null) {
             mTextObject.pushEndTag(tag);
-            wdPushedTextObjStartTag = false;
-            wdPushedTextObjEndTag = true;
+            if (tag.equals(TextObject.TAG)) {
+                wdPushedTextObjStartTag = false;
+                wdPushedTextObjEndTag = true;
+            }
         }
         
         if (tag.equals(TAG)) {
