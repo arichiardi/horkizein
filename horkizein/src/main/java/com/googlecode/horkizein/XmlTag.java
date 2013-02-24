@@ -33,14 +33,14 @@ public @interface XmlTag {
     
     /**
      * Declares the additional tag(s) this class accepts and handle when a push*() method is called.
-     * The {@code tags} tags and {@link #dependencies} discovered tags are merged.
+     * The {ode tags} tags and {@link #dependencies} discovered tags are merged.
      */
     String[] additionalTags() default { /* empty by default */ };
     /**
      * Declares HAS-A XmlPushable classes which the XmlFiller has to push back to this object
-     * when parsing the Xml file. These classes are inspected for {@code XmlTag} annotations
+     * when parsing the Xml file. These classes are inspected for {ode XmlTag} annotations
      * and their tags recursively added to the list of pushed tags for this object.
-     * The {@code tags} tags and {@link #dependencies} discovered tags are merged.
+     * The {ode tags} tags and {@link #dependencies} discovered tags are merged.
      * @return A list of classes that extend XmlPushable
      */
     Class<? extends XmlPushable>[] enclosedPushables() default { /* empty by default */ };

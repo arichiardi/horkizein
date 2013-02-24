@@ -16,8 +16,8 @@
 package com.googlecode.horkizein;
 
 /**
- * XmlPushable object contract. See @code Tag annotation class for a detailed explanation
- * on how to specify the object's tags that Horkizein is going to extract from the Xml file.
+ * XmlPushable object contract. For a detailed explanation on how to specify the tags
+ * that Horkizein is required to extract from the Xml file see {@link XmlTag}.
  */
 public interface XmlPushable {
     /**

@@ -18,7 +18,7 @@ package com.googlecode.horkizein;
 import com.googlecode.horkizein.XmlPushable;
 
 /**
- * A generic object builder.
+ * Interface for building XmlPushable objects.
  * @param <T> The generic type to build.
  */
 public interface XmlBuilder<T extends XmlPushable> {

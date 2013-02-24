@@ -8,7 +8,7 @@ import com.googlecode.horkizein.XmlPushable;
 import com.googlecode.horkizein.XmlWritable;
 
 /**
- * Class that doesn't have {@code XmlTag} annotation.
+ * Class that doesn't have {ode XmlTag} annotation.
  */
 public class UntaggedObject implements XmlPushable, XmlWritable {
 
