@@ -9,5 +9,4 @@ public class ObjectWithUntaggedBuilder implements XmlBuilder<ObjectWithUntagged>
     public ObjectWithUntagged getInstance() {
         return new ObjectWithUntagged();
     }
-
 }

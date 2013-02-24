@@ -21,6 +21,7 @@ import org.xmlpull.v1.XmlSerializer;
 
 import com.googlecode.horkizein.XmlFiller;
 import com.googlecode.horkizein.XmlPushable;
+import com.googlecode.horkizein.XmlTag;
 import com.googlecode.horkizein.XmlWritable;
 import com.googlecode.horkizein.test.Constants;
 
@@ -29,6 +30,7 @@ import android.util.Log;
 /**
  * Implementation of the DOCDECL xml section as a XmlPushable metadata object.
  */
+@XmlTag(XmlFiller.DOCDECL_TAG)
 public class DocdeclObject implements XmlPushable, XmlWritable {
     // This object tag
     public final static String TAG = XmlFiller.DOCDECL_TAG;
@@ -71,7 +73,6 @@ public class DocdeclObject implements XmlPushable, XmlWritable {
         if (tag.equals(TAG) && mPushedStartTag == true) {
             mDocdeclContent = text;
             Log.d (Constants.PACKAGE_TAG_TEST, TAG + " pushed: " + text);
-            Log.d (Constants.PACKAGE_TAG_TEST, "---------------------");
         } else {
             Log.d(Constants.PACKAGE_TAG_TEST, TAG + "NOT MINE");
         }
@@ -92,7 +93,7 @@ public class DocdeclObject implements XmlPushable, XmlWritable {
 
         DocdeclObject o = (DocdeclObject)obj;
         Log.d(Constants.PACKAGE_TAG_TEST, TAG + " 1: " + mDocdeclContent + "- 2: " + o.mDocdeclContent);
-        return (mDocdeclContent.equals(o.mDocdeclContent));
+        return (mDocdeclContent == o.mDocdeclContent || (mDocdeclContent != null && mDocdeclContent.equals(o.mDocdeclContent)));
     }
 
     @Override

@@ -21,6 +21,7 @@ import org.xmlpull.v1.XmlSerializer;
 
 import com.googlecode.horkizein.XmlFiller;
 import com.googlecode.horkizein.XmlPushable;
+import com.googlecode.horkizein.XmlTag;
 import com.googlecode.horkizein.XmlWritable;
 import com.googlecode.horkizein.test.Constants;
 
@@ -28,8 +29,8 @@ import android.util.Log;
 
 /**
  * Implementation of the CDSECT xml section as a XmlPushable metadata object.
- * @author kapitan
  */
+@XmlTag(XmlFiller.CDSECT_TAG)
 public class CdsectObject implements XmlPushable, XmlWritable {
 
     // This object tag
@@ -73,7 +74,6 @@ public class CdsectObject implements XmlPushable, XmlWritable {
         if (tag.equals(TAG) && mPushedStartTag == true) {
             mCdsectContent = text;
             Log.d(Constants.PACKAGE_TAG_TEST, TAG + " pushed: " + text);
-            Log.d(Constants.PACKAGE_TAG_TEST, "---------------------");
         } else {
             Log.d(Constants.PACKAGE_TAG_TEST, TAG + "NOT MINE");
         }
@@ -92,9 +92,9 @@ public class CdsectObject implements XmlPushable, XmlWritable {
         if (obj == this) return true;
         if((obj == null) || (obj.getClass() != this.getClass())) return false;
 
-        CdsectObject item = (CdsectObject)obj;
-        Log.d(Constants.PACKAGE_TAG_TEST, TAG + " mCdsectContent: " + mCdsectContent + " - item.mCdsectContent: " + item.mCdsectContent);
-        return (mCdsectContent.equals(item.mCdsectContent));
+        CdsectObject o = (CdsectObject)obj;
+        Log.d(Constants.PACKAGE_TAG_TEST, TAG + " mCdsectContent: " + mCdsectContent + " - item.mCdsectContent: " + o.mCdsectContent);
+        return (mCdsectContent == o.mCdsectContent || (mCdsectContent != null && mCdsectContent.equals(o.mCdsectContent)));
     }
 
     @Override

@@ -21,6 +21,7 @@ import org.xmlpull.v1.XmlSerializer;
 
 import com.googlecode.horkizein.XmlFiller;
 import com.googlecode.horkizein.XmlPushable;
+import com.googlecode.horkizein.XmlTag;
 import com.googlecode.horkizein.XmlWritable;
 import com.googlecode.horkizein.test.Constants;
 
@@ -29,6 +30,7 @@ import android.util.Log;
 /**
  * Implementation of the PROCESSING xml section as a XmlPushable metadata object.
  */
+@XmlTag(XmlFiller.PROCESSING_TAG)
 public class ProcessingObject implements XmlPushable, XmlWritable {
 
     // This object tag
@@ -74,7 +76,6 @@ public class ProcessingObject implements XmlPushable, XmlWritable {
         if (tag.equals(TAG) && mPushedStartTag == true) {
             mProcessingContent = text;
             Log.d (Constants.PACKAGE_TAG_TEST, TAG + " pushed: " + text);
-            Log.d (Constants.PACKAGE_TAG_TEST, "---------------------");
         } else {
             Log.d(Constants.PACKAGE_TAG_TEST, TAG + "NOT MINE");
         }
@@ -93,8 +94,9 @@ public class ProcessingObject implements XmlPushable, XmlWritable {
         if (obj == this) return true;
         if((obj == null) || (obj.getClass() != this.getClass())) return false;
 
-        ProcessingObject item = (ProcessingObject)obj;
-        return (mProcessingContent.equals(item.mProcessingContent));
+        ProcessingObject o = (ProcessingObject)obj;
+        Log.d(Constants.PACKAGE_TAG_TEST, TAG + " 1: " + mProcessingContent + "- 2: " + o.mProcessingContent);
+        return (mProcessingContent == o.mProcessingContent || (mProcessingContent != null && mProcessingContent.equals(o.mProcessingContent)));
     }
 
     @Override

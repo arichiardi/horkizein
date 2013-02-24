@@ -89,7 +89,7 @@ public class TextObject implements XmlPushable, XmlWritable {
         if (wdPushedStartTag == true) {
             if (tag.equals(TEXT_TAG) && wdTextStartTag == true) {
                 Log.d (Constants.PACKAGE_TAG_TEST, TAG + " pushed: " + text);
-                Log.d (Constants.PACKAGE_TAG_TEST, "---------------------");
+                
                 mText = new String(text);
             }
         }
@@ -112,9 +112,9 @@ public class TextObject implements XmlPushable, XmlWritable {
     public boolean equals(Object obj) {
         if (obj == this) return true;
         if((obj == null) || (obj.getClass() != this.getClass())) return false;
-        TextObject item = (TextObject)obj;
-        Log.d(Constants.PACKAGE_TAG_TEST, TAG + " 1: " + mText + "- 2: " + item.mText);
-        return (mText.equals(item.mText));
+        TextObject o = (TextObject)obj;
+        Log.d(Constants.PACKAGE_TAG_TEST, TAG + " 1: " + mText + "- 2: " + o.mText);
+        return (mText == o.mText || (mText != null && mText.equals(o.mText)));
     }
 
     @Override

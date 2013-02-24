@@ -21,6 +21,7 @@ import org.xmlpull.v1.XmlSerializer;
 
 import com.googlecode.horkizein.XmlFiller;
 import com.googlecode.horkizein.XmlPushable;
+import com.googlecode.horkizein.XmlTag;
 import com.googlecode.horkizein.XmlWritable;
 import com.googlecode.horkizein.test.Constants;
 
@@ -29,6 +30,7 @@ import android.util.Log;
 /**
  * Implementation of the COMMENT xml section as a XmlPushable metadata object.
  */
+@XmlTag(XmlFiller.COMMENT_TAG)
 public class CommentObject implements XmlPushable, XmlWritable {
 
     // This object tag
@@ -65,6 +67,7 @@ public class CommentObject implements XmlPushable, XmlWritable {
 
     @Override
     public void pushStartTag(String tag) {
+        Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushStartTag(" + tag + ")");
         if (tag.equals(TAG)) {
             mPushedStartTag = true;
         }
@@ -76,7 +79,6 @@ public class CommentObject implements XmlPushable, XmlWritable {
         if (tag.equals(TAG) && mPushedStartTag == true) {
             mCommentContent = text;
             Log.d (Constants.PACKAGE_TAG_TEST, TAG + " pushed: " + text);
-            Log.d (Constants.PACKAGE_TAG_TEST, "---------------------");
         } else {
             Log.d(Constants.PACKAGE_TAG_TEST, TAG + "NOT MINE");
         }
@@ -84,6 +86,7 @@ public class CommentObject implements XmlPushable, XmlWritable {
 
     @Override
     public void pushEndTag(String tag) {
+        Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushEndTag(" + tag + ")");
         if (tag.equals(TAG) && mPushedStartTag == true) {
             mPushedEndTag = true;
         }
@@ -94,9 +97,9 @@ public class CommentObject implements XmlPushable, XmlWritable {
         if (obj == this) return true;
         if((obj == null) || (obj.getClass() != this.getClass())) return false;
 
-        CommentObject item = (CommentObject)obj;
-        Log.d(Constants.PACKAGE_TAG_TEST, TAG + " 1: " + mCommentContent + "- 2: " + item.mCommentContent);
-        return (mCommentContent.equals(item.mCommentContent));
+        CommentObject o = (CommentObject)obj;
+        Log.d(Constants.PACKAGE_TAG_TEST, TAG + " 1: " + mCommentContent + "- 2: " + o.mCommentContent);
+        return (mCommentContent == o.mCommentContent || (mCommentContent != null && mCommentContent.equals(o.mCommentContent)));
     }
 
     @Override
