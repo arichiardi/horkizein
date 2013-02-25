@@ -86,7 +86,6 @@ public final class XmlFiller {
     /**
      * Constructor.
      * @param parser Preferred XmlPullParser class.
-     * @param pushableMap Registered objects Map.
      */
     public XmlFiller(XmlPullParser parser) {
         mParser = parser;
