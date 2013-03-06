@@ -22,10 +22,8 @@ import com.googlecode.horkizein.obj.FlatObjectList;
  * Self-explanatory
  */
 public class FlatObjectListBuilder implements XmlBuilder<FlatObjectList> {
-
     @Override
     public FlatObjectList getInstance() {
-        // TODO Auto-generated method stub
         return new FlatObjectList();
     }
 

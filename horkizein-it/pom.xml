@@ -43,7 +43,7 @@
         <dependency>
             <groupId>com.googlecode.horkizein</groupId>
             <artifactId>horkizein</artifactId>
-            <version>0.0.7-alpha</version>
+            <version>0.0.8-alpha</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

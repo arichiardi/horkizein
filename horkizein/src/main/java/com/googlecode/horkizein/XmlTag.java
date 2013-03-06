@@ -21,32 +21,75 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation for a class that contributes to the Xml object graph.
+ * Declares the entry point for the hierarchy of classes that needs to be filled with
+ * the data parsed by XmlFiller. This annotated node acts as root, with children
+ * pushed directly to it. The annotation is not &#64;Inherited, meaning that 
+ * it is responsibility of the each and every class to declare its own &#64;XmlTag.
+ * its parent.<br/><br/>
+ * <i>Sample usage:</i>
+ * <pre>
+ * &#64;XmlTag (
+ *   value = "helloWorld",
+ *   additionalTags = { "c", "java", XmlFiller.CDSECT_TAG }
+ * )
+ * public class HelloWorldObject implements XmlPushable {
+ * ...
+ * </pre>
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface XmlTag {
     /**
-     * Declares the root tag this class accepts and handle when a push*() method is called.
+     * Declares the root tag of this class. This tag will be used to identify
+     * this class during the parsing and for instance retrieval.<br/><br/>
+     * <i>Sample usage (short):</i>
+     * <pre>
+     * &#64;XmlTag("flat_obj")
+     * public class FlatObject implements XmlPushable {
+     * ...
+     * </pre>
+     * <i>Sample usage (long):</i>
+     * <pre>
+     * &#64;XmlTag(
+     *  value = "flat_obj",
+     *  ...
+     * )
+     * public class FlatObject implements XmlPushable {
+     * ...
+     * </pre>
      */
     String value();
     
     /**
      * Declares the additional tag(s) this class accepts and handle when a push*() method is called.
-     * The {ode tags} tags and {@link #dependencies} discovered tags are merged.
+     * The {@link  XmlTag#enclosedPushables} tags and {@link XmlTag#additionalTags} tags are merged.<br/><br/>
+     * <i>Sample usage:</i>
+     * <pre>
+     * &#64;XmlTag (
+     *  value = "flat_obj",
+     *  additionalTags = { "boolean", "string", "integer", "double" } 
+     * )
+     * public class FlatObject implements XmlPushable {
+     * ...
+     * </pre>
      */
     String[] additionalTags() default { /* empty by default */ };
     /**
-     * Declares HAS-A XmlPushable classes which the XmlFiller has to push back to this object
-     * when parsing the Xml file. These classes are inspected for {ode XmlTag} annotations
-     * and their tags recursively added to the list of pushed tags for this object.
-     * The {ode tags} tags and {@link #dependencies} discovered tags are merged.
-     * @return A list of classes that extend XmlPushable
+     * Declares XmlPushable sub-classes whose tags the XmlFiller has to push back to the annotated object.
+     * These classes are inspected for {@link XmlTag} annotations and their tags recursively added to
+     * the list of pushed tags for this object.
+     * The {@link  XmlTag#enclosedPushables} tags and {@link XmlTag#additionalTags} tags are merged.<br/><br/>
+     * <i>Sample usage:</i>
+     * <pre>
+     * &#64;XmlTag (
+     *  value = "nested_obj1",
+     *  enclosedPushables = FlatObject.class
+     * )
+     * public class NestedObject1 implements XmlPushable {
+     * ...
+     * </pre>
      */
     Class<? extends XmlPushable>[] enclosedPushables() default { /* empty by default */ };
-    /**
-     * TODO XmlPushable Auto-discovery feature.
-     */
-    //boolean autodiscovery() default true;
 
+    //boolean autodiscovery() default false; // TODO XmlPushable Auto-discovery feature.
 }

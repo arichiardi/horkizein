@@ -16,6 +16,8 @@
 package com.googlecode.horkizein;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -31,15 +33,18 @@ import org.xmlpull.v1.XmlPullParserException;
 import android.util.SparseArray;
 
 /**
- * This class performs the XML de-serialization. You can pass a Collection of String in order to register
- * the tags that XmlFiller accepts as "pushable".
+ * This class performs objects de-serialization from Xml files.
+ * You can register classes in order for their tags to be accepted as "pushable" and then
+ * retrieve their instances after the parsing ends.
+ * An XmlPushable class requires the {@link XmlTag} annotation or a RuntimeException will be
+ * raised.<br/>
  * XmlFiller includes a buffer for multiple TEXT events pulled from the parser. For this reason,
  * pushText() is called exactly once for each tag (if there is text to push).<br>
  * Metadata content is handled the same way as standard tags: every time a Metadata event is pulled,
  * XmlFiller calls both pushStartTag() and pushEndTag(), plus pushText() if necessary (once).
  * To register a metadata object please use the static field {@link XmlFiller#CDSECT_TAG},
  * {@link XmlFiller#COMMENT_TAG}, {@link XmlFiller#DOCDECL_TAG} or {@link XmlFiller#PROCESSING_TAG}
- * as tag in your implementation.
+ * in your implementation.
  * XmlFiller's internal data structures are not thread-safe and synchronization must be implemented
  * externally.
  */
@@ -85,7 +90,7 @@ public final class XmlFiller {
     
     /**
      * Constructor.
-     * @param parser Preferred XmlPullParser class.
+     * @param parser XmlPullParser instance.
      */
     public XmlFiller(XmlPullParser parser) {
         mParser = parser;
@@ -104,22 +109,48 @@ public final class XmlFiller {
     }
 
     /**
-     * Starts parsing the Xml file, pulling tag data from the XmlPullParser.
-     * This function will always fill a registered object starting from the outermost start tag
-     * found descending the Xml hierarchy.
+     * Sets the input and resets the underlying parser. This method accepts null
+     * in both fields. 
+     * @param inputStream An input stream. If null it will stop parsing and reset the state, allowing the parser to free resources.
+     * @param inputEncoding The source encoding. If null the parser will try to determine the encoding from the Xml preamble (1.0 specification).
+     * @throws XmlPullParserException Thrown by the XmlPullParser instance.
+     */
+    public void setInput(InputStream inputStream, String inputEncoding) throws XmlPullParserException {
+        mParser.setInput(inputStream, inputEncoding);
+    }
+    /**
+     * Sets the input and resets the underlying parser. The parser will try to determine the encoding
+     * from the Xml preamble (1.0 specification). This method accepts a null parameter.
+     * @param inputStream An input stream. If null it will stop parsing and reset the state, allowing the parser to free resources.
+     * @throws XmlPullParserException Thrown by the XmlPullParser instance.
+     */
+    public void setInput(InputStream inputStream) throws XmlPullParserException {
+        mParser.setInput(inputStream, null);
+    }
+    /**
+     * Sets the input and resets the underlying parser. The parser will try to determine the encoding
+     * from the Xml preamble (1.0 specification). This method accepts a null parameter.
+     * @param in An input reader. If null it will stop parsing and reset the state, allowing the parser to free resources.
+     * @throws XmlPullParserException Thrown by the XmlPullParser instance.
+     */
+    public void setInput(Reader in) throws XmlPullParserException {
+        mParser.setInput(in);
+    }
+    /**
+     * Starts parsing the Xml file, pulling tag data from the XmlPullParser instance.
+     * This function will always fill a registered object starting from the outermost matching start tag.
      * Once this tag is found, no other registered tag is taken into consideration until an end tag
-     * is found.
+     * is found, pushing all the annotated {@link  XmlTag#enclosedPushables} and {@link XmlTag#additionalTags} tags.
      * The filling process respect the finding order. If two or more registered tags have been found in
-     * the Xml file, the created instances of XmlPushable will reflect their order.
-     * This function doesn't reset the internal list of registered objects at the end, call  reset() 
-     * to clear the internal data structure.
-     * @throws XmlPullParserException Thrown by the XmlPullParser directly.
-     * @throws IOException Thrown by the XmlPullParser directly.
+     * the Xml file, the new instances of XmlPushable objects will reflect their order.
+     * This method neither reset the internal list of registered objects nor the XmlPullParser.
+     * @throws XmlPullParserException Thrown by the XmlPullParser instance.
+     * @throws IOException Thrown by the XmlPullParser instance if some IO problem occurs.
      */
     final public <E extends XmlPushable> void parse() throws XmlPullParserException, IOException {
 
         if (mTagMap.isEmpty()) return;
-
+        
         int currentEvent = mParser.getEventType();
         
         List<StringBuilder> textStack = new LinkedList<StringBuilder>();
@@ -213,10 +244,10 @@ public final class XmlFiller {
 
     /**
      * Registers an XmlPushable (this method will use reflection). The class needs
-     * an XmlTag annotation or the this method will throw a RuntimeException.
+     * {@link XmlTag} annotation or this method will throw a RuntimeException.
      * (TODO, a custom parser to enforce the presence of the annotation at compile time).
-     * @param clazz The XmlPushable type.
-     * @param xmlBuilder The Builder class which will be used for object creation.
+     * @param clazz The XmlPushable class object to register.
+     * @param xmlBuilder The class that will be used for instance creation.
      */
     public void registerNode(Class<? extends XmlPushable> clazz, XmlBuilder<? extends XmlPushable> xmlBuilder) {
         // Gets the root annotation
@@ -243,7 +274,7 @@ public final class XmlFiller {
     }
 
     /**
-     * Resets the list of registered objects.
+     * Resets the list of registered objects and other internal data structures.
      */
     public void reset() {
         mBuilderMap.clear();
@@ -254,8 +285,8 @@ public final class XmlFiller {
     /**
      * Gets the first instance of the desired XmlPushable class, if at least one instance has been correctly
      * parsed from the Xml.
-     * @param clazz The XmlPushable class type.
-     * @return A filled instance of the specified class,  null if none was found.
+     * @param clazz The class object of a previously registered XmlPushable.
+     * @return A filled instance of the specified class, null if none was found.
      */
     public <T extends XmlPushable> T getFirstInstanceOf(Class<T> clazz) {
         String rootTag = "";
@@ -268,10 +299,10 @@ public final class XmlFiller {
     }
     
     /**
-     * Gets the first instance of the desired XmlPushable class, if at least one instance has been correctly
+     * Gets the first instance of the desired XmlPushable tag, if at least one instance has been correctly
      * parsed from the Xml.
      * @param tagName The tag of a previously registered XmlPushable.
-     * @return A filled instance of the specified tag,  null if none was found.
+     * @return A filled instance of the specified tag, null if none was found.
      */
     public <T extends XmlPushable> T getFirstInstanceOf(String tagName) {
         T instance = (T) mFilledObjectMap.get(tagName).get(0);
@@ -280,8 +311,8 @@ public final class XmlFiller {
     
     /**
      * Internal recursive method to collect the tags accepted by the XmlPushable object.
-     * @param clazz
-     * @param tagStack
+     * @param clazz The XmlPushable class object.
+     * @param tagStack A stack of tags.
      */
     private <T extends XmlPushable> void collectTags(Class<T> clazz, Set<String> tagStack) {
         // Gets the root annotation
@@ -305,9 +336,9 @@ public final class XmlFiller {
     }
     
     /**
-     * Gets a  List containing the objects created after parsing the Xml file.
-     * @param clazz The tag of the desired type (same as  registerNode()).
-     * @return A  List. An empty  List if the requested tag has not be found during the parsing.
+     * Gets a List containing the XmlPushable objects created after parsing the Xml file.
+     * @param clazz The class object of a previously registered XmlPushable.
+     * @return A  List. An empty List if the requested tag has not be found during the parsing.
      */
     public <E extends XmlPushable> List<E> getInstanceListOf(Class<E> clazz) {
         String rootTag = "";
@@ -320,9 +351,9 @@ public final class XmlFiller {
     }
     
     /**
-     * Gets a  List containing the objects created after parsing the Xml file.
-     * @param tag The tag of the desired type (same as  registerNode()).
-     * @return A  List. An empty  List if the requested tag has not be found during the parsing.
+     * Gets a List containing the objects created after parsing the Xml file.
+     * @param tag The tag of a previously registered XmlPushable.
+     * @return A List. An empty List if the requested tag has not be found during the parsing.
      */
     public <E extends XmlPushable> List<E> getInstanceListOf(String tag) {
         List<XmlPushable> filledInstances = mFilledObjectMap.get(tag);
@@ -333,66 +364,4 @@ public final class XmlFiller {
         }
         return returnedInstances;
     }
-    /**
-     * Internal implementation of the Iterator interface.
-     * @author Andrea Richiardi
-     * @param <E>
-     *//*
-    private class XmlFillerIterator<E> implements Iterator<E> {
-
-        int mInitialModCount;
-        
-        XmlFillerIterator() {
-            mInitialModCount = mModCount;
-        }
-        
-        final void checkForComodification() {
-            if (mModCount != mInitialModCount)
-                throw new ConcurrentModificationException();
-        }
-
-        
-        @Override
-        public boolean hasNext() {
-            checkForComodification();
-            
-            return false;
-        }
-
-        @Override
-        public E next() {
-            checkForComodification();
-            return null;
-        }
-
-        @Override
-        public void remove() {
-            throw new UnsupportedOperationException();
-        }
-    }*/
- /*   
-    *//**
-     * Internal implementation of the Iterator interface.
-     * @author Andrea Richiardi
-     * @param <E>
-     *//*
-    final class EmptyIterator<E> implements Iterator<E> {
-
-        EmptyIterator() {  do nothing  }
-        
-        @Override
-        public boolean hasNext() {
-            return false;
-        }
-
-        @Override
-        public E next() {
-            return null;
-        }
-
-        @Override
-        public void remove() {
-            throw new UnsupportedOperationException();
-        }
-    }*/
 }

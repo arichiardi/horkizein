@@ -524,7 +524,7 @@ public class EqualityTest extends AndroidTestCase {
     }
 
     /**
-     * Tests the equality of a the NoTextObject. In particoular, the outer object (NoTextObject)
+     * Tests the equality of NoTextObject. In particular, the outer object (NoTextObject)
      * never gets text (mNoText must not change).
      * @throws IllegalArgumentException
      * @throws IllegalStateException
@@ -537,13 +537,13 @@ public class EqualityTest extends AndroidTestCase {
         Log.i(Constants.PACKAGE_TAG_TEST, "--- [" + TAG + ".tesNoTextObjectEquality] ---");
         NoTextObject mNoTextObjectSrc = new NoTextObject(new TextObject("Ciao."));
 
-        Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".tesNoTextObjectEquality() open Android file: " + TEMPORARY_FILE);
+        Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".testNoTextObjectEquality() open Android file: " + TEMPORARY_FILE);
         XmlDataCommitter.commitData(getContext(), TEMPORARY_FILE, "UTF-8", mNoTextObjectSrc); // serializing
 
         NoTextObject mNoTextObjectDst = XmlDataReader.read(mParser, getContext(), NoTextObject.class, new NoTextObjectBuilder(), TEMPORARY_FILE);
 
         Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".tesNoTextObjectEquality() equals test");
-        assertTrue(mNoTextObjectSrc.equals(mNoTextObjectSrc));
+        assertTrue(mNoTextObjectDst.equals(mNoTextObjectSrc));
         assertTrue(mNoTextObjectDst.tagCheck());
         Log.i(Constants.PACKAGE_TAG_TEST, "-----------------------------------------");
     }

@@ -17,7 +17,7 @@ package com.googlecode.horkizein;
 
 /**
  * XmlPushable object contract. For a detailed explanation on how to specify the tags
- * that Horkizein is required to extract from the Xml file see {@link XmlTag}.
+ * that Horkizein is required to extract from the Xml file, see {@link XmlTag}.
  */
 public interface XmlPushable {
     /**
@@ -27,7 +27,7 @@ public interface XmlPushable {
     void pushStartTag(String tag);
 
     /**
-     * Pushes attribute name/value to the current object.
+     * Pushes attribute name/value to the current object. The prefix has not been tested yet. 
      * @param tag    Tag name.
      * @param prefix Attribute prefix (ignored at the moment).
      * @param name    Attribute name.

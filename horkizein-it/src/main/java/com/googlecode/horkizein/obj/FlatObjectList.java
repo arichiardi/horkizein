@@ -22,7 +22,7 @@ import java.util.List;
 import org.xmlpull.v1.XmlSerializer;
 
 import com.googlecode.horkizein.XmlPushable;
-import com.googlecode.horkizein.XmlPushableList;
+import com.googlecode.horkizein.XmlPushableArrayList;
 import com.googlecode.horkizein.XmlTag;
 import com.googlecode.horkizein.XmlWritable;
 import com.googlecode.horkizein.obj.builders.FlatObjectBuilder;
@@ -30,14 +30,15 @@ import com.googlecode.horkizein.test.Constants;
 
 import android.util.Log;
 
-@XmlTag(
+@XmlTag (
     value = "flat_obj_list",
     enclosedPushables = FlatObject.class
 )
-public class FlatObjectList extends XmlPushableList<FlatObject> implements XmlWritable{
 
-    final static String TAG = "flat_obj_list";
-
+public class FlatObjectList extends XmlPushableArrayList<FlatObject> implements XmlWritable{
+   
+    public final static String TAG = "flat_obj_list";
+    
     /**
      * Ctor with input list.
      * @param list
@@ -93,14 +94,14 @@ public class FlatObjectList extends XmlPushableList<FlatObject> implements XmlWr
         }
         return (listCheck);
     }
-    
-    @Override
-    protected String getTag() {
-        return TAG;
-    }
-    
+
     @Override
     protected String getItemTag() {
         return FlatObject.TAG;
+    }
+
+    @Override
+    protected String getTag() {
+        return TAG;
     }
 }

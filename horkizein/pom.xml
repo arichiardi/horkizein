@@ -21,7 +21,7 @@
     <artifactId>horkizein</artifactId>
     <packaging>jar</packaging>
     <name>Horkizein Open Source Android Library</name>
-    <version>0.0.7-alpha</version>
+    <version>0.0.8-alpha</version>
 
     <dependencies>
         <dependency>
