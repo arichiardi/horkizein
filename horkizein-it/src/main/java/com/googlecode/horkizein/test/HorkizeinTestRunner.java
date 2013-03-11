@@ -16,7 +16,6 @@
 package com.googlecode.horkizein.test;
 
 import junit.framework.TestSuite;
-import android.content.Context;
 import android.test.InstrumentationTestRunner;
 import android.test.InstrumentationTestSuite;
 
@@ -25,12 +24,8 @@ import android.test.InstrumentationTestSuite;
  */
 public final class HorkizeinTestRunner extends InstrumentationTestRunner {
 
-    Context mContext;
-
     @Override
     public TestSuite getAllTests() {
-
-        mContext = getContext();
 
         InstrumentationTestSuite suite = new InstrumentationTestSuite(this);
         // Object Read Write Tests

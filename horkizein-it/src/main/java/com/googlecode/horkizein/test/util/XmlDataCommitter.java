@@ -36,8 +36,11 @@ public final class XmlDataCommitter {
      * A useful Android specific method that writes XmlWritables on file.
      * @param context An Android Context.
      * @param filename The input filename.
+     * @param encoding The encoding.
      * @param object The list to write into the file.
-     * @return True if successful, false if not.
+     * @throws IllegalArgumentException 
+     * @throws IllegalStateException 
+     * @throws IOException 
      */
     public static void commitData(Context context, String filename, String encoding, XmlWritable object) throws IllegalArgumentException, IllegalStateException, IOException {
         BufferedOutputStream buf = new BufferedOutputStream(context.openFileOutput(filename, Context.MODE_PRIVATE));
