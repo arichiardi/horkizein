@@ -36,7 +36,6 @@ public final class HorkizeinTestRunner extends InstrumentationTestRunner {
         // Object Error Tests
         suite.addTestSuite(ErrorTest.class);
         // Performance Tests
-        //suite.addTestSuite(PerformTest.class);
         return suite;
     }
 
