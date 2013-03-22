@@ -37,7 +37,9 @@ import java.lang.annotation.Target;
  * </pre>
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
+@Target(
+    value = { ElementType.TYPE, ElementType.FIELD }
+)
 public @interface XmlTag {
     /**
      * Declares the root tag of this class. This tag will be used to identify
@@ -58,7 +60,7 @@ public @interface XmlTag {
      * ...
      * </pre>
      */
-    String value();
+    String value() default "";
     
     /**
      * Declares the additional tag(s) this class accepts and handle when a push*() method is called.
@@ -89,7 +91,5 @@ public @interface XmlTag {
      * ...
      * </pre>
      */
-    Class<? extends XmlPushable>[] enclosedPushables() default { /* empty by default */ };
-
-    //boolean autodiscovery() default false; // TODO XmlPushable Auto-discovery feature.
+    Class<? extends XmlPushable<?>>[] enclosedPushables() default { /* empty by default */ };
 }
