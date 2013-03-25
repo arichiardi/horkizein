@@ -15,117 +15,22 @@
  */
 package com.googlecode.horkizein.obj;
 
-import java.io.IOException;
-
-import org.xmlpull.v1.XmlSerializer;
-
-import com.googlecode.horkizein.XmlPushable;
-import com.googlecode.horkizein.XmlTag;
-import com.googlecode.horkizein.XmlWritable;
-import com.googlecode.horkizein.obj.builders.FlatObjectBuilder;
-import com.googlecode.horkizein.test.Constants;
-
-import android.util.Log;
-
 /**
  * Implementation of an XmlPushable which contains a FlatObject.
  */
-@XmlTag (
-    value = "nested_obj1",
-    enclosedPushables = FlatObject.class
-)
-public class NestedObject1 implements XmlPushable, XmlWritable {
-
+public class NestedObject1 {
     // This object tag
     public final static String TAG = "nested_obj1";
-
-    // watch dog
-    private boolean wdPushedStartTag;
-    private boolean wdPushedEndTag;
-
     // child
-    public FlatObject mFlatObject;
-    // creator
-    private FlatObjectBuilder mFlatCreator;
+    public final FlatObject mFlatObject;
 
     /**
      * Creates a NestedObject1 that contains a shallow copy of a FlatObject
      * @param flatSrc The child.
      */
     public NestedObject1(FlatObject flatSrc) {
-        mFlatCreator = new FlatObjectBuilder();
         mFlatObject = flatSrc; // test purpose
     }
-
-    /**
-     * Creates an empty NetstedObject1
-     */
-    public NestedObject1() {
-        mFlatCreator = new FlatObjectBuilder();
-    }
-
-
-    @Override
-    public void pushAttribute(String tag, String prefix, String name, String value) {
-        Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushAttribute() - TAG: " + tag + " NAME: " + name +  " TEXT: " + value);
-        if (wdPushedStartTag) {
-            //if (wdFlatObjStartTag) {
-            mFlatObject.pushAttribute(tag, prefix, name, value);
-            //}
-        }
-    }
-
-
-    @Override
-    public void pushText(String tag, String text) {
-        Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushText() - TAG: " + tag + " TEXT: " + text);
-        if (wdPushedStartTag) {
-            //if (wdFlatObjStartTag) {
-            mFlatObject.pushText(tag, text);
-            //}
-        }
-    }
-
-
-    @Override
-    public void pushEndTag(String tag) {
-        Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushEndTag() - TAG: " + tag);
-
-        if(wdPushedStartTag) {
-            if (mFlatObject != null) {
-                mFlatObject.pushEndTag(tag);
-            }
-        }
-
-        if (tag.equals(TAG) && wdPushedStartTag == true) {
-            wdPushedStartTag = false;
-            wdPushedEndTag = true;
-        }
-    }
-
-
-    @Override
-    public void pushStartTag(String tag) {
-        Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushStartTag() - TAG: " + tag);
-        if (tag.equals(TAG))
-            wdPushedStartTag = true;
-
-        if(wdPushedStartTag) {
-            //if (wdFlatObjStartTag == true) {
-            if (tag.equals(FlatObject.TAG)) {
-            //    wdFlatObjStartTag = true;
-                if (mFlatCreator != null) {
-                    Log.d(Constants.PACKAGE_TAG_TEST, TAG + ": flatObj created");
-                    mFlatObject = mFlatCreator.getInstance();
-                }
-            }
-
-            if (mFlatObject != null) {
-                mFlatObject.pushStartTag(tag);
-            }
-        }
-    }
-
 
     @Override
     public boolean equals(Object obj) {
@@ -135,25 +40,13 @@ public class NestedObject1 implements XmlPushable, XmlWritable {
         NestedObject1 o = (NestedObject1)obj;
         return (mFlatObject == o.mFlatObject || (mFlatObject != null && mFlatObject.equals(o.mFlatObject)));
     }
-
-
-    @Override
-    public void writeXml(XmlSerializer out) throws IOException, IllegalStateException, IllegalArgumentException {
-        // Writing out
-        out.startTag("", TAG);
-        if(mFlatObject != null) {
-            mFlatObject.writeXml(out);
-        }
-        out.endTag("", TAG);
-    }
-
+    
     /**
-     * Simple check to see if we push tags in the correct order.
-     * @return True or false.
+     * Note: This method safely return a reference just because the 
+     * returned object is immutable.
+     * @return 
      */
-    public boolean tagCheck() {
-        return (mFlatObject.tagCheck() &&
-                !wdPushedStartTag &&
-                wdPushedEndTag);
+    public FlatObject getFlatObject() {
+        return mFlatObject;
     }
 }

@@ -31,8 +31,8 @@ import com.googlecode.horkizein.obj.DocdeclObject;
 import com.googlecode.horkizein.obj.FlatObject;
 import com.googlecode.horkizein.obj.HelloWorldObject;
 import com.googlecode.horkizein.obj.NestedObject1;
-import com.googlecode.horkizein.obj.ProcessingObject;
 import com.googlecode.horkizein.obj.TextObject;
+import com.googlecode.horkizein.obj.builders.ProcessingObjectDAO;
 import com.googlecode.horkizein.test.Constants;
 import com.googlecode.horkizein.test.util.CustomKXmlParser;
 import com.googlecode.horkizein.test.util.XmlDataCommitter;
@@ -68,16 +68,8 @@ public class EqualityCustomParserTest extends AndroidTestCase {
         Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".setUp() parser: " + mParser.getClass().getName());
 
         Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".setUp() creating FlatObject src");
-        mFlatSrc = new FlatObject();
-        mFlatSrc.mBooleanAttr = false;
-        mFlatSrc.mIntegerAttr = 666;
-        mFlatSrc.mDoubleAttr = 0.666;
-        mFlatSrc.mStringAttr = new String("666");
-
-        mFlatSrc.mBooleanTag = true;
-        mFlatSrc.mIntegerTag = 42;
-        mFlatSrc.mDoubleTag = 0.42;
-        mFlatSrc.mStringTag = new String("42");
+        
+        mFlatSrc = new FlatObject(true, 42, 0.42, new String("42"), false, 666, 0.666, new String("666"));
     }
 
     /**

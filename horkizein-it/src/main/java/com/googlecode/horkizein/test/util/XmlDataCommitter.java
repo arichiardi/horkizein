@@ -30,43 +30,54 @@ import android.content.Context;
  */
 public final class XmlDataCommitter {
 
-    private XmlDataCommitter() {}
-
+    private final Context mContext;
+    private final String mFileName;
+    private final String mEncoding;
+    private final XmlSerializer mSerializer;
+    
+    public XmlDataCommitter(Context context, XmlSerializer serializer, String filename, String encoding) {
+        mContext = context;
+        mSerializer = serializer;
+        mFileName = filename;
+        mEncoding = encoding;
+    }
     /**
-     * A useful Android specific method that writes XmlWritables on file.
-     * @param context An Android Context.
-     * @param filename The input filename.
-     * @param encoding The encoding.
-     * @param object The list to write into the file.
+     * A useful Android specific method that writes one XmlWritable on file.
+     * @param dao A data access object (implements XmlWritable interface).
+     * @param object An object to write onto the file.
      * @throws IllegalArgumentException 
      * @throws IllegalStateException 
      * @throws IOException 
      */
-    public static void commitData(Context context, String filename, String encoding, XmlWritable object) throws IllegalArgumentException, IllegalStateException, IOException {
-        BufferedOutputStream buf = new BufferedOutputStream(context.openFileOutput(filename, Context.MODE_PRIVATE));
-
-        XmlSerializer serializer = android.util.Xml.newSerializer();
-        serializer.setOutput(buf, encoding);
+    public <T> void commitData(XmlWritable<T> dao, T object) throws IllegalArgumentException, IllegalStateException, IOException {
+        BufferedOutputStream buf = new BufferedOutputStream(mContext.openFileOutput(mFileName, Context.MODE_PRIVATE));
+        mSerializer.setOutput(buf, mEncoding);
+        mSerializer.startDocument(mEncoding, true);
         // do it
-        object.writeXml(serializer);
-
-        serializer.endDocument();
-        serializer.flush();
+        dao.writeXml(object);
+        mSerializer.endDocument();
+        mSerializer.flush();
         buf.close();
     }
 
-    public static void commitData(Context context, String filename, String encoding, Collection<XmlWritable> objects) throws IllegalArgumentException, IllegalStateException, IOException {
-        BufferedOutputStream buf = new BufferedOutputStream(context.openFileOutput(filename, Context.MODE_PRIVATE));
-
-        XmlSerializer serializer = android.util.Xml.newSerializer();
-        serializer.setOutput(buf, encoding);
+    /**
+     * A useful Android specific method that writes XmlWritables on file.
+     * @param dao A data access object (XmlWritable interface)
+     * @param objects A collection to write onto a file.
+     * @throws IllegalArgumentException
+     * @throws IllegalStateException
+     * @throws IOException
+     */
+    public <T> void commitData(XmlWritable<T> dao, Collection<T> objects) throws IllegalArgumentException, IllegalStateException, IOException {
+        BufferedOutputStream buf = new BufferedOutputStream(mContext.openFileOutput(mFileName, Context.MODE_PRIVATE));
+        mSerializer.setOutput(buf, mEncoding);
+        mSerializer.startDocument(mEncoding, true);
         // do it
-        for (XmlWritable object : objects) {
-            object.writeXml(serializer);
+        for (T object : objects) {
+            dao.writeXml(object);
         }
-
-        serializer.endDocument();
-        serializer.flush();
+        mSerializer.endDocument();
+        mSerializer.flush();
         buf.close();
     }
 }

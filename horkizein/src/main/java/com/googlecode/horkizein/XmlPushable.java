@@ -16,10 +16,14 @@
 package com.googlecode.horkizein;
 
 /**
- * XmlPushable object contract. For a detailed explanation on how to specify the tags
- * that Horkizein is required to extract from the Xml file, see {@link XmlTag}.
+ * XmlPushable object contract. The classes implementing this interface are intended
+ * to be used as mutable builders for the target value objects. The build() method is
+ * never called by the framework, while clone() is necessary to build and store instances
+ * internally.
+ * The {@link XmlTag} annotation is necessary for recursively pushing the dependent objects.
+ * @param <T> The (immutable) instance to build.
  */
-public interface XmlPushable {
+public interface XmlPushable<T> extends XmlBuilder<T>, XmlPrototype<T> {
     /**
      * Pushes the opening tag event.
      * @param tag Tag name.
@@ -28,17 +32,17 @@ public interface XmlPushable {
 
     /**
      * Pushes attribute name/value to the current object. The prefix has not been tested yet. 
-     * @param tag    Tag name.
+     * @param tag Tag name.
      * @param prefix Attribute prefix (ignored at the moment).
-     * @param name    Attribute name.
-     * @param value    Attribute value.
+     * @param name Attribute name.
+     * @param value Attribute value.
      */
     void pushAttribute(String tag, String prefix, String name, String value);
 
     /**
      * Pushes the tag text.
-     * @param tag    Tag name.
-     * @param text    Tag text.
+     * @param tag Tag name.
+     * @param text Tag text.
      */
     void pushText(String tag, String text);
 

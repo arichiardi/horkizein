@@ -19,13 +19,10 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
-import com.googlecode.horkizein.XmlBuilder;
 import com.googlecode.horkizein.XmlFiller;
 import com.googlecode.horkizein.XmlPushable;
 
@@ -35,25 +32,30 @@ import android.content.Context;
  * Very simple class to simplify the Xml to XmlPushable binding.  
  */
 public class XmlDataReader {
-
-    private XmlDataReader() {}
+    
+    private final Context mContext;
+    private final String mFileName;
+    
+    public XmlDataReader(Context context, String filename) {
+        mContext = context;
+        mFileName = filename;
+    }
 
     /**
      * A custom method that fills an XmlPushable..
      * @param parser The parser we want to use.
+     * @param dao A data access object (implements XmlPushable interface).
+     * @param daoClass The class of the desired XmlPushable type.
      * @param context A context.
-     * @param clazz The XmlPushable class.
-     * @param builder The XmlPushable builder.
-     * @param fileName The input file name.
      * @return An instance of the requested object.
      * @throws FileNotFoundException
      * @throws XmlPullParserException
      * @throws IOException
      */
-    public static <T extends XmlPushable> T read(XmlPullParser parser, Context context, Class<T> clazz, XmlBuilder<T> builder, String fileName) throws FileNotFoundException, XmlPullParserException, IOException {
+    public <T, K extends XmlPushable<T>> K read(XmlPullParser parser, XmlPushable<T> dao, Class<K> daoClass) throws FileNotFoundException, XmlPullParserException, IOException {
         // Prints the file for debugging.
         /*try {
-            InputStreamReader inputStream = new InputStreamReader(inContext.openFileInput(inFileName));
+            InputStreamReader inputStream = new InputStreamReader(mContext.openFileInput(inFileName));
             BufferedReader bufReader = new BufferedReader(inputStream);
 
             String inputLine;
@@ -67,18 +69,17 @@ public class XmlDataReader {
         }*/
 
         // Opens the file, buffers it and starts!
-        InputStreamReader inputStream = new InputStreamReader(context.openFileInput(fileName));
+        InputStreamReader inputStream = new InputStreamReader(mContext.openFileInput(mFileName));
         BufferedReader bufReader = new BufferedReader(inputStream);
         XmlFiller filler = new XmlFiller(parser);
         // register
-        filler.registerNode(clazz, builder);
+        filler.registerNode(dao);
         parser.setInput(bufReader);
         // fill
         filler.parse();
         // close buffer
         bufReader.close();
-        
-        return filler.getFirstInstanceOf(clazz);
+        return filler.firstPushableOf(daoClass);
     }
 
     /**
@@ -94,8 +95,8 @@ public class XmlDataReader {
      * @throws XmlPullParserException
      * @throws IOException
      */
-    public static List<XmlPushable> readMany(XmlPullParser inParser, Context inContext, List<Class<? extends XmlPushable>> clazzez, List<XmlBuilder<? extends XmlPushable>> builders, String inFileName) throws FileNotFoundException, XmlPullParserException, IOException {
-        android.util.Log.i(com.googlecode.horkizein.test.Constants.PACKAGE_TAG_TEST, "List filling");
+    /*public static <T extends XmlPushable<T>> List<XmlPushable<T>> readMany(XmlPullParser inParser, Context inContext, List<Class<? extends XmlPushable>> clazzez, List<XmlBuilder<? extends XmlPushable>> builders, String inFileName) throws FileNotFoundException, XmlPullParserException, IOException {
+        Log.i(com.googlecode.horkizein.test.Constants.PACKAGE_TAG_TEST, "List filling");
         // Prints the file for debugging.
         try {
             InputStreamReader inputStream = new InputStreamReader(inContext.openFileInput(inFileName));
@@ -131,6 +132,6 @@ public class XmlDataReader {
             result.addAll(filler.getInstanceListOf(clazzez.get(i)));
         }
         return result;
-    }
+    }*/
 
 }

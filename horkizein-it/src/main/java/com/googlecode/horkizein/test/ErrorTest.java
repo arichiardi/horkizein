@@ -15,8 +15,6 @@
  */
 package com.googlecode.horkizein.test;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -24,16 +22,10 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
-import com.googlecode.horkizein.XmlPushable;
 import com.googlecode.horkizein.obj.FlatObject;
-import com.googlecode.horkizein.obj.FlatObjectList;
-import com.googlecode.horkizein.obj.NestedObject1;
-import com.googlecode.horkizein.obj.ObjectWithList;
-import com.googlecode.horkizein.obj.ObjectWithUntagged;
-import com.googlecode.horkizein.obj.builders.FlatObjectListBuilder;
-import com.googlecode.horkizein.obj.builders.ObjectWithUntaggedBuilder;
+import com.googlecode.horkizein.obj.builders.FlatObjectDAO;
+import com.googlecode.horkizein.obj.builders.UntaggedDAO;
 import com.googlecode.horkizein.test.Constants;
-import com.googlecode.horkizein.test.util.XmlDataCommitter;
 import com.googlecode.horkizein.test.util.XmlDataReader;
 
 import android.test.AndroidTestCase;
@@ -71,16 +63,7 @@ public class ErrorTest extends AndroidTestCase {
         Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".setUp() parser: " + mParser.getClass().getName());
 
         Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".setUp() creating FlatObject src");
-        mFlatSrc = new FlatObject();
-        mFlatSrc.mBooleanAttr = false;
-        mFlatSrc.mIntegerAttr = 666;
-        mFlatSrc.mDoubleAttr = 0.666;
-        mFlatSrc.mStringAttr = new String("666");
-
-        mFlatSrc.mBooleanTag = true;
-        mFlatSrc.mIntegerTag = 42;
-        mFlatSrc.mDoubleTag = 0.42;
-        mFlatSrc.mStringTag = new String("42");
+        mFlatSrc = new FlatObject(true, 42, 0.42, new String("42"), false, 666, 0.666, new String("666"));
     }
 
     /**
@@ -91,6 +74,7 @@ public class ErrorTest extends AndroidTestCase {
      * @throws FileNotFoundException
      * @throws XmlPullParserException
      * @throws IOException
+     * @throws CloneNotSupportedException 
      */
     /*@MediumTest
     public void testNestingError() throws IllegalArgumentException, IllegalStateException, FileNotFoundException, XmlPullParserException, IOException {
@@ -180,22 +164,18 @@ public class ErrorTest extends AndroidTestCase {
 //    }
 
     @MediumTest
-    public void testDeclaredButNotAnnotatedError() throws IllegalArgumentException, IllegalStateException, FileNotFoundException, XmlPullParserException, IOException {
+    public void testDeclaredButNotAnnotatedError() throws IllegalArgumentException, IllegalStateException, FileNotFoundException, XmlPullParserException, IOException, CloneNotSupportedException {
 
       Log.i(Constants.PACKAGE_TAG_TEST, "--- [" + TAG + ".testDeclaredButNotAnnotatedError] ---");
       boolean catched = false;
       try {
-          ObjectWithUntagged obj = new ObjectWithUntagged();
-          XmlDataCommitter.commitData(getContext(), TEMPORARY_FILE, "UTF-8", obj); // marshalling
-          
           // don't care about the builder
-          XmlDataReader.read(mParser, getContext(), ObjectWithUntagged.class, new ObjectWithUntaggedBuilder(), TEMPORARY_FILE);
+          //XmlDataReader.read(mParser, getContext(), new UntaggedDAO(), TEMPORARY_FILE);
       } catch (RuntimeException expected) {
           Log.i(Constants.PACKAGE_TAG_TEST, "Expected: " + expected.getMessage());
           catched = true;
       }
       assert(catched);
-      
     }
     
     @Override

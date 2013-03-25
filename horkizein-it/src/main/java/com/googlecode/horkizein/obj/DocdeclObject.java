@@ -15,98 +15,44 @@
  */
 package com.googlecode.horkizein.obj;
 
-import java.io.IOException;
-
-import org.xmlpull.v1.XmlSerializer;
-
 import com.googlecode.horkizein.XmlFiller;
-import com.googlecode.horkizein.XmlPushable;
-import com.googlecode.horkizein.XmlTag;
-import com.googlecode.horkizein.XmlWritable;
-import com.googlecode.horkizein.test.Constants;
-
-import android.util.Log;
 
 /**
  * Implementation of the DOCDECL xml section as a XmlPushable metadata object.
  */
-@XmlTag(XmlFiller.DOCDECL_TAG)
-public class DocdeclObject implements XmlPushable, XmlWritable {
+public class DocdeclObject {
     // This object tag
     public final static String TAG = XmlFiller.DOCDECL_TAG;
-    // watch dog
-    private boolean mPushedStartTag;
-    private boolean mPushedEndTag;
-    // the text inside this xml section
-    public String mDocdeclContent;
 
+    // the text inside this xml section
+    private final String mContent;
+    private int mHashCode;
+    
     /**
      * Ctor.
      * @param text Metadata content.
      */
-    public DocdeclObject(String text) {
-        mDocdeclContent = text;
-        mPushedEndTag = mPushedStartTag = false;
-    }
-
-    /**
-     * Ctor.
-     */
-    public DocdeclObject() {
-        mDocdeclContent = "";
-        mPushedEndTag = mPushedStartTag = false;
+    public DocdeclObject(String content) {
+        mContent = content;
+        mHashCode = 337 + (mContent.hashCode() * 37);
     }
 
     @Override
-    public void pushAttribute(String tag, String prefix, String name, String value) { /* do nothing */ }
-
-    @Override
-    public void pushStartTag(String tag) {
-        Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushStartTag(" + tag + ")");
-        if (tag.equals(TAG)) {
-            mPushedStartTag = true;
-        }
+    public int hashCode() {
+        return mHashCode;
     }
-
-    @Override
-    public void pushText(String tag, String text) {
-        if (tag.equals(TAG) && mPushedStartTag == true) {
-            mDocdeclContent = text;
-            Log.d (Constants.PACKAGE_TAG_TEST, TAG + " pushed: " + text);
-        } else {
-            Log.d(Constants.PACKAGE_TAG_TEST, TAG + "NOT MINE");
-        }
-    }
-
-    @Override
-    public void pushEndTag(String tag) {
-        Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushEndTag(" + tag + ")");
-        if (tag.equals(TAG) && mPushedStartTag == true) {
-            mPushedEndTag = true;
-        }
-    }
-
+    
     @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
         if((obj == null) || (obj.getClass() != this.getClass())) return false;
 
         DocdeclObject o = (DocdeclObject)obj;
-        Log.d(Constants.PACKAGE_TAG_TEST, TAG + " 1: " + mDocdeclContent + "- 2: " + o.mDocdeclContent);
-        return (mDocdeclContent == o.mDocdeclContent || (mDocdeclContent != null && mDocdeclContent.equals(o.mDocdeclContent)));
+        return (mContent == o.mContent || (mContent != null && mContent.equals(o.mContent)));
     }
-
-    @Override
-    public void writeXml(XmlSerializer out) throws IOException, IllegalStateException, IllegalArgumentException {
-        out.docdecl(mDocdeclContent);
-    }
-
-    /**
-     * Simple check to see if we push tags in the correct order.
-     * @return True or false.
-     */
-    public boolean tagCheck() {
-        return (mPushedStartTag && mPushedEndTag);
+    
+    public final String getContent() {
+        return mContent;
     }
 }
 

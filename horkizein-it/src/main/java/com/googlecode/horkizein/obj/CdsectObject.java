@@ -15,99 +15,39 @@
  */
 package com.googlecode.horkizein.obj;
 
-import java.io.IOException;
-
-import org.xmlpull.v1.XmlSerializer;
-
-import com.googlecode.horkizein.XmlFiller;
-import com.googlecode.horkizein.XmlPushable;
-import com.googlecode.horkizein.XmlTag;
-import com.googlecode.horkizein.XmlWritable;
-import com.googlecode.horkizein.test.Constants;
-
-import android.util.Log;
-
 /**
  * Implementation of the CDSECT xml section as a XmlPushable metadata object.
  */
-@XmlTag(XmlFiller.CDSECT_TAG)
-public class CdsectObject implements XmlPushable, XmlWritable {
-
-    // This object tag
-    public final static String TAG = XmlFiller.CDSECT_TAG;
-
-    // watch dog
-    private boolean mPushedStartTag;
-    private boolean mPushedEndTag;
-
+public class CdsectObject {
     // the text inside this xml section
-    public String mCdsectContent;
+    private final String mContent;
+    private int mHashCode;
 
     /**
      * Ctor.
-     * @param text Metadata content.
+     * @param content Metadata content.
      */
-    public CdsectObject(String text) {
-        mCdsectContent = text;
-    }
-
-    /**
-     * Ctor.
-     */
-    public CdsectObject() {
-        mCdsectContent = "";
+    public CdsectObject(String content) {
+        mContent = content;
+        mHashCode = 7 + (mContent.hashCode() * 277);
     }
 
     @Override
-    public void pushAttribute(String tag, String prefix, String name, String value) { /* do nothing */ }
-
+    public int hashCode() {
+        return mHashCode;
+    }
+    
     @Override
-    public void pushStartTag(String tag) {
-        Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushStartTag(" + tag + ")");
-        if (tag.equals(TAG)) {
-            mPushedStartTag = true;
-        }
+    public boolean equals(Object other) {
+        if (other == this) return true;
+        if((other == null) || (other.getClass() != this.getClass())) return false;
+
+        CdsectObject o = (CdsectObject)other;
+        return (mContent == o.mContent || (mContent != null && mContent.equals(o.mContent)));
     }
 
-    @Override
-    public void pushText(String tag, String text) {
-        if (tag.equals(TAG) && mPushedStartTag == true) {
-            mCdsectContent = text;
-            Log.d(Constants.PACKAGE_TAG_TEST, TAG + " pushed: " + text);
-        } else {
-            Log.d(Constants.PACKAGE_TAG_TEST, TAG + "NOT MINE");
-        }
-    }
-
-    @Override
-    public void pushEndTag(String tag) {
-        Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushEndTag(" + tag + ")");
-        if (tag.equals(TAG) && mPushedStartTag == true) {
-            mPushedEndTag = true;
-        }
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == this) return true;
-        if((obj == null) || (obj.getClass() != this.getClass())) return false;
-
-        CdsectObject o = (CdsectObject)obj;
-        Log.d(Constants.PACKAGE_TAG_TEST, TAG + " mCdsectContent: " + mCdsectContent + " - item.mCdsectContent: " + o.mCdsectContent);
-        return (mCdsectContent == o.mCdsectContent || (mCdsectContent != null && mCdsectContent.equals(o.mCdsectContent)));
-    }
-
-    @Override
-    public void writeXml(XmlSerializer out) throws IOException, IllegalStateException, IllegalArgumentException {
-        out.cdsect(mCdsectContent);
-    }
-
-    /**
-     * Simple check to see if we push tags in the correct order.
-     * @return True or false.
-     */
-    public boolean tagCheck() {
-        return (mPushedStartTag && mPushedEndTag);
+    public final String getContent() {
+        return mContent;
     }
 }
 

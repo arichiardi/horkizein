@@ -15,101 +15,43 @@
  */
 package com.googlecode.horkizein.obj;
 
-import java.io.IOException;
-
-import org.xmlpull.v1.XmlSerializer;
-
 import com.googlecode.horkizein.XmlFiller;
-import com.googlecode.horkizein.XmlPushable;
-import com.googlecode.horkizein.XmlTag;
-import com.googlecode.horkizein.XmlWritable;
-import com.googlecode.horkizein.test.Constants;
-
-import android.util.Log;
 
 /**
- * Implementation of the PROCESSING xml section as a XmlPushable metadata object.
+ * Implementation of the COMMENT xml section as a XmlPushable metadata object.
  */
-@XmlTag(XmlFiller.PROCESSING_TAG)
-public class ProcessingObject implements XmlPushable, XmlWritable {
-
+public class ProcessingObject {
     // This object tag
-    public final static String TAG = XmlFiller.PROCESSING_TAG;
+    public final static String TAG = XmlFiller.COMMENT_TAG;
 
-    // watch dog
-    private boolean mPushedStartTag;
-    private boolean mPushedEndTag;
-
-    // the text inside this xml section
-    public String mProcessingContent;
+    // The text inside this xml section
+    public final String mContent;
+    private int mHashCode;
 
     /**
      * Ctor.
-     * @param text Metadata content.
+     * @param content Metadata content.
      */
-    public ProcessingObject(String text) {
-        mProcessingContent = text;
-        mPushedEndTag = mPushedStartTag = false;
-    }
-
-    /**
-     * Ctor.
-     */
-    public ProcessingObject() {
-        mProcessingContent = "";
-        mPushedEndTag = mPushedStartTag = false;
+    public ProcessingObject(String content) {
+        mContent = content;
+        mHashCode = 97 + (mContent.hashCode() * 653);
     }
 
     @Override
-    public void pushAttribute(String tag, String prefix, String name, String value) { /* do nothing */ }
-
-    @Override
-    public void pushStartTag(String tag) {
-        Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushStartTag(" + tag + ")");
-        if (tag.equals(TAG)) {
-            mPushedStartTag = true;
-        }
+    public int hashCode() {
+        return mHashCode;
     }
-
-    @Override
-    public void pushText(String tag, String text) {
-        if (tag.equals(TAG) && mPushedStartTag == true) {
-            mProcessingContent = text;
-            Log.d (Constants.PACKAGE_TAG_TEST, TAG + " pushed: " + text);
-        } else {
-            Log.d(Constants.PACKAGE_TAG_TEST, TAG + "NOT MINE");
-        }
-    }
-
-    @Override
-    public void pushEndTag(String tag) {
-        Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushEndTag(" + tag + ")");
-        if (tag.equals(TAG) && mPushedStartTag == true) {
-            mPushedEndTag = true;
-        }
-    }
-
+    
     @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
         if((obj == null) || (obj.getClass() != this.getClass())) return false;
 
         ProcessingObject o = (ProcessingObject)obj;
-        Log.d(Constants.PACKAGE_TAG_TEST, TAG + " 1: " + mProcessingContent + "- 2: " + o.mProcessingContent);
-        return (mProcessingContent == o.mProcessingContent || (mProcessingContent != null && mProcessingContent.equals(o.mProcessingContent)));
+        return (mContent == o.mContent || (mContent != null && mContent.equals(o.mContent)));
     }
-
-    @Override
-    public void writeXml(XmlSerializer out) throws IOException, IllegalStateException, IllegalArgumentException {
-        out.processingInstruction(mProcessingContent);
-    }
-
-    /**
-     * Simple check to see if we push tags in the correct order.
-     * @return True or false.
-     */
-    public boolean tagCheck() {
-        return (mPushedStartTag && mPushedEndTag);
+    
+    public final String getContent() {
+        return mContent;
     }
 }
-

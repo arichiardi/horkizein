@@ -20,15 +20,17 @@ import org.xmlpull.v1.XmlSerializer;
 
 /**
  * XmlWritable object contract.
+ * @param <T> The object type to persist.
  */
-public interface XmlWritable {
+public interface XmlWritable<T> {
 
     /**
-     * Implement this method to write onto the XmlSerializer (aka .xml file).
-     * @param serializer The XmlSerializer.
+     * Implement this method to write your object to Xml. Typically, the class implementing
+     * this interface will also include XmlSerializer as dependency in order to write the Xml file.
+     * @param object The object to persist.
      * @throws IOException Launched by XmlSerializer.
      * @throws IllegalStateException Launched by XmlSerializer.
      * @throws IllegalArgumentException Launched by XmlSerializer.
      */
-    public void writeXml(XmlSerializer serializer) throws IOException, IllegalStateException, IllegalArgumentException; 
+    public void writeXml(T object) throws IOException, IllegalStateException, IllegalArgumentException; 
 }

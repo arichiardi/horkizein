@@ -1,99 +1,15 @@
 package com.googlecode.horkizein.obj;
 
-import java.io.IOException;
-
-import org.xmlpull.v1.XmlSerializer;
-
-import android.util.Log;
-
-import com.googlecode.horkizein.XmlPushable;
-import com.googlecode.horkizein.XmlTag;
-import com.googlecode.horkizein.XmlWritable;
-import com.googlecode.horkizein.test.Constants;
-
-@XmlTag (
-    value = NoTextObject.TAG,
-    enclosedPushables = TextObject.class
-)
-public class NoTextObject implements XmlPushable, XmlWritable {
+public class NoTextObject {
 
     public final static String TAG = "no_text_obj";
-    private final static String TEST_TEXT = "s0me TeXt, 4 T3st1ng";
     
-    private TextObject mTextObject;
+    private final TextObject mTextObject;
     
-    private String mNoText;
-    private boolean wdPushedStartTag;
-    private boolean wdPushedTextObjStartTag;
-    private boolean wdPushedEndTag;
-    private boolean wdPushedTextObjEndTag;
-    
-    public NoTextObject() { 
-        mNoText = TEST_TEXT;
-        mTextObject = new TextObject();
-    }
-    
-    public NoTextObject(TextObject textObj) {
-        mNoText = TEST_TEXT;
-        mTextObject = textObj;
-    }
-    
-    @Override
-    public void writeXml(XmlSerializer serializer) throws IOException, IllegalStateException, IllegalArgumentException {
-        serializer.startTag("", TAG);
-        mTextObject.writeXml(serializer);
-        serializer.endTag("", TAG);
-    }
+    private String mSupposedlyNoText = "s0me TeXt, 4 T3st1ng";
 
-    @Override
-    public void pushStartTag(String tag) {
-        Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushStartTag() - TAG: " + tag);
-        if (tag.equals(TAG)) {
-            wdPushedStartTag = true;
-            mTextObject = new TextObject();
-        }
-
-        if (wdPushedStartTag == true && mTextObject != null) {
-            if (tag.equals(TextObject.TAG)) {
-                wdPushedTextObjStartTag = true;
-            }
-            if (wdPushedTextObjStartTag == true) {
-                mTextObject.pushStartTag(tag);
-            }
-        }
-    }
-
-    @Override
-    public void pushAttribute(String tag, String prefix, String name, String value) {
-        /* it doesn't matter */
-    }
-
-    @Override
-    public void pushText(String tag, String text) {
-        if (wdPushedStartTag) {
-            if (tag.equals(TAG)) {
-                mNoText = text;
-            } else if (tag.equals(TextObject.TAG) && wdPushedTextObjStartTag == true) {
-                mTextObject.pushText(tag, text);
-            }
-        }
-    }
-
-    @Override
-    public void pushEndTag(String tag) {
-        
-        if (wdPushedStartTag == true && mTextObject != null) {
-            mTextObject.pushEndTag(tag);
-            if (tag.equals(TextObject.TAG)) {
-                wdPushedTextObjStartTag = false;
-                wdPushedTextObjEndTag = true;
-            }
-        }
-        
-        if (tag.equals(TAG)) {
-            wdPushedStartTag = false;
-            wdPushedEndTag = true;
-        }
+    public NoTextObject(TextObject textObject) { 
+        mTextObject = textObject;
     }
 
     @Override
@@ -102,16 +18,16 @@ public class NoTextObject implements XmlPushable, XmlWritable {
         if((o == null) || (o.getClass() != this.getClass())) return false;
 
         NoTextObject n = (NoTextObject)o;
-        return (mNoText == n.mNoText || (mNoText != null && mNoText.equals(n.mNoText)) &&
+        return (mSupposedlyNoText == n.mSupposedlyNoText || (mSupposedlyNoText != null && mSupposedlyNoText.equals(n.mSupposedlyNoText)) &&
                  mTextObject == n.mTextObject || (mTextObject != null && mTextObject.equals(n.mTextObject)));
     }
     
-    public boolean tagCheck() {
-        return (mNoText == TEST_TEXT &&
-                !wdPushedStartTag &&
-                wdPushedEndTag &&
-                !wdPushedTextObjStartTag &&
-                wdPushedTextObjEndTag &&
-                mTextObject.tagCheck());
+    /**
+     * Note: This method safely return a reference just because the 
+     * returned object is immutable.
+     * @return 
+     */
+    public TextObject getTextObject() {
+        return mTextObject;
     }
 }

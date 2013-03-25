@@ -25,25 +25,25 @@ import com.googlecode.horkizein.XmlBuilder;
 import com.googlecode.horkizein.XmlTag;
 import com.googlecode.horkizein.XmlPushable;
 import com.googlecode.horkizein.XmlWritable;
-import com.googlecode.horkizein.obj.builders.FlatObjectBuilder;
+import com.googlecode.horkizein.obj.builders.FlatObjectDAO;
 import com.googlecode.horkizein.test.Constants;
 
 import android.util.Log;
 
 @XmlTag(
     value = "obj_with_list",
-    enclosedPushables = FlatObject.class
+    enclosedPushables = FlatObjectDAO.class
 )
 public class ObjectWithList implements XmlPushable, XmlWritable {
 
     private final static String TAG = "obj_with_list";
-    private final static String ITEM_TAG = FlatObject.TAG;
+    private final static String ITEM_TAG = FlatObjectDAO.TAG;
 
     //private int mListIndex;
-    private FlatObject mCurrentItem;
+    private FlatObjectDAO mCurrentItem;
     
-    private XmlBuilder<FlatObject> mFactory;
-    private List<FlatObject> mList;
+    private XmlBuilder<FlatObjectDAO> mFactory;
+    private List<FlatObjectDAO> mList;
     
     // watch dog
     private boolean wdPushedListItemStartTag;
@@ -55,7 +55,7 @@ public class ObjectWithList implements XmlPushable, XmlWritable {
      * Ctor with input list.
      * @param list
      *//*
-    public ObjectWithList(List<FlatObject> list) {
+    public ObjectWithList(List<FlatObjectDAO> list) {
         mFactory = new FlatObjectBuilder();
         mList = list;
         mCurrentItem = null;
@@ -66,7 +66,7 @@ public class ObjectWithList implements XmlPushable, XmlWritable {
      *//*
     public ObjectWithList() {
         mFactory = new FlatObjectBuilder();
-        mList = new ArrayList<FlatObject>();
+        mList = new ArrayList<FlatObjectDAO>();
         mCurrentItem = null;
     }
 
@@ -105,7 +105,7 @@ public class ObjectWithList implements XmlPushable, XmlWritable {
             wdPushedListItemStartTag = true;
             wdPushedItemStartTagCount++;
             // build the item through the factory
-            mCurrentItem = mFactory.getInstance();
+            mCurrentItem = mFactory.build();
         }
 
         if (wdPushedListItemStartTag == true) {
@@ -153,7 +153,7 @@ public class ObjectWithList implements XmlPushable, XmlWritable {
     public void writeXml(XmlSerializer out) throws IOException, IllegalStateException, IllegalArgumentException {
         out.startTag("", TAG);
         if (mList != null) {
-            for (FlatObject ai : mList) {
+            for (FlatObjectDAO ai : mList) {
                 ai.writeXml(out);
             }
         }
@@ -172,8 +172,8 @@ public class ObjectWithList implements XmlPushable, XmlWritable {
             Log.d(Constants.PACKAGE_TAG_TEST, "ObjectWithList.equals(): o.mList.size() is " + o.mList.size());
 
             int i = 0;
-            for (FlatObject fo : mList) {
-                FlatObject objFo = o.mList.get(i);
+            for (FlatObjectDAO fo : mList) {
+                FlatObjectDAO objFo = o.mList.get(i);
                 if (fo.equals(objFo)) {
                     Log.d(Constants.PACKAGE_TAG_TEST, "ObjectWithList.equals(): Objects #" + i + " are equals");
                 } else {
@@ -192,7 +192,7 @@ public class ObjectWithList implements XmlPushable, XmlWritable {
     public boolean tagCheck() {
         boolean listCheck = true;
 
-        for (FlatObject ai : mList) {
+        for (FlatObjectDAO ai : mList) {
             listCheck &= ai.tagCheck();
         }
 

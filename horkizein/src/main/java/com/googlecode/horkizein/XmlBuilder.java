@@ -15,17 +15,15 @@
  */
 package com.googlecode.horkizein;
 
-import com.googlecode.horkizein.XmlPushable;
-
 /**
  * Interface for building XmlPushable objects.
  * @param <T> The generic type to build.
  */
-public interface XmlBuilder<T extends XmlPushable> {
+public interface XmlBuilder<T> {
     /**
      * Create factory method.
      * @return The new object.
      */
-    T getInstance();
+    T build();
 }
 
