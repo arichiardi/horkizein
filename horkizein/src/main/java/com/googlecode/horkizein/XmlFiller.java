@@ -165,7 +165,10 @@ public final class XmlFiller {
                 ///////////////////////////////////////////////////////////
                 if (rootItem == null) {
                     // Looking for a registered item and get the builder
-                    rootItem = (XmlPushable<?>) mPrototypeMap.get(currentTag).shallowClone();
+                    XmlPushable<?> prototype = mPrototypeMap.get(currentTag);
+                    if (prototype != null) {
+                        rootItem = prototype.shallowClone();
+                    }
                     // Adding new instance to the Filled Object map
                     mXmlPushableMap.get(currentTag).add(rootItem);
                     // Getting the accepted tag list.
@@ -193,7 +196,10 @@ public final class XmlFiller {
                 ///////////////////////////////////////////////////////////
                 if (rootItem == null) {
                     // Looking for a registered item and get the builder
-                    rootItem = (XmlPushable<?>) mPrototypeMap.get(currentTag).shallowClone();
+                    XmlPushable<?> prototype = mPrototypeMap.get(currentTag);
+                    if (prototype != null) {
+                        rootItem = prototype.shallowClone();
+                    }
                     // Adding new instance to the Filled Object map
                     mXmlPushableMap.get(currentTag).add(rootItem);
                     // Getting the accepted tag list.
@@ -291,7 +297,9 @@ public final class XmlFiller {
             rootTag = xmlTag.value();
         }
         if (rootTag != null) {
-            return (K) firstPushableOf(rootTag);
+            // Workaround for:
+            //  XmlFiller.java:[294,35] invalid inferred types for T,K; inferred type does not conform to declared bound(s)
+            return this.<T, K>firstPushableOf(rootTag);
         } else {
             return null;
         }

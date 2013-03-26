@@ -4,11 +4,13 @@ public class NoTextObject {
 
     public final static String TAG = "no_text_obj";
     
+    private final String mMyText;
     private final TextObject mTextObject;
     
     private String mSupposedlyNoText = "s0me TeXt, 4 T3st1ng";
 
-    public NoTextObject(TextObject textObject) { 
+    public NoTextObject(String myText, TextObject textObject) { 
+        mMyText = myText;
         mTextObject = textObject;
     }
 

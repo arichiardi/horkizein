@@ -16,7 +16,6 @@
 package com.googlecode.horkizein;
 
 import java.io.IOException;
-import org.xmlpull.v1.XmlSerializer;
 
 /**
  * XmlWritable object contract.

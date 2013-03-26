@@ -35,7 +35,7 @@ public class NoTextObjectDAO implements XmlPushable<NoTextObject>, XmlWritable<N
     
     public NoTextObjectDAO(XmlSerializer serializer) { 
         mSerializer = serializer;
-        mTextObjectDAO = new TextObjectDAO();
+        mTextObjectDAO = new TextObjectDAO(serializer);
     }
     
     @Override
@@ -48,14 +48,11 @@ public class NoTextObjectDAO implements XmlPushable<NoTextObject>, XmlWritable<N
     @Override
     public void pushStartTag(String tag) {
         Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushStartTag() - TAG: " + tag);
-
-        if (wdPushedStartTag == true) {
-            if (tag.equals(TextObjectDAO.TAG)) {
-                wdPushedTextObjStartTag = true;
-            }
-            if (wdPushedTextObjStartTag == true) {
-                mTextObjectDAO.pushStartTag(tag);
-            }
+        if (tag.equals(TextObjectDAO.TAG)) {
+            wdPushedTextObjStartTag = true;
+        }
+        if (wdPushedTextObjStartTag == true) {
+            mTextObjectDAO.pushStartTag(tag);
         }
     }
 
@@ -77,7 +74,6 @@ public class NoTextObjectDAO implements XmlPushable<NoTextObject>, XmlWritable<N
 
     @Override
     public void pushEndTag(String tag) {
-        
         if (wdPushedStartTag == true) {
             mTextObjectDAO.pushEndTag(tag);
             if (tag.equals(TextObject.TAG)) {
@@ -85,7 +81,6 @@ public class NoTextObjectDAO implements XmlPushable<NoTextObject>, XmlWritable<N
                 wdPushedTextObjEndTag = true;
             }
         }
-        
         if (tag.equals(TAG)) {
             wdPushedStartTag = false;
             wdPushedEndTag = true;
@@ -102,7 +97,7 @@ public class NoTextObjectDAO implements XmlPushable<NoTextObject>, XmlWritable<N
 
     @Override
     public NoTextObject build() {
-        return new NoTextObject(mTextObjectDAO.build());
+        return new NoTextObject(mSupposedlyNoText, mTextObjectDAO.build());
     }
 
     @Override

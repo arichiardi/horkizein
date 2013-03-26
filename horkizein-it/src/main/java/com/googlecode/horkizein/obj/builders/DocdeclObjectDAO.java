@@ -111,6 +111,6 @@ public class DocdeclObjectDAO implements XmlPushable<DocdeclObject>, XmlWritable
 
     @Override
     public void writeXml(DocdeclObject object) throws IOException, IllegalStateException, IllegalArgumentException {
-        mSerializer.comment(object.getContent());
+        mSerializer.docdecl(object.getContent());
     }
 }

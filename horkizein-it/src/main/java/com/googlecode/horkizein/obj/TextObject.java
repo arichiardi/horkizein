@@ -39,5 +39,9 @@ public class TextObject {
         TextObject o = (TextObject)obj;
         return (mText == o.mText || (mText != null && mText.equals(o.mText)));
     }
+    
+    public String getText() {
+        return mText;
+    }
 }
 

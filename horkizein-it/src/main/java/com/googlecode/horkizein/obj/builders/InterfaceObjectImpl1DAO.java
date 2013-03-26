@@ -13,7 +13,7 @@ import com.googlecode.horkizein.obj.InterfaceObjectImpl1;
 import com.googlecode.horkizein.test.Constants;
 
 @XmlTag(InterfaceObjectImpl1DAO.TAG)
-public class InterfaceObjectImpl1DAO implements InterfaceObjectDAO, XmlWritable<InterfaceObjectImpl1>{
+public class InterfaceObjectImpl1DAO implements InterfaceObjectDAO, XmlWritable<InterfaceObjectImpl1> {
 
     public static final String TAG = "interface_impl1";
     

@@ -18,7 +18,7 @@ import com.googlecode.horkizein.test.Constants;
  * to receive.
  */
 @XmlTag(AbstractObjectImpl1.TAG)
-public class AbstractObjectImpl1DAO extends AbstractObjectDAO implements XmlWritable<AbstractObjectImpl1>{
+public class AbstractObjectImpl1DAO extends AbstractObjectDAO {
     
     private static final String TAG = AbstractObjectImpl1.TAG;
     
