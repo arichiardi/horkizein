@@ -15,12 +15,17 @@
  */
 package com.googlecode.horkizein.obj;
 
+import java.io.IOException;
+
+import org.xmlpull.v1.XmlSerializer;
+
 import com.googlecode.horkizein.XmlFiller;
+import com.googlecode.horkizein.XmlWritable;
 
 /**
  * Implementation of the DOCDECL xml section as a XmlPushable metadata object.
  */
-public class DocdeclObject {
+public class DocdeclObject implements XmlWritable {
     // This object tag
     public final static String TAG = XmlFiller.DOCDECL_TAG;
 
@@ -30,7 +35,7 @@ public class DocdeclObject {
     
     /**
      * Ctor.
-     * @param text Metadata content.
+     * @param content Metadata content.
      */
     public DocdeclObject(String content) {
         mContent = content;
@@ -53,6 +58,11 @@ public class DocdeclObject {
     
     public final String getContent() {
         return mContent;
+    }
+
+    @Override
+    public void writeXml(XmlSerializer serializer) throws IOException, IllegalStateException, IllegalArgumentException {
+        serializer.docdecl(mContent);
     }
 }
 

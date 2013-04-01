@@ -23,6 +23,7 @@ import com.googlecode.horkizein.XmlFiller;
 import com.googlecode.horkizein.XmlPushable;
 import com.googlecode.horkizein.XmlTag;
 import com.googlecode.horkizein.XmlWritable;
+import com.googlecode.horkizein.XmlWriter;
 import com.googlecode.horkizein.obj.HelloWorldObject;
 import com.googlecode.horkizein.test.Constants;
 
@@ -35,17 +36,19 @@ import android.util.Log;
  */
 @XmlTag (
     value = "helloWorld",
-    additionalTags = { "c", "java", XmlFiller.CDSECT_TAG }
+    additionalTags = { HelloWorldDAO.C_TAG,  HelloWorldDAO.JAVA_TAG, XmlFiller.CDSECT_TAG }
 )
-public class HelloWorldDAO implements XmlPushable<HelloWorldObject>, XmlWritable<HelloWorldObject> {
+public class HelloWorldDAO implements XmlPushable<HelloWorldObject>, XmlWriter {
 
     // Dependency
     private final XmlSerializer mSerializer;
     
     private static final String TAG = "helloWorld";
-    private static final String C_TAG = "c";
-    private static final String JAVA_TAG = "java";
-    private static final String FAVOURITE_ATTR = "favourite";
+    public static final String C_TAG = "c";
+    public static final String JAVA_TAG = "java";
+    public static final String FAVOURITE_ATTR = "favourite";
+
+    // Init value
     private static final String C_TEXT = "This is the C implementation.";
     private static final String JAVA_TEXT =  "This is the Java implementation.";
     private static final String NULL = "null";
@@ -194,22 +197,8 @@ public class HelloWorldDAO implements XmlPushable<HelloWorldObject>, XmlWritable
     }
 
     @Override
-    public void writeXml(HelloWorldObject object) throws IOException, IllegalStateException, IllegalArgumentException {
-        mSerializer.startTag("", TAG);
-        mSerializer.attribute("", FAVOURITE_ATTR, mFavouriteLanguage);
-        mSerializer.startTag("", C_TAG);
-        mSerializer.text(mCText);
-        
-        mHelloWorld_c.writeXml(mHelloWorld_c.build());
-        
-        mSerializer.endTag("", C_TAG);
-        mSerializer.startTag("", JAVA_TAG);
-        mSerializer.text(mJavaText);
-        
-        mHelloWorld_java.writeXml(mHelloWorld_java.build());
-        
-        mSerializer.endTag("", JAVA_TAG);
-        mSerializer.endTag("", TAG);
+    public void write(XmlWritable object) throws IOException, IllegalStateException, IllegalArgumentException {
+        object.writeXml(mSerializer);
     }
 }
 

@@ -1,10 +1,16 @@
 package com.googlecode.horkizein.obj;
 
-public class NoTextObject {
+import java.io.IOException;
+
+import org.xmlpull.v1.XmlSerializer;
+
+import com.googlecode.horkizein.XmlWritable;
+
+public class NoTextObject implements XmlWritable {
 
     public final static String TAG = "no_text_obj";
     
-    private final String mMyText;
+    private final String mMyText; // it is always empty
     private final TextObject mTextObject;
     
     private String mSupposedlyNoText = "s0me TeXt, 4 T3st1ng";
@@ -27,9 +33,16 @@ public class NoTextObject {
     /**
      * Note: This method safely return a reference just because the 
      * returned object is immutable.
-     * @return 
+     * @return A TextObject.
      */
     public TextObject getTextObject() {
         return mTextObject;
+    }
+
+    @Override
+    public void writeXml(XmlSerializer serializer) throws IOException, IllegalStateException, IllegalArgumentException {
+        serializer.startTag("", TAG);
+        mTextObject.writeXml(serializer);
+        serializer.endTag("", TAG);
     }
 }

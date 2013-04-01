@@ -17,11 +17,12 @@ package com.googlecode.horkizein.test.util;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
-import java.util.Collection;
+import java.util.Map;
 
 import org.xmlpull.v1.XmlSerializer;
 
 import com.googlecode.horkizein.XmlWritable;
+import com.googlecode.horkizein.XmlWriter;
 
 import android.content.Context;
 
@@ -49,12 +50,12 @@ public final class XmlDataCommitter {
      * @throws IllegalStateException 
      * @throws IOException 
      */
-    public <T> void commitData(XmlWritable<T> dao, T object) throws IllegalArgumentException, IllegalStateException, IOException {
+    public <T extends XmlWritable> void commitData(XmlWriter dao, T object) throws IllegalArgumentException, IllegalStateException, IOException {
         BufferedOutputStream buf = new BufferedOutputStream(mContext.openFileOutput(mFileName, Context.MODE_PRIVATE));
         mSerializer.setOutput(buf, mEncoding);
         mSerializer.startDocument(mEncoding, true);
         // do it
-        dao.writeXml(object);
+        dao.write(object);
         mSerializer.endDocument();
         mSerializer.flush();
         buf.close();
@@ -62,19 +63,19 @@ public final class XmlDataCommitter {
 
     /**
      * A useful Android specific method that writes XmlWritables on file.
-     * @param dao A data access object (XmlWritable interface)
-     * @param objects A collection to write onto a file.
+     * @param objMap Map of value/dao objects.
      * @throws IllegalArgumentException
      * @throws IllegalStateException
      * @throws IOException
      */
-    public <T> void commitData(XmlWritable<T> dao, Collection<T> objects) throws IllegalArgumentException, IllegalStateException, IOException {
+    public void commitData(Map<XmlWritable, XmlWriter> objMap) throws IllegalArgumentException, IllegalStateException, IOException {
         BufferedOutputStream buf = new BufferedOutputStream(mContext.openFileOutput(mFileName, Context.MODE_PRIVATE));
         mSerializer.setOutput(buf, mEncoding);
         mSerializer.startDocument(mEncoding, true);
         // do it
-        for (T object : objects) {
-            dao.writeXml(object);
+        for (XmlWritable object : objMap.keySet()) {
+            XmlWriter dao = objMap.get(object);
+            dao.write((XmlWritable)object);
         }
         mSerializer.endDocument();
         mSerializer.flush();

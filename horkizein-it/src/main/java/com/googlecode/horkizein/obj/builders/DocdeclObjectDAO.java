@@ -23,6 +23,7 @@ import com.googlecode.horkizein.XmlFiller;
 import com.googlecode.horkizein.XmlPushable;
 import com.googlecode.horkizein.XmlTag;
 import com.googlecode.horkizein.XmlWritable;
+import com.googlecode.horkizein.XmlWriter;
 import com.googlecode.horkizein.obj.DocdeclObject;
 import com.googlecode.horkizein.test.Constants;
 
@@ -32,7 +33,7 @@ import android.util.Log;
  * Implementation of the DOCDECL xml section as a XmlPushable metadata object.
  */
 @XmlTag(XmlFiller.DOCDECL_TAG)
-public class DocdeclObjectDAO implements XmlPushable<DocdeclObject>, XmlWritable<DocdeclObject> {
+public class DocdeclObjectDAO implements XmlPushable<DocdeclObject>, XmlWriter {
 
     // This object tag
     public final static String TAG = XmlFiller.DOCDECL_TAG;
@@ -108,9 +109,8 @@ public class DocdeclObjectDAO implements XmlPushable<DocdeclObject>, XmlWritable
         return new DocdeclObjectDAO(mSerializer);
     }
 
-
     @Override
-    public void writeXml(DocdeclObject object) throws IOException, IllegalStateException, IllegalArgumentException {
-        mSerializer.docdecl(object.getContent());
+    public void write(XmlWritable object) throws IOException, IllegalStateException, IllegalArgumentException {
+        object.writeXml(mSerializer);
     }
 }

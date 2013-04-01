@@ -7,10 +7,11 @@ import org.xmlpull.v1.XmlSerializer;
 import com.googlecode.horkizein.XmlPushable;
 import com.googlecode.horkizein.XmlTag;
 import com.googlecode.horkizein.XmlWritable;
+import com.googlecode.horkizein.XmlWriter;
 import com.googlecode.horkizein.obj.TextObject;
 
 @XmlTag (TextObjectDAO.TAG)
-public class TextObjectDAO implements XmlPushable<TextObject>, XmlWritable<TextObject> {
+public class TextObjectDAO implements XmlPushable<TextObject>, XmlWriter {
 
     public static final String TAG = TextObject.TAG;
     
@@ -32,13 +33,6 @@ public class TextObjectDAO implements XmlPushable<TextObject>, XmlWritable<TextO
     @Override
     public XmlPushable<TextObject> shallowClone() {
         return new TextObjectDAO(mSerializer);
-    }
-
-    @Override
-    public void writeXml(TextObject object) throws IOException, IllegalStateException, IllegalArgumentException {
-        mSerializer.startTag("", TAG);
-        mSerializer.text(object.getText());
-        mSerializer.endTag("", TAG);
     }
 
     @Override
@@ -70,5 +64,9 @@ public class TextObjectDAO implements XmlPushable<TextObject>, XmlWritable<TextO
     
     public boolean tagCheck() {
         return !wdPushedStartTag && wdPushedEndTag;
+    }
+    @Override
+    public void write(XmlWritable object) throws IOException, IllegalStateException, IllegalArgumentException {
+        object.writeXml(mSerializer);
     }
 }

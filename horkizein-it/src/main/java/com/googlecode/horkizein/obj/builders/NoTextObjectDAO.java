@@ -9,6 +9,7 @@ import android.util.Log;
 import com.googlecode.horkizein.XmlPushable;
 import com.googlecode.horkizein.XmlTag;
 import com.googlecode.horkizein.XmlWritable;
+import com.googlecode.horkizein.XmlWriter;
 import com.googlecode.horkizein.obj.NoTextObject;
 import com.googlecode.horkizein.obj.TextObject;
 import com.googlecode.horkizein.test.Constants;
@@ -17,7 +18,7 @@ import com.googlecode.horkizein.test.Constants;
     value = NoTextObjectDAO.TAG,
     enclosedPushables = TextObjectDAO.class
 )
-public class NoTextObjectDAO implements XmlPushable<NoTextObject>, XmlWritable<NoTextObject> {
+public class NoTextObjectDAO implements XmlPushable<NoTextObject>, XmlWriter {
 
     public final static String TAG = NoTextObject.TAG;
     
@@ -38,13 +39,6 @@ public class NoTextObjectDAO implements XmlPushable<NoTextObject>, XmlWritable<N
         mTextObjectDAO = new TextObjectDAO(serializer);
     }
     
-    @Override
-    public void writeXml(NoTextObject object) throws IOException, IllegalStateException, IllegalArgumentException {
-        mSerializer.startTag("", TAG);
-        mTextObjectDAO.writeXml(object.getTextObject());
-        mSerializer.endTag("", TAG);
-    }
-
     @Override
     public void pushStartTag(String tag) {
         Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushStartTag() - TAG: " + tag);
@@ -103,5 +97,10 @@ public class NoTextObjectDAO implements XmlPushable<NoTextObject>, XmlWritable<N
     @Override
     public XmlPushable<NoTextObject> shallowClone() {
         return new NoTextObjectDAO(mSerializer);
+    }
+
+    @Override
+    public void write(XmlWritable object) throws IOException, IllegalStateException, IllegalArgumentException {
+        object.writeXml(mSerializer);
     }
 }

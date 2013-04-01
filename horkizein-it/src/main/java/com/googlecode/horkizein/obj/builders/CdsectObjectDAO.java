@@ -23,6 +23,7 @@ import com.googlecode.horkizein.XmlFiller;
 import com.googlecode.horkizein.XmlPushable;
 import com.googlecode.horkizein.XmlTag;
 import com.googlecode.horkizein.XmlWritable;
+import com.googlecode.horkizein.XmlWriter;
 import com.googlecode.horkizein.obj.CdsectObject;
 import com.googlecode.horkizein.test.Constants;
 
@@ -32,7 +33,7 @@ import android.util.Log;
  * Implementation of the CDSECT xml section as a XmlPushable metadata object.
  */
 @XmlTag(XmlFiller.CDSECT_TAG)
-public class CdsectObjectDAO implements XmlPushable<CdsectObject>, XmlWritable<CdsectObject> {
+public class CdsectObjectDAO implements XmlPushable<CdsectObject>, XmlWriter {
 
     // This object tag
     public final static String TAG = XmlFiller.CDSECT_TAG;
@@ -109,8 +110,8 @@ public class CdsectObjectDAO implements XmlPushable<CdsectObject>, XmlWritable<C
     }
     
     @Override
-    public void writeXml(CdsectObject object) throws IOException, IllegalStateException, IllegalArgumentException {
-        mSerializer.cdsect(object.getContent());
+    public void write(XmlWritable object) throws IOException, IllegalStateException, IllegalArgumentException {
+        object.writeXml(mSerializer);
     }
 
     @Override

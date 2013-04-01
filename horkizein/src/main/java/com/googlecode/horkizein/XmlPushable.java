@@ -17,11 +17,11 @@ package com.googlecode.horkizein;
 
 /**
  * XmlPushable object contract. The classes implementing this interface are intended
- * to be used as mutable builders for the target value objects. The build() method is
- * never called by the framework, while clone() is necessary to build and store instances
- * internally.
- * The {@link XmlTag} annotation is necessary for recursively pushing the dependent objects.
- * @param <T> The (immutable) instance to build.
+ * to be used as mutable builders for the target value objects. The build() method can be
+ * implemented to create immutable instances, while clone() is necessary to copy and store
+ * instances of XmlPushable in XmlFiller.
+ * The {@link XmlTag} annotation is necessary for recursively pushing dependent objects.
+ * @param <T> The (immutable) type to build.
  */
 public interface XmlPushable<T> extends XmlBuilder<T>, XmlPrototype<T> {
     /**

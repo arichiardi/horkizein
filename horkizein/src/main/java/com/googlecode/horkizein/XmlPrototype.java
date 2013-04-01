@@ -7,9 +7,9 @@ public interface XmlPrototype<T> {
      * be filled by XmlFiller, though this depends on the implementation and object structure.
      * For example, dependencies that need to be passed to the final object (the one created by
      * build(), which is preferably immutable) have to be copied with this method.<br/><br/>
-     * <i>An example:</i>
+     * <i>An example:</i>(TODO example)
      * <pre>
-     * &#64;XmlTag (TODO example)
+     * &#64;XmlTag 
      *   value = "helloWorld",
      *   additionalTags = { "c", "java", XmlFiller.CDSECT_TAG }
      * )

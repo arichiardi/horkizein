@@ -19,12 +19,14 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Collection;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 import com.googlecode.horkizein.XmlFiller;
 import com.googlecode.horkizein.XmlPushable;
+import com.googlecode.horkizein.test.Constants;
 
 import android.content.Context;
 
@@ -35,27 +37,29 @@ public class XmlDataReader {
     
     private final Context mContext;
     private final String mFileName;
+    private final XmlFiller mFiller;
     
-    public XmlDataReader(Context context, String filename) {
+    public XmlDataReader(Context context, String filename, XmlFiller xmlFiller) {
         mContext = context;
         mFileName = filename;
+        mFiller = xmlFiller;
     }
 
     /**
      * A custom method that fills an XmlPushable..
      * @param parser The parser we want to use.
-     * @param dao A data access object (implements XmlPushable interface).
-     * @param daoClass The class of the desired XmlPushable type.
+     * @param daoInstance A data access instance (implements XmlPushable interface).
+     * @param daoClass The class of the desired XmlPushable type (necessary because of Generics' type erasure).
      * @param context A context.
      * @return An instance of the requested object.
      * @throws FileNotFoundException
      * @throws XmlPullParserException
      * @throws IOException
      */
-    public <T, K extends XmlPushable<T>> K read(XmlPullParser parser, XmlPushable<T> dao, Class<K> daoClass) throws FileNotFoundException, XmlPullParserException, IOException {
+    public <E extends XmlPushable<?>> E read(XmlPushable<?> daoInstance, Class<E> daoClass) throws FileNotFoundException, XmlPullParserException, IOException {
         // Prints the file for debugging.
         /*try {
-            InputStreamReader inputStream = new InputStreamReader(mContext.openFileInput(inFileName));
+            InputStreamReader inputStream = new InputStreamReader(mContext.openFileInput(fileName));
             BufferedReader bufReader = new BufferedReader(inputStream);
 
             String inputLine;
@@ -71,67 +75,52 @@ public class XmlDataReader {
         // Opens the file, buffers it and starts!
         InputStreamReader inputStream = new InputStreamReader(mContext.openFileInput(mFileName));
         BufferedReader bufReader = new BufferedReader(inputStream);
-        XmlFiller filler = new XmlFiller(parser);
         // register
-        filler.registerNode(dao);
-        parser.setInput(bufReader);
+        mFiller.registerNode(daoInstance);
+        mFiller.setInput(bufReader);
         // fill
-        filler.parse();
+        mFiller.parse();
         // close buffer
         bufReader.close();
-        return filler.firstPushableOf(daoClass);
+        return mFiller.firstOf(daoClass);
     }
 
     /**
-     * A custom method that fills a collection of XmlPushable.
-     * @param inParser The parser we want to use.
-     * @param inContext A context.
-     * @param clazzez List ofXmlPushables types.
-     * @param builders List of XmlBuilder.
-     * @param inFileName The input file name.
-     * @param includeMetadata True if you want to read XML Metadata as well.
-     * @return A list of XmlPushables.
+     * A custom method that fills a collection of XmlPushables.
+     * @param pushables Collection of desired XmlPushable instances.
+     * @return Kind of fluent interface here.
      * @throws FileNotFoundException
      * @throws XmlPullParserException
      * @throws IOException
      */
-    /*public static <T extends XmlPushable<T>> List<XmlPushable<T>> readMany(XmlPullParser inParser, Context inContext, List<Class<? extends XmlPushable>> clazzez, List<XmlBuilder<? extends XmlPushable>> builders, String inFileName) throws FileNotFoundException, XmlPullParserException, IOException {
-        Log.i(com.googlecode.horkizein.test.Constants.PACKAGE_TAG_TEST, "List filling");
+    public XmlFiller readMany(Collection<XmlPushable<?>> pushables) throws FileNotFoundException, XmlPullParserException, IOException {
         // Prints the file for debugging.
         try {
-            InputStreamReader inputStream = new InputStreamReader(inContext.openFileInput(inFileName));
+            InputStreamReader inputStream = new InputStreamReader(mContext.openFileInput(mFileName));
             BufferedReader bufReader = new BufferedReader(inputStream);
 
             String inputLine;
 
             while ((inputLine = bufReader.readLine()) != null) {
-                android.util.Log.i(com.googlecode.horkizein.test.Constants.PACKAGE_TAG_TEST, inputLine);
+                android.util.Log.i(Constants.PACKAGE_TAG_TEST, inputLine);
             }
             bufReader.close();
         } catch (IOException e) {
-            android.util.Log.i(com.googlecode.horkizein.test.Constants.PACKAGE_TAG_TEST, e.getMessage());
+            android.util.Log.i(Constants.PACKAGE_TAG_TEST, e.getMessage());
         }
-        
         // Opens the file, buffers it and starts!
-        InputStreamReader inputStream = new InputStreamReader(inContext.openFileInput(inFileName));
+        InputStreamReader inputStream = new InputStreamReader(mContext.openFileInput(mFileName));
         BufferedReader bufReader = new BufferedReader(inputStream);
 
-        XmlFiller filler = new XmlFiller(inParser);
         // register
-        for (int i = 0; i < clazzez.size(); i++) {
-            filler.registerNode(clazzez.get(i), builders.get(i));
+        for (XmlPushable<?> pushable : pushables) {
+            mFiller.registerNode(pushable);
         }
-        inParser.setInput(bufReader);
+        mFiller.setInput(bufReader);
         // fill
-        filler.parse();
+        mFiller.parse();
         // close buffer
         bufReader.close();
-        
-        List<XmlPushable> result = new ArrayList<XmlPushable>();
-        for (int i = 0; i < clazzez.size(); i++) {
-            result.addAll(filler.getInstanceListOf(clazzez.get(i)));
-        }
-        return result;
-    }*/
-
+        return mFiller;
+    }
 }

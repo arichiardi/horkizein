@@ -15,11 +15,18 @@
  */
 package com.googlecode.horkizein.obj;
 
+import java.io.IOException;
+
+import org.xmlpull.v1.XmlSerializer;
+
+import com.googlecode.horkizein.XmlWritable;
+import com.googlecode.horkizein.obj.builders.FlatObjectDAO;
+
 /**
  * Implementation of an object without any XmlPushable child. It contains four attributes and four tags.
  */
 
-public class FlatObject {
+public class FlatObject implements XmlWritable {
     // This object tag
     public final static String TAG = "flat_obj";
 
@@ -103,6 +110,43 @@ public class FlatObject {
 
     public final String getStringAttr() {
         return mStringAttr;
+    }
+
+    @Override
+    public void writeXml(XmlSerializer serializer) throws IOException, IllegalStateException, IllegalArgumentException {
+
+        serializer.startTag("", TAG);
+
+        if (mBooleanAttr) {
+            serializer.attribute("", FlatObjectDAO.BOOLEAN_ATTR, FlatObjectDAO.XML_TRUE);
+        } else {
+            serializer.attribute("", FlatObjectDAO.BOOLEAN_ATTR, FlatObjectDAO.XML_FALSE);
+        }
+        serializer.attribute("", FlatObjectDAO.INTEGER_ATTR, String.valueOf(mIntegerAttr));
+        serializer.attribute("", FlatObjectDAO.DOUBLE_ATTR, String.valueOf(mDoubleAttr));
+        serializer.attribute("", FlatObjectDAO.STRING_ATTR, mStringAttr);
+
+        serializer.startTag("", FlatObjectDAO.BOOLEAN_TAG);
+        if (mBooleanTag) {
+            serializer.text(FlatObjectDAO.XML_TRUE);
+        } else {
+            serializer.text(FlatObjectDAO.XML_FALSE);
+        }
+        serializer.endTag("", FlatObjectDAO.BOOLEAN_TAG);
+
+        serializer.startTag("", FlatObjectDAO.INTEGER_TAG);
+        serializer.text(String.valueOf(mIntegerTag));
+        serializer.endTag("", FlatObjectDAO.INTEGER_TAG);
+
+        serializer.startTag("", FlatObjectDAO.DOUBLE_TAG);
+        serializer.text(String.valueOf(mDoubleTag));
+        serializer.endTag("", FlatObjectDAO.DOUBLE_TAG);
+
+        serializer.startTag("", FlatObjectDAO.STRING_TAG);
+        serializer.text(mStringTag);
+        serializer.endTag("", FlatObjectDAO.STRING_TAG);
+
+        serializer.endTag("", TAG);
     }
 }
 

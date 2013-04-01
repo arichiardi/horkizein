@@ -23,6 +23,7 @@ import com.googlecode.horkizein.XmlFiller;
 import com.googlecode.horkizein.XmlPushable;
 import com.googlecode.horkizein.XmlTag;
 import com.googlecode.horkizein.XmlWritable;
+import com.googlecode.horkizein.XmlWriter;
 import com.googlecode.horkizein.obj.CommentObject;
 import com.googlecode.horkizein.test.Constants;
 
@@ -32,7 +33,7 @@ import android.util.Log;
  * Implementation of the COMMENT xml section as a XmlPushable metadata object.
  */
 @XmlTag(XmlFiller.COMMENT_TAG)
-public class CommentObjectDAO implements XmlPushable<CommentObject>, XmlWritable<CommentObject> {
+public class CommentObjectDAO implements XmlPushable<CommentObject>, XmlWriter {
 
     // This object tag
     public final static String TAG = XmlFiller.COMMENT_TAG;
@@ -118,9 +119,8 @@ public class CommentObjectDAO implements XmlPushable<CommentObject>, XmlWritable
         return new CommentObjectDAO(mSerializer);
     }
 
-
     @Override
-    public void writeXml(CommentObject object) throws IOException, IllegalStateException, IllegalArgumentException {
-        mSerializer.comment(object.getContent());
+    public void write(XmlWritable object) throws IOException, IllegalStateException, IllegalArgumentException {
+        object.writeXml(mSerializer);
     }
 }

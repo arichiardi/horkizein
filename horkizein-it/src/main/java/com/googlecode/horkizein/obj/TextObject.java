@@ -15,10 +15,16 @@
  */
 package com.googlecode.horkizein.obj;
 
+import java.io.IOException;
+
+import org.xmlpull.v1.XmlSerializer;
+
+import com.googlecode.horkizein.XmlWritable;
+
 /**
  * Implementation of XmlPushable which contains just text.
  */
-public class TextObject {
+public class TextObject implements XmlWritable {
     // This object tag
     public final static String TAG = "text_obj";
 
@@ -42,6 +48,13 @@ public class TextObject {
     
     public String getText() {
         return mText;
+    }
+
+    @Override
+    public void writeXml(XmlSerializer serializer) throws IOException, IllegalStateException, IllegalArgumentException {
+        serializer.startTag("", TAG);
+        serializer.text(mText);
+        serializer.endTag("", TAG);
     }
 }
 

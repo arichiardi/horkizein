@@ -15,10 +15,16 @@
  */
 package com.googlecode.horkizein.obj;
 
+import java.io.IOException;
+
+import org.xmlpull.v1.XmlSerializer;
+
+import com.googlecode.horkizein.XmlWritable;
+
 /**
  * Implementation of the CDSECT xml section as a XmlPushable metadata object.
  */
-public class CdsectObject {
+public class CdsectObject implements XmlWritable {
     // the text inside this xml section
     private final String mContent;
     private int mHashCode;
@@ -48,6 +54,11 @@ public class CdsectObject {
 
     public final String getContent() {
         return mContent;
+    }
+
+    @Override
+    public void writeXml(XmlSerializer serializer) throws IOException, IllegalStateException, IllegalArgumentException {
+        serializer.cdsect(mContent);
     }
 }
 

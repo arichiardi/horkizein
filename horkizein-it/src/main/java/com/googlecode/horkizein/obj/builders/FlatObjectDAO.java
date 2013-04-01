@@ -22,6 +22,7 @@ import org.xmlpull.v1.XmlSerializer;
 import com.googlecode.horkizein.XmlPushable;
 import com.googlecode.horkizein.XmlTag;
 import com.googlecode.horkizein.XmlWritable;
+import com.googlecode.horkizein.XmlWriter;
 import com.googlecode.horkizein.obj.FlatObject;
 import com.googlecode.horkizein.test.Constants;
 
@@ -35,7 +36,7 @@ import android.util.Log;
     additionalTags = { FlatObjectDAO.BOOLEAN_TAG, FlatObjectDAO.STRING_TAG, 
                        FlatObjectDAO.INTEGER_TAG, FlatObjectDAO.DOUBLE_TAG }
 )
-public class FlatObjectDAO implements XmlPushable<FlatObject>, XmlWritable<FlatObject> {
+public class FlatObjectDAO implements XmlPushable<FlatObject>, XmlWriter {
     // This object tag
     public final static String TAG = "flat_obj";
     
@@ -183,43 +184,6 @@ public class FlatObjectDAO implements XmlPushable<FlatObject>, XmlWritable<FlatO
         return sb.toString();
     }
     
-    @Override
-    public void writeXml(FlatObject object) throws IOException, IllegalStateException, IllegalArgumentException {
-
-        mSerializer.startTag("", TAG);
-
-        if (object.getBooleanAttr()) {
-            mSerializer.attribute("", BOOLEAN_ATTR, XML_TRUE);
-        } else {
-            mSerializer.attribute("", BOOLEAN_ATTR, XML_FALSE);
-        }
-        mSerializer.attribute("", INTEGER_ATTR, String.valueOf(object.getIntegerAttr()));
-        mSerializer.attribute("", DOUBLE_ATTR, String.valueOf(object.getDoubleAttr()));
-        mSerializer.attribute("", STRING_ATTR, object.getStringAttr());
-
-        mSerializer.startTag("", BOOLEAN_TAG);
-        if (object.getBooleanTag()) {
-            mSerializer.text(XML_TRUE);
-        } else {
-            mSerializer.text(XML_FALSE);
-        }
-        mSerializer.endTag("", BOOLEAN_TAG);
-
-        mSerializer.startTag("", INTEGER_TAG);
-        mSerializer.text(String.valueOf(object.getIntegerTag()));
-        mSerializer.endTag("", INTEGER_TAG);
-
-        mSerializer.startTag("", DOUBLE_TAG);
-        mSerializer.text(String.valueOf(object.getDoubleTag()));
-        mSerializer.endTag("", DOUBLE_TAG);
-
-        mSerializer.startTag("", STRING_TAG);
-        mSerializer.text(object.getStringTag());
-        mSerializer.endTag("", STRING_TAG);
-
-        mSerializer.endTag("", TAG);
-    }
-
     public boolean tagCheck() {
         return (wdPushedStartTag &&
                 wdPushedEndTag &&
@@ -242,6 +206,11 @@ public class FlatObjectDAO implements XmlPushable<FlatObject>, XmlWritable<FlatO
     @Override
     public XmlPushable<FlatObject> shallowClone() {
         return new FlatObjectDAO(mSerializer);
+    }
+
+    @Override
+    public void write(XmlWritable object) throws IOException, IllegalStateException, IllegalArgumentException {
+        object.writeXml(mSerializer);
     }
 }
 

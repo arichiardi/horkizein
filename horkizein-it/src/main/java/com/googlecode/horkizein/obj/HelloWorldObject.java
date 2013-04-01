@@ -15,17 +15,21 @@
  */
 package com.googlecode.horkizein.obj;
 
+import java.io.IOException;
+
+import org.xmlpull.v1.XmlSerializer;
+
+import com.googlecode.horkizein.XmlWritable;
+import com.googlecode.horkizein.obj.builders.HelloWorldDAO;
+
 /**
  * Horkizein implementation of "Hello World!". The class contains two tags, one for the C and one for the Java
  * implementation. The code is enclosed in a CDATA section. The attribute "favourite" specifies which one is
  * preferred by a fictitious application.
  */
-public class HelloWorldObject {
+public class HelloWorldObject implements XmlWritable {
 
     public static final String TAG = "helloWorld";
-    public static final String C_TAG = "c";
-    public static final String JAVA_TAG = "java";
-    public static final String FAVOURITE_ATTR = "favourite";
 
     private final String mFavouriteLanguage;
     private final String mCText;
@@ -85,7 +89,7 @@ public class HelloWorldObject {
     /**
      * Note: This method safely return a reference just because the 
      * returned object is immutable.
-     * @return 
+     * @return A Cdsect Object.
      */
     public final CdsectObject getHelloWorld_c() {
         return mHelloWorld_c;
@@ -93,10 +97,25 @@ public class HelloWorldObject {
     /**
      * Note: This method safely return a reference just because the 
      * returned object is immutable.
-     * @return 
+     * @return A Cdsect Object.
      */
     public final CdsectObject getHelloWorld_java() {
         return mHelloWorld_java;
+    }
+
+    @Override
+    public void writeXml(XmlSerializer serializer) throws IOException, IllegalStateException, IllegalArgumentException {
+        serializer.startTag("", TAG);
+        serializer.attribute("", HelloWorldDAO.FAVOURITE_ATTR, mFavouriteLanguage);
+        serializer.startTag("", HelloWorldDAO.C_TAG);
+        serializer.text(mCText);
+        mHelloWorld_c.writeXml(serializer);
+        serializer.endTag("", HelloWorldDAO.C_TAG);
+        serializer.startTag("", HelloWorldDAO.JAVA_TAG);
+        serializer.text(mJavaText);
+        mHelloWorld_java.writeXml(serializer);
+        serializer.endTag("", HelloWorldDAO.JAVA_TAG);
+        serializer.endTag("", TAG);
     }
 }
 

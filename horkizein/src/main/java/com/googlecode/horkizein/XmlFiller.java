@@ -19,7 +19,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.HashMap;
@@ -108,7 +110,7 @@ public final class XmlFiller {
     }
 
     /**
-     * Sets the input and resets the underlying parser. This method accepts null
+     * Set the input and resets the underlying parser. This method accepts null
      * in both fields. 
      * @param inputStream An input stream. If null it will stop parsing and reset the state, allowing the parser to free resources.
      * @param inputEncoding The source encoding. If null the parser will try to determine the encoding from the Xml preamble (1.0 specification).
@@ -118,7 +120,7 @@ public final class XmlFiller {
         mParser.setInput(inputStream, inputEncoding);
     }
     /**
-     * Sets the input and resets the underlying parser. The parser will try to determine the encoding
+     * Set the input and resets the underlying parser. The parser will try to determine the encoding
      * from the Xml preamble (1.0 specification). This method accepts a null parameter.
      * @param inputStream An input stream. If null it will stop parsing and reset the state, allowing the parser to free resources.
      * @throws XmlPullParserException Thrown by the XmlPullParser instance.
@@ -127,7 +129,7 @@ public final class XmlFiller {
         mParser.setInput(inputStream, null);
     }
     /**
-     * Sets the input and resets the underlying parser. The parser will try to determine the encoding
+     * Set the input and resets the underlying parser. The parser will try to determine the encoding
      * from the Xml preamble (1.0 specification). This method accepts a null parameter.
      * @param in An input reader. If null it will stop parsing and reset the state, allowing the parser to free resources.
      * @throws XmlPullParserException Thrown by the XmlPullParser instance.
@@ -136,7 +138,7 @@ public final class XmlFiller {
         mParser.setInput(in);
     }
     /**
-     * Starts parsing the Xml file, pulling tag data from the XmlPullParser instance.
+     * Start parsing the Xml file, pulling tag data from the XmlPullParser instance.
      * This function will always fill a registered object starting from the outermost matching start tag.
      * Once this tag is found, no other registered tag is taken into consideration until an end tag
      * is found, pushing all the annotated {@link  XmlTag#enclosedPushables} and {@link XmlTag#additionalTags} tags.
@@ -242,7 +244,7 @@ public final class XmlFiller {
     }
 
     /**
-     * Registers an XmlPushable (this method will use reflection). The class needs
+     * Register an XmlPushable (this method will use reflection). The class needs
      * {@link XmlTag} annotation or this method will throw a RuntimeException.
      * (TODO, a custom parser to enforce the presence of the annotation at compile time).
      * @param clazz The XmlPushable class object to register.
@@ -250,69 +252,70 @@ public final class XmlFiller {
      */
     public void registerNode(XmlPushable<?> xmlPushable) {
         Class<?> clazz = xmlPushable.getClass();
-        // Gets the root annotation
-        if (clazz.isAnnotationPresent(XmlTag.class)) {
-            // Gets the root tag from annotations
-            XmlTag xmlTag = clazz.getAnnotation(XmlTag.class);
-            String rootTag = xmlTag.value();
-            // Just to need to check in one of the maps if the rootTag is already registered.
-            if (mTagMap.get(rootTag) == null) {
-                // Creates the tag set to insert in the tag map.
-                Set<String> tagSet = new HashSet<String>();
-                mTagMap.put(rootTag, tagSet);
-                // Saves the builder.
-                mPrototypeMap.put(rootTag, xmlPushable);
-                // Creates the list of instances in the Filled Object map
-                mXmlPushableMap.put(rootTag, new ArrayList<XmlPushable<?>>());
-                
-                // Starts to recursively collect the additional tags
-                collectTags(clazz, tagSet);
-            }
-        } else {
-            throw new RuntimeException(clazz.getCanonicalName() + " is declared XmlPushable but it doesn't have any @XmlTag annotation.");
+        // Is annotated?
+        if (!clazz.isAnnotationPresent(XmlTag.class)) throw new RuntimeException(clazz.getCanonicalName() + " is declared XmlPushable but it doesn't have any @XmlTag annotation.");
+        // Get the root tag from annotations
+        XmlTag xmlTag = clazz.getAnnotation(XmlTag.class);
+        String rootTag = xmlTag.value();
+        // Just to need to check in one of the maps if the rootTag is already registered.
+        if (mTagMap.get(rootTag) == null) {
+            // Creates the tag set to insert in the tag map.
+            Set<String> tagSet = new HashSet<String>();
+            mTagMap.put(rootTag, tagSet);
+            // Saves the builder.
+            mPrototypeMap.put(rootTag, xmlPushable);
+            // Creates the list of instances in the Filled Object map
+            mXmlPushableMap.put(rootTag, new ArrayList<XmlPushable<?>>());
+
+            // Starts to recursively collect the additional tags
+            collectTags(clazz, tagSet);
         }
     }
 
     /**
-     * Resets the list of registered objects and other internal data structures.
+     * Reset the list of registered objects and other internal data structures.
      */
     public void reset() {
         mPrototypeMap.clear();
         mTagMap.clear();
         mXmlPushableMap.clear();
     }
-    
+
     /**
-     * Gets the first instance of the desired XmlPushable class, if at least one instance has been correctly
-     * parsed from the Xml.
-     * Note: because of Java type erasure, the type T in XmlPushable<T> is not known at runtime.
+     * Get the first instance of the desired XmlPushable class, if at least one instance has been correctly
+     * parsed from the Xml. A RuntimeException is thrown if the class has not been annotated with {@link XmlTag}.
+     * Note: because of Java type erasure, the type T in XmlPushable<T> is not known at runtime. The registration
+     * is always based on annotation's <code>value</code>.
      * @param clazz An class object of a previously registered XmlPushable<T> type.
      * @return A filled instance of the specified class, null if none was found.
      */
-    public <T, K extends XmlPushable<T>> K firstPushableOf(Class<K> clazz) {
-        String rootTag = null;
-        // Gets the root annotation
-        if (clazz.isAnnotationPresent(XmlTag.class)) {
-            XmlTag xmlTag = clazz.getAnnotation(XmlTag.class);
-            rootTag = xmlTag.value();
-        }
+    public <E extends XmlPushable<?>> E firstOf(Class<E> clazz) {
+        // Is annotated?
+        if (!clazz.isAnnotationPresent(XmlTag.class)) throw new RuntimeException(clazz.getCanonicalName() + " is declared XmlPushable but it doesn't have any @XmlTag annotation.");
+        
+        XmlTag xmlTag = clazz.getAnnotation(XmlTag.class);
+        String rootTag = xmlTag.value();
         if (rootTag != null) {
             // Workaround for:
             //  XmlFiller.java:[294,35] invalid inferred types for T,K; inferred type does not conform to declared bound(s)
-            return this.<T, K>firstPushableOf(rootTag);
+            return firstOf(rootTag);
         } else {
             return null;
         }
     }
     
     /**
-     * Gets the first instance of the desired XmlPushable tag, if at least one instance has been correctly
+     * Get the first instance of the desired XmlPushable tag, if at least one instance has been correctly
      * parsed from the Xml.
-     * @param tagName The tag of a previously registered XmlPushable.
+     * @param tag The tag of a previously registered XmlPushable.
      * @return A filled instance of the specified tag, null if none was found.
      */
-    public <T, K extends XmlPushable<T>> K firstPushableOf(String tagName) {
-        return (K) mXmlPushableMap.get(tagName).get(0);
+    public <E extends XmlPushable<?>> E firstOf(String tag) {
+        List<XmlPushable<?>> pushableList = mXmlPushableMap.get(tag);
+        if (pushableList != null) {
+            return (E) pushableList.get(0);
+        }
+        return null;
     }
     
     /**
@@ -321,53 +324,124 @@ public final class XmlFiller {
      * @param tagStack A stack of tags.
      */
     private void collectTags(Class<?> clazz, Set<String> tagStack) {
-        // Gets the root annotation
-        if (clazz.isAnnotationPresent(XmlTag.class)) {
-            XmlTag xmlTag = clazz.getAnnotation(XmlTag.class);
-            String rootTag = xmlTag.value();
-            tagStack.add(rootTag);
-            
-            String[] additionalTags = xmlTag.additionalTags();
-            for (int i = 0; i < additionalTags.length; ++i) {
-                tagStack.add(additionalTags[i]);
-            }
-            
-            Class<? extends XmlPushable<?>>[] enclosedPushables = xmlTag.enclosedPushables();
-            for (int i = 0; i < enclosedPushables.length; ++i) {
-                collectTags(enclosedPushables[i], tagStack);
-            }
-        } else {
-            throw new RuntimeException(clazz.getCanonicalName() + " is declared XmlPushable but it doesn't have any @XmlTag annotation.");
+        // Is annotated?
+        if (!clazz.isAnnotationPresent(XmlTag.class)) throw new RuntimeException(clazz.getCanonicalName() + " is declared XmlPushable but it doesn't have any @XmlTag annotation.");
+        
+        XmlTag xmlTag = clazz.getAnnotation(XmlTag.class);
+        String rootTag = xmlTag.value();
+        tagStack.add(rootTag);
+        
+        String[] additionalTags = xmlTag.additionalTags();
+        for (int i = 0; i < additionalTags.length; ++i) {
+            tagStack.add(additionalTags[i]);
+        }
+        
+        Class<? extends XmlPushable<?>>[] enclosedPushables = xmlTag.enclosedPushables();
+        for (int i = 0; i < enclosedPushables.length; ++i) {
+            collectTags(enclosedPushables[i], tagStack);
         }
     }
     
-   /* *//**
-     * Gets a List containing the XmlPushable objects created after parsing the Xml file.
+    /**
+     * Get a List containing the XmlPushable(s) created after parsing the Xml file.
+     * A RuntimeException is thrown if the class has not been annotated with {@link XmlTag}.
      * @param clazz The class object of a previously registered XmlPushable.
-     * @return A  List. An empty List if the requested tag has not be found during the parsing.
-     *//*
-    public <E extends XmlPushable> List<E> getInstanceListOf(Class<E> clazz) {
-        String rootTag = "";
-        // Gets the root annotation
-        if (clazz.isAnnotationPresent(XmlTag.class)) {
-            XmlTag xmlTag = clazz.getAnnotation(XmlTag.class);
-            rootTag = xmlTag.value();
-        }
-        return getInstanceListOf(rootTag);
+     * @return A List. An empty List (not null) if the requested tag has not be found during the parsing.
+     * The returned List implementation is ArrayList. The list is a copy of the internal list,
+     * but the XmlPushable(s) in it are shared between the client and XmlFiller (XmlFiller
+     * is not inherently thread-safe). Resetting XmlFiller will reset the internal data structure
+     * and will let the client handle the references.
+     */
+    public <E extends XmlPushable<?>> List<E> listOf(Class<E> clazz) {
+        // Is annotated?
+        if (!clazz.isAnnotationPresent(XmlTag.class)) throw new RuntimeException(clazz.getCanonicalName() + " is declared XmlPushable but it doesn't have any @XmlTag annotation.");
+        
+        XmlTag xmlTag = clazz.getAnnotation(XmlTag.class);
+        String rootTag = xmlTag.value();
+        return listOf(rootTag);
     }
     
-    *//**
-     * Gets a List containing the objects created after parsing the Xml file.
+    /**
+     * Get a List containing the XmlPushable(s) created after parsing the Xml file.
      * @param tag The tag of a previously registered XmlPushable.
      * @return A List. An empty List if the requested tag has not be found during the parsing.
-     *//*
-    public <E extends XmlPushable> List<E> getInstanceListOf(String tag) {
-        List<XmlPushable> filledInstances = mXmlPushableMap.get(tag);
-        
+     * The returned List implementation is ArrayList. The list is a copy of the internal list,
+     * but the XmlPushable(s) in it are shared between the client and XmlFiller (XmlFiller
+     * is not inherently thread-safe). Resetting XmlFiller will reset the internal data structure
+     * and will let the client handle the references.
+     */
+    public <E extends XmlPushable<?>> List<E> listOf(String tag) {
+        List<XmlPushable<?>> pushableList = mXmlPushableMap.get(tag);
         List<E> returnedInstances = new ArrayList<E>();
-        if (filledInstances != null) {
-            returnedInstances.addAll((Collection<? extends E>) filledInstances);
+        if (pushableList != null) {
+            returnedInstances.addAll((Collection<? extends E>) pushableList);
         }
         return returnedInstances;
-    }*/
+    }
+    
+    /**
+     * Return an Iterator over the underlying parsed data. The iterator is fail-fast.
+     * * A RuntimeException is thrown if the class has not been annotated with {@link XmlTag}.
+     * @param clazz The class object of a previously registered XmlPushable.
+     * @return An Iterator. An empty Iterator if the requested tag has not be found during the parsing.
+     */
+    public <E extends XmlPushable<?>> Iterator<E> iterateOver(Class<E> clazz) {
+        // Is annotated?
+        if (!clazz.isAnnotationPresent(XmlTag.class)) throw new RuntimeException(clazz.getCanonicalName() + " is declared XmlPushable but it doesn't have any @XmlTag annotation.");
+        
+        XmlTag xmlTag = clazz.getAnnotation(XmlTag.class);
+        String rootTag = xmlTag.value();
+        return iterateOver(rootTag);
+    }
+    
+    /**
+     * Return an Iterator over the underlying parsed data. The Iterator is fail-fast.
+     * * A RuntimeException is thrown if the class has not been annotated with {@link XmlTag}.
+     * @param tag The tag of a previously registered XmlPushable.
+     * @return An Iterator. An empty Iterator if the requested tag has not be found during the parsing.
+     */
+    public <E extends XmlPushable<?>> Iterator<E> iterateOver(String tag) {
+        List<XmlPushable<?>> pushableList = mXmlPushableMap.get(tag);
+        if (pushableList != null) {
+            return (Iterator<E>) pushableList.iterator();
+        } else {
+            return new EmptyIterator<E>();
+        }
+    }
+    
+    /**
+     * Get a Map containing the XmlPushable(s) created after parsing the Xml file.
+     * @param classes The classes of previously registered XmlPushables.
+     * @return A Map. An empty List value is contained in the map if one of the requested classes
+     * has not been found during the parsing.
+     * The returned Map implementation is HashMap. The map's instances are shared between
+     * the client and XmlFiller (XmlFiller is not inherently thread-safe). Resetting XmlFiller
+     * will reset the internal data structure and will let the client handle the references.
+     */
+     public <T, E extends XmlPushable<?>> Map<Class<E>, List<E>> mapOf(Collection<Class<E>> classes) {
+        Map<Class<E>, List<E>> returnedMap = new HashMap<Class<E>, List<E>>();
+        for (Class<E> clazz : classes) {
+            returnedMap.put(clazz, listOf(clazz));
+        }
+        return returnedMap;
+     }
+    
+    /**
+     * Implementation of an Empty iterator to return to clients when the tag has not been found.
+     * @param <E>
+     */
+    private class EmptyIterator<E> implements Iterator<E> {
+        @Override
+        public boolean hasNext() {
+            return false;
+        }
+        @Override
+        public E next() {
+            return null;
+        }
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException("Doesn't support remove().");
+        }
+    }
 }

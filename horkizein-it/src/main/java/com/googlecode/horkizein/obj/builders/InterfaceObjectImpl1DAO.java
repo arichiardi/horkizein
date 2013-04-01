@@ -8,12 +8,13 @@ import android.util.Log;
 
 import com.googlecode.horkizein.XmlTag;
 import com.googlecode.horkizein.XmlWritable;
+import com.googlecode.horkizein.XmlWriter;
 import com.googlecode.horkizein.obj.InterfaceObject;
 import com.googlecode.horkizein.obj.InterfaceObjectImpl1;
 import com.googlecode.horkizein.test.Constants;
 
 @XmlTag(InterfaceObjectImpl1DAO.TAG)
-public class InterfaceObjectImpl1DAO implements InterfaceObjectDAO, XmlWritable<InterfaceObjectImpl1> {
+public class InterfaceObjectImpl1DAO implements InterfaceObjectDAO, XmlWriter {
 
     public static final String TAG = "interface_impl1";
     
@@ -43,7 +44,9 @@ public class InterfaceObjectImpl1DAO implements InterfaceObjectDAO, XmlWritable<
     @Override
     public void pushText(String tag, String text) {
         Log.d(Constants.PACKAGE_TAG_TEST, TAG + " pushText(" + text + ")");
-        mText = text;
+        if (tag.equals(TAG)) {
+            mText = text;
+        }
     }
 
     @Override
@@ -61,10 +64,9 @@ public class InterfaceObjectImpl1DAO implements InterfaceObjectDAO, XmlWritable<
         return new InterfaceObjectImpl1DAO(mSerializer);
     }
     
+
     @Override
-    public void writeXml(InterfaceObjectImpl1 object) throws IOException, IllegalStateException, IllegalArgumentException {
-        mSerializer.startTag("", TAG);
-        mSerializer.text(object.getText());
-        mSerializer.endTag("", TAG);
+    public void write(XmlWritable object) throws IOException, IllegalStateException, IllegalArgumentException {
+        object.writeXml(mSerializer);
     }
 }

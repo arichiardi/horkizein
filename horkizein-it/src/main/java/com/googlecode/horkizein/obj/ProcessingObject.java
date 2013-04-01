@@ -15,12 +15,17 @@
  */
 package com.googlecode.horkizein.obj;
 
+import java.io.IOException;
+
+import org.xmlpull.v1.XmlSerializer;
+
 import com.googlecode.horkizein.XmlFiller;
+import com.googlecode.horkizein.XmlWritable;
 
 /**
  * Implementation of the COMMENT xml section as a XmlPushable metadata object.
  */
-public class ProcessingObject {
+public class ProcessingObject implements XmlWritable {
     // This object tag
     public final static String TAG = XmlFiller.COMMENT_TAG;
 
@@ -53,5 +58,10 @@ public class ProcessingObject {
     
     public final String getContent() {
         return mContent;
+    }
+
+    @Override
+    public void writeXml(XmlSerializer serializer) throws IOException, IllegalStateException, IllegalArgumentException {
+        serializer.processingInstruction(mContent);
     }
 }

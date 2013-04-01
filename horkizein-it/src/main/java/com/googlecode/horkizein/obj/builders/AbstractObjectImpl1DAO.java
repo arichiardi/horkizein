@@ -21,12 +21,13 @@ import com.googlecode.horkizein.test.Constants;
 public class AbstractObjectImpl1DAO extends AbstractObjectDAO {
     
     private static final String TAG = AbstractObjectImpl1.TAG;
-    
+    public static final String INT_ATTRIBUTE = "integer";
     // Dependency
     private final XmlSerializer mSerializer;
     
     private int mInt;
-
+    private String mString;
+    
     /**
      * ctor
      * @param serializer The serializer.
@@ -42,7 +43,7 @@ public class AbstractObjectImpl1DAO extends AbstractObjectDAO {
     
     @Override
     public AbstractObjectImpl1 build() {
-        return new AbstractObjectImpl1(mInt);
+        return new AbstractObjectImpl1(mInt, mString);
     }
 
     @Override
@@ -53,12 +54,17 @@ public class AbstractObjectImpl1DAO extends AbstractObjectDAO {
     @Override
     public void pushAttribute(String tag, String prefix, String name, String value) {
         Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushAttribute() - TAG: " + tag + " NAME: " + name +  " TEXT: " + value);
+        if (tag.equals(TAG) && name.equals(INT_ATTRIBUTE)) {
+            mInt = Integer.parseInt(value);
+        }
     }
 
     @Override
     public void pushText(String tag, String text) {
         Log.d(Constants.PACKAGE_TAG_TEST, TAG + " pushText(" + text + ")");
-        mInt = Integer.parseInt(text);
+        if (tag.equals(TAG)) {
+            mString = text;
+        }
     }
 
     @Override
@@ -70,11 +76,9 @@ public class AbstractObjectImpl1DAO extends AbstractObjectDAO {
     public XmlPushable<AbstractObject> shallowClone() {
         return new AbstractObjectImpl1DAO(mSerializer);
     }
-    
+
     @Override
-    public void writeXml(AbstractObjectImpl1 object) throws IOException, IllegalStateException, IllegalArgumentException {
-        mSerializer.startTag("", TAG);
-        mSerializer.text(String.valueOf(object.getInt()));
-        mSerializer.endTag("", TAG);
+    public void write(XmlWritable object) throws IllegalStateException, IllegalArgumentException, IOException {
+        object.writeXml(mSerializer);
     }
 }

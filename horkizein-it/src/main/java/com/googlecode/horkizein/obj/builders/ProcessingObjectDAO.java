@@ -23,6 +23,7 @@ import com.googlecode.horkizein.XmlFiller;
 import com.googlecode.horkizein.XmlPushable;
 import com.googlecode.horkizein.XmlTag;
 import com.googlecode.horkizein.XmlWritable;
+import com.googlecode.horkizein.XmlWriter;
 import com.googlecode.horkizein.obj.ProcessingObject;
 import com.googlecode.horkizein.test.Constants;
 
@@ -32,7 +33,7 @@ import android.util.Log;
  * Implementation of the PROCESSING xml section as a XmlPushable metadata object.
  */
 @XmlTag(XmlFiller.PROCESSING_TAG)
-public class ProcessingObjectDAO implements XmlPushable<ProcessingObject>, XmlWritable<ProcessingObject> {
+public class ProcessingObjectDAO implements XmlPushable<ProcessingObject>, XmlWriter {
     // This object tag
     public final static String TAG = XmlFiller.PROCESSING_TAG;
  
@@ -102,8 +103,8 @@ public class ProcessingObjectDAO implements XmlPushable<ProcessingObject>, XmlWr
     }
 
     @Override
-    public void writeXml(ProcessingObject object) throws IOException, IllegalStateException, IllegalArgumentException {
-        mSerializer.processingInstruction(object.getContent());
+    public void write(XmlWritable object) throws IOException, IllegalStateException, IllegalArgumentException {
+        object.writeXml(mSerializer);
     }
 }
 
