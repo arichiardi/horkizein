@@ -282,6 +282,129 @@ public final class XmlFiller {
     }
 
     /**
+     * Internal recursive method to collect the tags accepted by the XmlPushable object.
+     * @param clazz The XmlPushable class object.
+     * @param tagStack A stack of tags.
+     */
+    private void collectTags(Class<?> clazz, Set<String> tagStack) {
+        // Is annotated?
+        if (!clazz.isAnnotationPresent(XmlTag.class)) throw new RuntimeException(clazz.getCanonicalName() + " is declared XmlPushable but it doesn't have any @XmlTag annotation.");
+        
+        XmlTag xmlTag = clazz.getAnnotation(XmlTag.class);
+        String rootTag = xmlTag.value();
+        tagStack.add(rootTag);
+        
+        String[] additionalTags = xmlTag.additionalTags();
+        for (int i = 0; i < additionalTags.length; ++i) {
+            tagStack.add(additionalTags[i]);
+        }
+        
+        Class<? extends XmlPushable<?>>[] enclosedPushables = xmlTag.enclosedPushables();
+        for (int i = 0; i < enclosedPushables.length; ++i) {
+            collectTags(enclosedPushables[i], tagStack);
+        }
+    }
+    
+    /**
+     * Build the first instance of the desired type, if at least one instance has been correctly
+     * parsed from the Xml. A RuntimeException is thrown if the XmlPushable class has not been 
+     * annotated with {@link XmlTag}, because XmlFiller cannot identify the Xml tag without it.
+     * <p>
+     * Note: The registration is always based on {@link XmlTag}'s <code>value</code> and this parameterized
+     * method enforces the constraint between builder and built object. ClassCastException may occure in
+     * case of wrong assignment of the return type (Java would infer the wrong type).
+     * @param clazz An class object of a previously registered XmlPushable<T> type.
+     * @return A filled instance of the specified class, null if none was found.
+     */
+    public <T, E extends XmlPushable<T>> T buildFirstOf(Class<E> clazz) {
+        // Is annotated?
+        if (!clazz.isAnnotationPresent(XmlTag.class)) throw new RuntimeException(clazz.getCanonicalName() + " is declared XmlPushable but it doesn't have any @XmlTag annotation.");
+        
+        XmlTag xmlTag = clazz.getAnnotation(XmlTag.class);
+        String rootTag = xmlTag.value();
+        T built = null;
+        if (rootTag != null) {
+            // Workaround for:
+            //  XmlFiller.java:[294,35] invalid inferred types for T,K; inferred type does not conform to declared bound(s)
+            E pushable = firstOf(rootTag);
+            if (pushable != null) {
+                built = pushable.build();
+            }
+        }
+        return built;
+    }
+    
+    /**
+     * Build the first instance of the desired type, if at least one instance has been correctly
+     * parsed from the Xml. A RuntimeException is thrown if the XmlPushable class has not been 
+     * annotated with {@link XmlTag}, because XmlFiller cannot identify the Xml tag without it.
+     * <p>
+     * Note: The registration is always based on {@link XmlTag}'s <code>value</code> and this parameterized
+     * method enforces the constraint between builder and built object. ClassCastException may occure in
+     * case of wrong assignment of the return type (Java would infer the wrong type).
+     * @param tag The tag of a previously registered XmlPushable.
+     * @return A filled instance of the specified tag, null if none was found.
+     */
+    public <T, E extends XmlPushable<T>> T buildFirstOf(String tag) {
+        List<XmlPushable<?>> pushableList = mXmlPushableMap.get(tag);
+        T built = null;
+        if (pushableList != null) {
+            E pushable = (E) pushableList.get(0);
+            if (pushable != null) {
+                built = pushable.build();
+            }
+        }
+        return built;
+    }
+    
+    /**
+     * Build a list of instances of the desired type. A RuntimeException is thrown if the XmlPushable
+     * class has not been annotated with {@link XmlTag}, because XmlFiller cannot identify the Xml tag without it.
+     * <p>
+     * Note: The registration is always based on {@link XmlTag}'s <code>value</code> and this parameterized
+     * method enforces the constraint between builder and built object. ClassCastException may occure in
+     * case of wrong assignment of the return type (Java would infer the wrong type).
+     * @param clazz The class object of a previously registered XmlPushable.
+     * @return A List. An empty List (not null) if the requested Xml tag has not be found during the parsing.
+     * The returned List implementation is ArrayList. The list is a copy of the internal list,
+     * but the XmlPushable(s) in it are shared between the client and XmlFiller (XmlFiller
+     * is not inherently thread-safe). Resetting XmlFiller will reset the internal data structure
+     * and will let the client handle the references.
+     */
+    public <T, E extends XmlPushable<T>> List<T> buildListOf(Class<E> clazz) {
+        // Is annotated?
+        if (!clazz.isAnnotationPresent(XmlTag.class)) throw new RuntimeException(clazz.getCanonicalName() + " is declared XmlPushable but it doesn't have any @XmlTag annotation.");
+        
+        XmlTag xmlTag = clazz.getAnnotation(XmlTag.class);
+        String rootTag = xmlTag.value();
+        return buildListOf(rootTag);
+    }
+    
+    /**
+     * Build a list of instances of the desired type.
+     * <p>
+     * Note: The registration is always based on {@link XmlTag}'s <code>value</code> and this parameterized
+     * method enforces the constraint between builder and built object. ClassCastException may occure in
+     * case of wrong assignment of the return type (Java would infer the wrong type).
+     * @param clazz The class object of a previously registered XmlPushable.
+     * @return A List. An empty List (not null) if the requested Xml tag has not be found during the parsing.
+     * The returned List implementation is ArrayList. The list is a copy of the internal list,
+     * but the XmlPushable(s) in it are shared between the client and XmlFiller (XmlFiller
+     * is not inherently thread-safe). Resetting XmlFiller will reset the internal data structure
+     * and will let the client handle the references.
+     */
+    public <T, E extends XmlPushable<T>> List<T> buildListOf(String tag) {
+        List<XmlPushable<?>> pushableList = mXmlPushableMap.get(tag);
+        List<T> returnedInstances = new ArrayList<T>();
+        if (pushableList != null) {
+            for (XmlPushable<?> pushable : pushableList) {
+                returnedInstances.add((T)pushable.build());
+            }
+        }
+        return returnedInstances;
+    }
+    
+    /**
      * Get the first instance of the desired XmlPushable class, if at least one instance has been correctly
      * parsed from the Xml. A RuntimeException is thrown if the class has not been annotated with {@link XmlTag}.
      * Note: because of Java type erasure, the type T in XmlPushable<T> is not known at runtime. The registration
@@ -316,30 +439,6 @@ public final class XmlFiller {
             return (E) pushableList.get(0);
         }
         return null;
-    }
-    
-    /**
-     * Internal recursive method to collect the tags accepted by the XmlPushable object.
-     * @param clazz The XmlPushable class object.
-     * @param tagStack A stack of tags.
-     */
-    private void collectTags(Class<?> clazz, Set<String> tagStack) {
-        // Is annotated?
-        if (!clazz.isAnnotationPresent(XmlTag.class)) throw new RuntimeException(clazz.getCanonicalName() + " is declared XmlPushable but it doesn't have any @XmlTag annotation.");
-        
-        XmlTag xmlTag = clazz.getAnnotation(XmlTag.class);
-        String rootTag = xmlTag.value();
-        tagStack.add(rootTag);
-        
-        String[] additionalTags = xmlTag.additionalTags();
-        for (int i = 0; i < additionalTags.length; ++i) {
-            tagStack.add(additionalTags[i]);
-        }
-        
-        Class<? extends XmlPushable<?>>[] enclosedPushables = xmlTag.enclosedPushables();
-        for (int i = 0; i < enclosedPushables.length; ++i) {
-            collectTags(enclosedPushables[i], tagStack);
-        }
     }
     
     /**
@@ -408,23 +507,6 @@ public final class XmlFiller {
             return new EmptyIterator<E>();
         }
     }
-    
-    /**
-     * Get a Map containing the XmlPushable(s) created after parsing the Xml file.
-     * @param classes The classes of previously registered XmlPushables.
-     * @return A Map. An empty List value is contained in the map if one of the requested classes
-     * has not been found during the parsing.
-     * The returned Map implementation is HashMap. The map's instances are shared between
-     * the client and XmlFiller (XmlFiller is not inherently thread-safe). Resetting XmlFiller
-     * will reset the internal data structure and will let the client handle the references.
-     */
-     public <T, E extends XmlPushable<?>> Map<Class<E>, List<E>> mapOf(Collection<Class<E>> classes) {
-        Map<Class<E>, List<E>> returnedMap = new HashMap<Class<E>, List<E>>();
-        for (Class<E> clazz : classes) {
-            returnedMap.put(clazz, listOf(clazz));
-        }
-        return returnedMap;
-     }
     
     /**
      * Implementation of an Empty iterator to return to clients when the tag has not been found.

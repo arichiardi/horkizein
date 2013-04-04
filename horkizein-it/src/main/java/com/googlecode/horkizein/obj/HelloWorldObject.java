@@ -31,7 +31,11 @@ public class HelloWorldObject implements XmlWritable {
 
     public static final String TAG = "helloWorld";
 
-    private final String mFavouriteLanguage;
+    public static enum Favorite {
+        JAVA, C
+    }
+    
+    private final Favorite mFavoriteLanguage;
     private final String mCText;
     private final String mJavaText;
     
@@ -39,26 +43,12 @@ public class HelloWorldObject implements XmlWritable {
     private final CdsectObject mHelloWorld_c;
     private final CdsectObject mHelloWorld_java;
 
-    public HelloWorldObject(String favouriteLanguage, String cText, String javaText, CdsectObject c, CdsectObject java) {
-        mFavouriteLanguage = favouriteLanguage;
+    public HelloWorldObject(Favorite favouriteLanguage, String cText, String javaText, CdsectObject c, CdsectObject java) {
+        mFavoriteLanguage = favouriteLanguage;
         mCText = cText;
         mJavaText = javaText;
         mHelloWorld_c = c;
         mHelloWorld_java = java;
-        
-       /* mHelloWorld_c = new CdsectObject("main() {" +
-                "extrn a, b, c;" +
-                "putchar(a); putchar(b); putchar(c); putchar('!*n');" +
-                "}" +
-                "a \'hell\';" +
-                "b \'o, w\';" +
-                "c \'orld\';");
-
-        mHelloWorld_java = new CdsectObject("class HelloWorldApp {" +
-                "public static void main(String[] args) {" + 
-                "System.out.println(\"Hello World!\"); " +
-                "}" +
-                "}");*/
     }
 
     @Override
@@ -68,15 +58,15 @@ public class HelloWorldObject implements XmlWritable {
 
         HelloWorldObject o = (HelloWorldObject)obj;
 
-        return (mFavouriteLanguage.equals(o.mFavouriteLanguage) &&
+        return (mFavoriteLanguage.equals(o.mFavoriteLanguage) &&
                 mCText.equals(o.mCText) &&
                 mJavaText.equals(o.mJavaText) &&
                 (mHelloWorld_java == o.mHelloWorld_java || (mHelloWorld_java != null && mHelloWorld_java.equals(o.mHelloWorld_java))) &&
                 (mHelloWorld_c == o.mHelloWorld_c || (mHelloWorld_c != null && mHelloWorld_c.equals(o.mHelloWorld_c))));
     }
 
-    public final String getFavouriteLanguage() {
-        return mFavouriteLanguage;
+    public final Favorite getFavouriteLanguage() {
+        return mFavoriteLanguage;
     }
 
     public final String getCText() {
@@ -106,7 +96,15 @@ public class HelloWorldObject implements XmlWritable {
     @Override
     public void writeXml(XmlSerializer serializer) throws IOException, IllegalStateException, IllegalArgumentException {
         serializer.startTag("", TAG);
-        serializer.attribute("", HelloWorldDAO.FAVOURITE_ATTR, mFavouriteLanguage);
+        switch (mFavoriteLanguage) {
+        case C:
+            serializer.attribute("", HelloWorldDAO.FAVOURITE_ATTR, "java");
+            break;
+        case JAVA:
+            serializer.attribute("", HelloWorldDAO.FAVOURITE_ATTR, "c");
+            break;
+        }
+        
         serializer.startTag("", HelloWorldDAO.C_TAG);
         serializer.text(mCText);
         mHelloWorld_c.writeXml(serializer);

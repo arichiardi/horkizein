@@ -25,6 +25,7 @@ import com.googlecode.horkizein.XmlTag;
 import com.googlecode.horkizein.XmlWritable;
 import com.googlecode.horkizein.XmlWriter;
 import com.googlecode.horkizein.obj.HelloWorldObject;
+import com.googlecode.horkizein.obj.HelloWorldObject.Favorite;
 import com.googlecode.horkizein.test.Constants;
 
 import android.util.Log;
@@ -35,7 +36,7 @@ import android.util.Log;
  * preferred by a fictitious application.
  */
 @XmlTag (
-    value = "helloWorld",
+    value = HelloWorldDAO.TAG,
     additionalTags = { HelloWorldDAO.C_TAG,  HelloWorldDAO.JAVA_TAG, XmlFiller.CDSECT_TAG }
 )
 public class HelloWorldDAO implements XmlPushable<HelloWorldObject>, XmlWriter {
@@ -43,7 +44,7 @@ public class HelloWorldDAO implements XmlPushable<HelloWorldObject>, XmlWriter {
     // Dependency
     private final XmlSerializer mSerializer;
     
-    private static final String TAG = "helloWorld";
+    public static final String TAG = "helloWorld";
     public static final String C_TAG = "c";
     public static final String JAVA_TAG = "java";
     public static final String FAVOURITE_ATTR = "favourite";
@@ -61,7 +62,7 @@ public class HelloWorldDAO implements XmlPushable<HelloWorldObject>, XmlWriter {
     private boolean wdIsJavaStartTag;
     private boolean wdIsJavaEndTag;
 
-    private String mFavouriteLanguage;
+    private Favorite mFavoriteLanguage;
 
     private String mCText;
     private String mJavaText;
@@ -77,11 +78,7 @@ public class HelloWorldDAO implements XmlPushable<HelloWorldObject>, XmlWriter {
      */
     public HelloWorldDAO(XmlSerializer serializer) {
         mSerializer = serializer;
-        mFavouriteLanguage = JAVA_TAG;
-        mCText = C_TEXT;
-        mJavaText = JAVA_TEXT;
-        mHelloWorld_c = new CdsectObjectDAO(serializer);
-        mHelloWorld_java = new CdsectObjectDAO(serializer);
+        reset();
     }
 
     @Override
@@ -89,7 +86,12 @@ public class HelloWorldDAO implements XmlPushable<HelloWorldObject>, XmlWriter {
         Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushAttribute() - TAG: " + tag + " NAME: " + name +  " TEXT: " + value);
         if (wdPushedStartTag) {
             if (tag.equals(TAG) && name.equals(FAVOURITE_ATTR)) {
-                mFavouriteLanguage = value;
+                // ugly
+                if (value.equals("java") == true) {
+                    mFavoriteLanguage = Favorite.JAVA;
+                } else if (value.equals("c") == true) {
+                    mFavoriteLanguage = Favorite.C;
+                }
             }
         }
     }
@@ -99,9 +101,6 @@ public class HelloWorldDAO implements XmlPushable<HelloWorldObject>, XmlWriter {
         Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushStartTag() - TAG: " + tag);
         if (tag.equals(TAG)) {
             wdPushedStartTag = true;
-            mFavouriteLanguage = NULL;
-            mCText = NULL;
-            mJavaText = NULL;
         }
         if (wdPushedStartTag) {
             if (tag.equals(C_TAG)) {
@@ -142,7 +141,6 @@ public class HelloWorldDAO implements XmlPushable<HelloWorldObject>, XmlWriter {
         }
     }
 
-
     @Override
     public void pushEndTag(String tag) {
         Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushEndTag() - TAG: " + tag);
@@ -170,6 +168,14 @@ public class HelloWorldDAO implements XmlPushable<HelloWorldObject>, XmlWriter {
         }
     }
 
+    void reset() {
+        mFavoriteLanguage = Favorite.JAVA;
+        mCText = C_TEXT;
+        mJavaText = JAVA_TEXT;
+        mHelloWorld_c = new CdsectObjectDAO(mSerializer);
+        mHelloWorld_java = new CdsectObjectDAO(mSerializer);
+    }
+    
     /**
      * Simple check to see if we push tags in the correct order.
      * @return True or false.
@@ -187,8 +193,10 @@ public class HelloWorldDAO implements XmlPushable<HelloWorldObject>, XmlWriter {
 
     @Override
     public HelloWorldObject build() {
-       return new HelloWorldObject(mFavouriteLanguage, mCText, mJavaText,
-                                       mHelloWorld_c.build(),mHelloWorld_java.build());
+        HelloWorldObject instance = new HelloWorldObject(mFavoriteLanguage, mCText, mJavaText,
+                mHelloWorld_c.build(),mHelloWorld_java.build());
+        reset();
+        return instance;
     }
 
     @Override

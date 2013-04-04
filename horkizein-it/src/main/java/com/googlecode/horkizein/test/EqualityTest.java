@@ -41,6 +41,7 @@ import com.googlecode.horkizein.obj.DocdeclObject;
 import com.googlecode.horkizein.obj.DummyObject;
 import com.googlecode.horkizein.obj.FlatObject;
 import com.googlecode.horkizein.obj.HelloWorldObject;
+import com.googlecode.horkizein.obj.HelloWorldObject.Favorite;
 import com.googlecode.horkizein.obj.InterfaceObjectImpl1;
 import com.googlecode.horkizein.obj.NoTextObject;
 import com.googlecode.horkizein.obj.ProcessingObject;
@@ -50,6 +51,7 @@ import com.googlecode.horkizein.obj.builders.CommentObjectDAO;
 import com.googlecode.horkizein.obj.builders.DocdeclObjectDAO;
 import com.googlecode.horkizein.obj.builders.DummyDAO;
 import com.googlecode.horkizein.obj.builders.FlatObjectDAO;
+import com.googlecode.horkizein.obj.builders.HelloWorldDAO;
 import com.googlecode.horkizein.obj.builders.ProcessingObjectDAO;
 import com.googlecode.horkizein.obj.builders.TextObjectDAO;
 import com.googlecode.horkizein.test.Constants;
@@ -240,7 +242,7 @@ public class EqualityTest extends AndroidTestCase {
     @MediumTest
     public void testMetadataAndTags1() throws IllegalArgumentException, IllegalStateException, FileNotFoundException, XmlPullParserException, IOException {
 
-        Log.i(Constants.PACKAGE_TAG_TEST, "--- [" + TAG + ".testMetadataLongTextEquality2] ---");
+        Log.i(Constants.PACKAGE_TAG_TEST, "--- [" + TAG + ".testMetadataAndTags1] ---");
 
         DocdeclObject docdecl = new DocdeclObject("version=\"1.0\" encoding=\"UTF-8\"");
         CommentObject commentNotMultiple32 = new CommentObject("This is a comment. This kind of comment has to be" +
@@ -258,22 +260,15 @@ public class EqualityTest extends AndroidTestCase {
         readMap.add(mDocdeclDAO);
         readMap.add(mFlatDAO);
         readMap.add(mCommentDAO);
+        // Parse
+        mDataReader.readMany(readMap);
+        DocdeclObject docDst = mFiller.buildFirstOf(DocdeclObjectDAO.class);
+        FlatObject flatDst = mFiller.buildFirstOf(FlatObject.TAG);
+        CommentObject commDst = mFiller.buildFirstOf(CommentObjectDAO.class);
         
-        List<Class<XmlPushable<?>>> classesMap = new ArrayList<Class<XmlPushable<?>>>();
-        classesMap.add(DocdeclObjectDAO.class);
-        classesMap.add(FlatObjectDAO.class);
-        classesMap.add(CommentObjectDAO.class);
-        
-        mDataReader.readMany(readMap).mapOf(readMap);
-        
-        mFiller..get(DocdeclObjectDAO.class)
-        
-        assertTrue(docdecl.equals());
-        assertTrue(mFlatSrc.equals(dstList.get(1)));
-        assertTrue(commentNotMultiple32.equals(dstList.get(2)));
-        assertTrue(((DocdeclObject)dstList.get(0)).tagCheck());
-        assertTrue(((FlatObject)dstList.get(1)).tagCheck());
-        assertTrue(((CommentObject)dstList.get(2)).tagCheck());*/
+        assertTrue(docdecl.equals(docDst));
+        assertTrue(mFlatSrc.equals(flatDst));
+        assertTrue(commentNotMultiple32.equals(commDst));
         Log.i(Constants.PACKAGE_TAG_TEST, "-----------------------------------------");
     }
 
@@ -284,85 +279,41 @@ public class EqualityTest extends AndroidTestCase {
      * @throws FileNotFoundException
      * @throws XmlPullParserException
      * @throws IOException
-     *//*
+     */
     @MediumTest
     public void testHelloWorldEquality() throws IllegalArgumentException, IllegalStateException, FileNotFoundException, XmlPullParserException, IOException {
 
         Log.i(Constants.PACKAGE_TAG_TEST, "--- [" + TAG + ".testHelloWorldEquality] ---");
+        String cHelloWorld = "main() {" +
+                                "extrn a, b, c;" +
+                                "putchar(a); putchar(b); putchar(c); putchar('!*n');" +
+                             "}" +
+                             "a \'hell\';" +
+                             "b \'o, w\';" +
+                             "c \'orld\';";
 
-        HelloWorldObject mHelloWorldSrc = new HelloWorldObject();
+        String javaHelloWorld = "class HelloWorldApp {" +
+                                    "public static void main(String[] args) {" + 
+                                        "System.out.println(\"Hello World!\"); " +
+                                    "}" +
+                                "}";
+        
+        HelloWorldObject mHelloWorldSrc = new HelloWorldObject(Favorite.C, 
+                "The C implementation rocks!", "The Java implementation is...Java.",
+                new CdsectObject(cHelloWorld), new CdsectObject(javaHelloWorld));
 
-        Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".testHelloWorldEquality() open Android file: " + METADATA_FILE);
-        XmlDataCommitter.commitData(getContext(), METADATA_FILE, "UTF-8", mHelloWorldSrc); // serializing
+        HelloWorldDAO helloWorldDAO = new HelloWorldDAO(mSerializer);
+        mDataCommitter.commitData(helloWorldDAO, mHelloWorldSrc); // serializing
 
-        HelloWorldObject mHelloWorldDst = XmlDataReader.read(mParser, getContext(), HelloWorldObject.class, new HelloWorldObjectBuilder(), METADATA_FILE);
-
-        Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".testHelloWorldEquality() equals test");
-        assertTrue(mHelloWorldDst.equals(mHelloWorldSrc));
-        assertTrue(mHelloWorldDst.tagCheck());
+        HelloWorldDAO helloWorldReadDAO = mDataReader.read(helloWorldDAO, HelloWorldDAO.class);
+        assertNotSame(helloWorldDAO, helloWorldReadDAO);
+        
+        assertTrue(mHelloWorldSrc.equals(helloWorldReadDAO.build()));
+        assertTrue(helloWorldReadDAO.tagCheck());
         Log.i(Constants.PACKAGE_TAG_TEST, "-----------------------------------------");
     }
 
-    *//**
-     * Tests the equality of a duplicate metadata object (among others).
-     * @throws IllegalArgumentException
-     * @throws IllegalStateException
-     * @throws FileNotFoundException
-     * @throws XmlPullParserException
-     * @throws IOException
-     *//*
-    @MediumTest
-    public void testDuplicateMetadataObjsEquality() throws IllegalArgumentException, IllegalStateException, FileNotFoundException, XmlPullParserException, IOException {
-
-        Log.i(Constants.PACKAGE_TAG_TEST, "--- [" + TAG + ".testDuplicateMetadataObjsEquality] ---");
-
-        DocdeclObject docdecl = new DocdeclObject("version=\"1.0\" encoding=\"UTF-8\"");
-        DocdeclObject docdecl1 = new DocdeclObject("version=\"2.0\" encoding=\"UTF-16\"");
-        ProcessingObjectDAO processing = new ProcessingObjectDAO("foo bar");
-        CommentObject comment = new CommentObject("this is a comment");
-        CdsectObject cdsect = new CdsectObject("public String foo() { return \"bar\" }; ");
-
-        // source list containing xml objects
-        ArrayList<XmlWritable> srcList = new ArrayList<XmlWritable>();
-        srcList.add(docdecl);
-        srcList.add(docdecl1);
-        srcList.add(processing);
-        srcList.add(comment);
-        srcList.add(cdsect);
-
-        Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".testMetadataObjsEquality() open Android file: " + METADATA_FILE);
-        XmlDataCommitter.commitData(getContext(), METADATA_FILE, "UTF-8", srcList); // serializing
-
-        List<Class<? extends XmlPushable>> classList = new ArrayList<Class<? extends XmlPushable>>();
-        classList.add(DocdeclObject.class);
-        classList.add(ProcessingObjectDAO.class);
-        classList.add(CommentObject.class);
-        classList.add(CdsectObject.class);
-        
-        List<XmlBuilder<? extends XmlPushable>> builderList = new ArrayList<XmlBuilder<? extends XmlPushable>>();
-        builderList.add(new DocdeclObjectBuilder());
-        builderList.add(new ProcessingObjectBuilder());
-        builderList.add(new CommentObjectBuilder());
-        builderList.add(new CdsectObjectBuilder());
-        
-        List<XmlPushable> dstList = XmlDataReader.readMany(mParser, getContext(), classList, builderList, METADATA_FILE);
-
-        assertTrue(docdecl.equals(dstList.get(0)));
-        assertTrue(docdecl1.equals(dstList.get(1)));
-        assertTrue(processing.equals(dstList.get(2)));
-        assertTrue(comment.equals(dstList.get(3)));
-        assertTrue(cdsect.equals(dstList.get(4)));
-
-        assertTrue(((DocdeclObject)dstList.get(0)).tagCheck());
-        assertTrue(((DocdeclObject)dstList.get(1)).tagCheck());
-        assertTrue(((ProcessingObjectDAO)dstList.get(2)).tagCheck());
-        assertTrue(((CommentObject)dstList.get(3)).tagCheck());
-        assertTrue(((CdsectObject)dstList.get(4)).tagCheck());
-
-        Log.i(Constants.PACKAGE_TAG_TEST, "-----------------------------------------");
-    }
-
-    *//**
+    /**
     * Tests the equality of a multiple duplicate metadata object (among others).
     * @throws IllegalArgumentException
     * @throws IllegalStateException
