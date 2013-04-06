@@ -1,10 +1,8 @@
-package com.googlecode.horkizein.obj.builders;
+package com.googlecode.horkizein.obj.daos;
 
 import java.io.IOException;
 
 import org.xmlpull.v1.XmlSerializer;
-
-import android.util.Log;
 
 import com.googlecode.horkizein.XmlPushable;
 import com.googlecode.horkizein.XmlTag;
@@ -12,7 +10,6 @@ import com.googlecode.horkizein.XmlWritable;
 import com.googlecode.horkizein.XmlWriter;
 import com.googlecode.horkizein.obj.NoTextObject;
 import com.googlecode.horkizein.obj.TextObject;
-import com.googlecode.horkizein.test.Constants;
 
 @XmlTag (
     value = NoTextObjectDAO.TAG,
@@ -41,12 +38,14 @@ public class NoTextObjectDAO implements XmlPushable<NoTextObject>, XmlWriter {
     
     @Override
     public void pushStartTag(String tag) {
-        Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushStartTag() - TAG: " + tag);
-        if (tag.equals(TextObjectDAO.TAG)) {
-            wdPushedTextObjStartTag = true;
+        if (tag.equals(TAG)) {
+            wdPushedStartTag = true;
         }
-        if (wdPushedTextObjStartTag == true) {
-            mTextObjectDAO.pushStartTag(tag);
+        if (wdPushedStartTag) {
+            if (tag.equals(TextObjectDAO.TAG)) {
+                wdPushedTextObjStartTag = true;
+                mTextObjectDAO.pushStartTag(tag);
+            }
         }
     }
 

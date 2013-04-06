@@ -20,7 +20,7 @@ import java.io.IOException;
 import org.xmlpull.v1.XmlSerializer;
 
 import com.googlecode.horkizein.XmlWritable;
-import com.googlecode.horkizein.obj.builders.FlatObjectDAO;
+import com.googlecode.horkizein.obj.daos.FlatObjectDAO;
 
 /**
  * Implementation of an object without any XmlPushable child. It contains four attributes and four tags.

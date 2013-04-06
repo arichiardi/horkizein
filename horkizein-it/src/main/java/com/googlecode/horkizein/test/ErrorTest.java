@@ -23,8 +23,8 @@ import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
 import com.googlecode.horkizein.obj.FlatObject;
-import com.googlecode.horkizein.obj.builders.FlatObjectDAO;
-import com.googlecode.horkizein.obj.builders.UntaggedDAO;
+import com.googlecode.horkizein.obj.daos.FlatObjectDAO;
+import com.googlecode.horkizein.obj.daos.UntaggedDAO;
 import com.googlecode.horkizein.test.Constants;
 import com.googlecode.horkizein.test.util.XmlDataReader;
 

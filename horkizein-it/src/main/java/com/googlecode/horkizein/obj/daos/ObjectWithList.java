@@ -1,3 +1,4 @@
+package com.googlecode.horkizein.obj.daos;
 /*
  ** Copyright 2013, Horkizein Open Source Android Library
  **

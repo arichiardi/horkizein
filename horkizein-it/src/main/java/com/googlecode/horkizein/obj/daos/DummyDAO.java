@@ -1,4 +1,4 @@
-package com.googlecode.horkizein.obj.builders;
+package com.googlecode.horkizein.obj.daos;
 
 import java.io.IOException;
 

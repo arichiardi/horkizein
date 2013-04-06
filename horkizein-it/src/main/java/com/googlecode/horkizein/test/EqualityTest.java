@@ -17,6 +17,7 @@ package com.googlecode.horkizein.test;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.io.FileNotFoundException;
@@ -28,12 +29,10 @@ import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 import org.xmlpull.v1.XmlSerializer;
 
-import com.googlecode.horkizein.XmlBuilder;
 import com.googlecode.horkizein.XmlFiller;
 import com.googlecode.horkizein.XmlPushable;
 import com.googlecode.horkizein.XmlWritable;
 import com.googlecode.horkizein.XmlWriter;
-import com.googlecode.horkizein.obj.AbstractObject;
 import com.googlecode.horkizein.obj.AbstractObjectImpl1;
 import com.googlecode.horkizein.obj.CdsectObject;
 import com.googlecode.horkizein.obj.CommentObject;
@@ -46,14 +45,15 @@ import com.googlecode.horkizein.obj.InterfaceObjectImpl1;
 import com.googlecode.horkizein.obj.NoTextObject;
 import com.googlecode.horkizein.obj.ProcessingObject;
 import com.googlecode.horkizein.obj.TextObject;
-import com.googlecode.horkizein.obj.builders.CdsectObjectDAO;
-import com.googlecode.horkizein.obj.builders.CommentObjectDAO;
-import com.googlecode.horkizein.obj.builders.DocdeclObjectDAO;
-import com.googlecode.horkizein.obj.builders.DummyDAO;
-import com.googlecode.horkizein.obj.builders.FlatObjectDAO;
-import com.googlecode.horkizein.obj.builders.HelloWorldDAO;
-import com.googlecode.horkizein.obj.builders.ProcessingObjectDAO;
-import com.googlecode.horkizein.obj.builders.TextObjectDAO;
+import com.googlecode.horkizein.obj.daos.CdsectObjectDAO;
+import com.googlecode.horkizein.obj.daos.CommentObjectDAO;
+import com.googlecode.horkizein.obj.daos.DocdeclObjectDAO;
+import com.googlecode.horkizein.obj.daos.DummyDAO;
+import com.googlecode.horkizein.obj.daos.FlatObjectDAO;
+import com.googlecode.horkizein.obj.daos.HelloWorldDAO;
+import com.googlecode.horkizein.obj.daos.NoTextObjectDAO;
+import com.googlecode.horkizein.obj.daos.ProcessingObjectDAO;
+import com.googlecode.horkizein.obj.daos.TextObjectDAO;
 import com.googlecode.horkizein.test.Constants;
 import com.googlecode.horkizein.test.util.XmlDataCommitter;
 import com.googlecode.horkizein.test.util.XmlDataReader;
@@ -141,9 +141,10 @@ public class EqualityTest extends AndroidTestCase {
     public void testFlatObjEquality() throws IllegalArgumentException, IllegalStateException, FileNotFoundException, XmlPullParserException, IOException {
         Log.i(Constants.PACKAGE_TAG_TEST, "--- [" + TAG + ".testFlatObjEquality] ---");
         mDataCommitter.commitData(mFlatDAO, mFlatSrc); // serializing
-        mFlatDAO = mDataReader.read(mFlatDAO, FlatObjectDAO.class);
-        assertTrue(mFlatDAO.tagCheck());
-        assertTrue(mFlatSrc.equals(mFlatDAO.build()));
+        FlatObjectDAO mFlatDAORead = mDataReader.read(mFlatDAO, FlatObjectDAO.class);
+        assertNotSame(mFlatDAO, mFlatDAORead);
+        assertTrue(mFlatDAORead.tagCheck());
+        assertTrue(mFlatSrc.equals(mFlatDAORead.build()));
         Log.i(Constants.PACKAGE_TAG_TEST, "-----------------------------------------");
     }
 
@@ -166,9 +167,10 @@ public class EqualityTest extends AndroidTestCase {
 
         TextObjectDAO textDAO = new TextObjectDAO(mSerializer);
         mDataCommitter.commitData(textDAO, txtObjSrc); // serializing
-        textDAO = mDataReader.read(textDAO, TextObjectDAO.class);
-        assertTrue(txtObjSrc.equals(textDAO.build()));
-        assertTrue(textDAO.tagCheck());
+        TextObjectDAO textDAORead = mDataReader.read(textDAO, TextObjectDAO.class);
+        assertNotSame(textDAO, textDAORead);
+        assertTrue(textDAORead.tagCheck());
+        assertTrue(txtObjSrc.equals(textDAORead.build()));
         Log.i(Constants.PACKAGE_TAG_TEST, "-----------------------------------------");
     }
 
@@ -186,8 +188,9 @@ public class EqualityTest extends AndroidTestCase {
         DummyObject dummySrc = new DummyObject(new AbstractObjectImpl1(42, "foo"), new InterfaceObjectImpl1("bar"));
         DummyDAO dummyDAO = new DummyDAO(mSerializer);
         mDataCommitter.commitData(dummyDAO, dummySrc); // serializing
-        dummyDAO = mDataReader.read(dummyDAO, DummyDAO.class);
-        assertTrue(dummySrc.equals(dummyDAO.build()));
+        DummyDAO dummyDAORead = mDataReader.read(dummyDAO, DummyDAO.class);
+        assertNotSame(dummyDAO, dummyDAORead);
+        assertTrue(dummySrc.equals(dummyDAORead.build()));
         Log.i(Constants.PACKAGE_TAG_TEST, "-----------------------------------------");
     }
     
@@ -206,28 +209,31 @@ public class EqualityTest extends AndroidTestCase {
 
         DocdeclObject docdeclSrc = new DocdeclObject("version=\"1.0\" encoding=\"UTF-8\"");
         mDataCommitter.commitData(mDocdeclDAO, docdeclSrc); // serializing
-        mDocdeclDAO = mDataReader.read(mDocdeclDAO, DocdeclObjectDAO.class);
-        assertTrue(docdeclSrc.equals(mDocdeclDAO.build()));
-        assertTrue(mDocdeclDAO.tagCheck());
+        DocdeclObjectDAO docdeclDAORead = mDataReader.read(mDocdeclDAO, DocdeclObjectDAO.class);
+        assertNotSame(mDocdeclDAO, docdeclDAORead);
+        assertTrue(docdeclDAORead.tagCheck());
+        assertTrue(docdeclSrc.equals(docdeclDAORead.build()));
         
         ProcessingObject processingSrc = new ProcessingObject("foo bar");
         mDataCommitter.commitData(mProcessingDAO, processingSrc); // serializing
-        mProcessingDAO = mDataReader.read(mProcessingDAO, ProcessingObjectDAO.class);
-        assertTrue(processingSrc.equals(mProcessingDAO.build()));
-        assertTrue(mProcessingDAO.tagCheck());
+        ProcessingObjectDAO processingDAORead = mDataReader.read(mProcessingDAO, ProcessingObjectDAO.class);
+        assertNotSame(mProcessingDAO, processingDAORead);
+        assertTrue(processingDAORead.tagCheck());
+        assertTrue(processingSrc.equals(processingDAORead.build()));
         
         CommentObject commentSrc = new CommentObject("this is a comment");
         mDataCommitter.commitData(mCommentDAO, commentSrc); // serializing
-        mCommentDAO = mDataReader.read(mCommentDAO, CommentObjectDAO.class);
-        assertTrue(commentSrc.equals(mCommentDAO.build()));
-        assertTrue(mCommentDAO.tagCheck());
+        CommentObjectDAO commentDAO = mDataReader.read(mCommentDAO, CommentObjectDAO.class);
+        assertNotSame(mCommentDAO, commentDAO);
+        assertTrue(commentDAO.tagCheck());
+        assertTrue(commentSrc.equals(commentDAO.build()));
         
         CdsectObject cdsectSrc = new CdsectObject("public String foo() { return \"bar\" }; ");
         mDataCommitter.commitData(mCdsectDAO, cdsectSrc); // serializing
-        mCdsectDAO = mDataReader.read(mCdsectDAO, CdsectObjectDAO.class);
-        assertTrue(cdsectSrc.equals(mCdsectDAO.build()));
-        assertTrue(mCdsectDAO.tagCheck());
-        
+        CdsectObjectDAO cdsectDAO = mDataReader.read(mCdsectDAO, CdsectObjectDAO.class);
+        assertNotSame(mCdsectDAO, cdsectDAO);
+        assertTrue(cdsectDAO.tagCheck());
+        assertTrue(cdsectSrc.equals(cdsectDAO.build()));
         Log.i(Constants.PACKAGE_TAG_TEST, "-----------------------------------------");
     }
 
@@ -249,21 +255,27 @@ public class EqualityTest extends AndroidTestCase {
                 " more than 32 char but with a length not multiple of 32 so as to test the XmlFiller merging alghoritm.");
 
         // XmlWriter DAO list
-        Map<XmlWritable, XmlWriter> writeMap = new HashMap<XmlWritable, XmlWriter>();
-        writeMap.put(docdecl, mDocdeclDAO);
-        writeMap.put(mFlatSrc, mFlatDAO);
-        writeMap.put(commentNotMultiple32, mCommentDAO);
+        List<XmlWritable> writableList = new LinkedList<XmlWritable>();
+        writableList.add(docdecl);
+        writableList.add(mFlatSrc);
+        writableList.add(commentNotMultiple32);
         
-        mDataCommitter.commitData(writeMap); // serializing
+        List<XmlWriter> writerList = new LinkedList<XmlWriter>();
+        writerList.add(mDocdeclDAO);
+        writerList.add(mFlatDAO);
+        writerList.add(mCommentDAO);
+        
+        mDataCommitter.commitData(writerList, writableList); // serializing
 
         List<XmlPushable<?>> readMap = new ArrayList<XmlPushable<?>>();
         readMap.add(mDocdeclDAO);
         readMap.add(mFlatDAO);
         readMap.add(mCommentDAO);
-        // Parse
-        mDataReader.readMany(readMap);
+        
+        mDataReader.readMany(readMap); // deserializing
+        
         DocdeclObject docDst = mFiller.buildFirstOf(DocdeclObjectDAO.class);
-        FlatObject flatDst = mFiller.buildFirstOf(FlatObject.TAG);
+        FlatObject flatDst = mFiller.buildFirstOf(FlatObjectDAO.TAG);
         CommentObject commDst = mFiller.buildFirstOf(CommentObjectDAO.class);
         
         assertTrue(docdecl.equals(docDst));
@@ -307,9 +319,8 @@ public class EqualityTest extends AndroidTestCase {
 
         HelloWorldDAO helloWorldReadDAO = mDataReader.read(helloWorldDAO, HelloWorldDAO.class);
         assertNotSame(helloWorldDAO, helloWorldReadDAO);
-        
-        assertTrue(mHelloWorldSrc.equals(helloWorldReadDAO.build()));
         assertTrue(helloWorldReadDAO.tagCheck());
+        assertTrue(mHelloWorldSrc.equals(helloWorldReadDAO.build()));
         Log.i(Constants.PACKAGE_TAG_TEST, "-----------------------------------------");
     }
 
@@ -320,63 +331,68 @@ public class EqualityTest extends AndroidTestCase {
     * @throws FileNotFoundException
     * @throws XmlPullParserException
     * @throws IOException
-    *//*
+    */
     @MediumTest
-    public void testMultiDupMetadataObjsEquality() throws IllegalArgumentException, IllegalStateException, FileNotFoundException, XmlPullParserException, IOException {
+    public void testOrderedMetadataObjsEquality() throws IllegalArgumentException, IllegalStateException, FileNotFoundException, XmlPullParserException, IOException {
 
-        Log.i(Constants.PACKAGE_TAG_TEST, "--- [" + TAG + ".testMultiDupMetadataObjsEquality] ---");
+        Log.i(Constants.PACKAGE_TAG_TEST, "--- [" + TAG + ".testOrderedMetadataObjsEquality] ---");
 
         DocdeclObject docdecl = new DocdeclObject("version=\"1.0\" encoding=\"UTF-8\"");
-        DocdeclObject docdecl1 = new DocdeclObject("version=\"2.0\" encoding=\"UTF-16\"");
-        ProcessingObjectDAO processing = new ProcessingObjectDAO("foo bar");
-        ProcessingObjectDAO processing1 = new ProcessingObjectDAO("bar no foo");
+        ProcessingObject processing = new ProcessingObject("foo bar");
+        ProcessingObject processing1 = new ProcessingObject("bar but not foo");
         CommentObject comment = new CommentObject("this is a comment");
-        CdsectObject cdsect = new CdsectObject("public String foo() { return \"bar\" }; ");
 
         // source list containing xml objects
-        ArrayList<XmlWritable> srcList = new ArrayList<XmlWritable>();
-        srcList.add(docdecl);
-        srcList.add(docdecl1);
-        srcList.add(processing);
-        srcList.add(processing1);
-        srcList.add(comment);
-        srcList.add(cdsect);
-
-        Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".testMetadataObjsEquality() open Android file: " + METADATA_FILE);
-        XmlDataCommitter.commitData(getContext(), METADATA_FILE, "UTF-8", srcList); // serializing
-
-        List<Class<? extends XmlPushable>> classList = new ArrayList<Class<? extends XmlPushable>>();
-        classList.add(DocdeclObject.class);
-        classList.add(ProcessingObjectDAO.class);
-        classList.add(CommentObject.class);
-        classList.add(CdsectObject.class);
+        List<XmlWritable> writableList = new LinkedList<XmlWritable>();
+        writableList.add(docdecl);
+        writableList.add(processing);
+        writableList.add(comment);
+        writableList.add(mFlatList.get(0));
+        writableList.add(processing1);
+        writableList.add(mFlatList.get(2));
+        writableList.add(mFlatList.get(1));
         
-        List<XmlBuilder<? extends XmlPushable>> builderList = new ArrayList<XmlBuilder<? extends XmlPushable>>();
-        builderList.add(new DocdeclObjectBuilder());
-        builderList.add(new ProcessingObjectBuilder());
-        builderList.add(new CommentObjectBuilder());
-        builderList.add(new CdsectObjectBuilder());
+        List<XmlWriter> writerList = new LinkedList<XmlWriter>();
+        writerList.add(mDocdeclDAO);
+        writerList.add(mProcessingDAO);
+        writerList.add(mCommentDAO);
+        writerList.add(mFlatDAO);
+        writerList.add(mProcessingDAO);
+        writerList.add(mFlatDAO);
+        writerList.add(mFlatDAO);
         
-        List<XmlPushable> dstList = XmlDataReader.readMany(mParser, getContext(), classList, builderList, METADATA_FILE);
-
-        assertTrue(docdecl.equals(dstList.get(0)));
-        assertTrue(docdecl1.equals(dstList.get(1)));
-        assertTrue(processing.equals(dstList.get(2)));
-        assertTrue(processing1.equals(dstList.get(3)));
-        assertTrue(comment.equals(dstList.get(4)));
-        assertTrue(cdsect.equals(dstList.get(5)));
-
-        assertTrue(((DocdeclObject)dstList.get(0)).tagCheck());
-        assertTrue(((DocdeclObject)dstList.get(1)).tagCheck());
-        assertTrue(((ProcessingObjectDAO)dstList.get(2)).tagCheck());
-        assertTrue(((ProcessingObjectDAO)dstList.get(3)).tagCheck());
-        assertTrue(((CommentObject)dstList.get(4)).tagCheck());
-        assertTrue(((CdsectObject)dstList.get(5)).tagCheck());
-
+        mDataCommitter.commitData(writerList, writableList); // serializing
+        
+        List<XmlPushable<?>> readMap = new ArrayList<XmlPushable<?>>();
+        readMap.add(mDocdeclDAO);
+        readMap.add(mFlatDAO);
+        readMap.add(mProcessingDAO);
+        readMap.add(mCommentDAO);
+        mDataReader.readMany(readMap); // deserializing
+        
+        List<DocdeclObject> docList = mFiller.buildListOf(DocdeclObjectDAO.class);
+        assertTrue(docList.size() == 1);
+        assertEquals(docList.get(0), docdecl);
+        
+        List<CommentObject> commList = mFiller.buildListOf(CommentObjectDAO.TAG);
+        assertTrue(commList.size() == 1);
+        assertEquals(commList.get(0), comment);
+        
+        List<FlatObject> flatList = mFiller.buildListOf(FlatObjectDAO.TAG);
+        assertTrue(flatList.size() == 3);
+        assertEquals(flatList.get(0), mFlatList.get(0));
+        assertEquals(flatList.get(1), mFlatList.get(2));
+        assertEquals(flatList.get(2), mFlatList.get(1));
+        
+        List<ProcessingObject> procList = mFiller.buildListOf(ProcessingObjectDAO.class);
+        assertTrue(procList.size() == 2);
+        assertEquals(procList.get(0), processing);
+        assertEquals(procList.get(1), processing1);
+        
         Log.i(Constants.PACKAGE_TAG_TEST, "-----------------------------------------");
     }
 
-    *//**
+    /**
     * Tests the equality of an object (ObjectWithList) which HAS-A List (FlatList).
     * @throws IllegalArgumentException
     * @throws IllegalStateException
@@ -402,7 +418,7 @@ public class EqualityTest extends AndroidTestCase {
         Log.i(Constants.PACKAGE_TAG_TEST, "-----------------------------------------");
     }
 
-    *//**
+    /**
      * Tests the equality of NoTextObject. In particular, the outer object (NoTextObject)
      * never gets text (mNoText must not change).
      * @throws IllegalArgumentException
@@ -410,22 +426,23 @@ public class EqualityTest extends AndroidTestCase {
      * @throws FileNotFoundException
      * @throws XmlPullParserException
      * @throws IOException
-     *//*
+     */
     @MediumTest
     public void testNoTextObjectEquality() throws IllegalArgumentException, IllegalStateException, FileNotFoundException, XmlPullParserException, IOException {
         Log.i(Constants.PACKAGE_TAG_TEST, "--- [" + TAG + ".tesNoTextObjectEquality] ---");
-        NoTextObject mNoTextObjectSrc = new NoTextObject(new TextObject("Ciao."));
-
-        Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".testNoTextObjectEquality() open Android file: " + TEMPORARY_FILE);
-        XmlDataCommitter.commitData(getContext(), TEMPORARY_FILE, "UTF-8", mNoTextObjectSrc); // serializing
-
-        NoTextObject mNoTextObjectDst = XmlDataReader.read(mParser, getContext(), NoTextObject.class, new NoTextObjectBuilder(), TEMPORARY_FILE);
-
-        Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".tesNoTextObjectEquality() equals test");
-        assertTrue(mNoTextObjectDst.equals(mNoTextObjectSrc));
-        assertTrue(mNoTextObjectDst.tagCheck());
+        
+        NoTextObject noTextObjectSrc = new NoTextObject("", new TextObject("Ciao."));
+        NoTextObjectDAO noTextObjDAO = new NoTextObjectDAO(mSerializer);
+        
+        mDataCommitter.commitData(noTextObjDAO, noTextObjectSrc); // serializing
+        
+        NoTextObjectDAO noTextObjDAORead = mDataReader.read(noTextObjDAO, NoTextObjectDAO.class);
+        assertNotSame(noTextObjDAO, noTextObjDAORead);
+        assertTrue(noTextObjDAORead.tagCheck());
+        assertTrue(noTextObjectSrc.equals(noTextObjDAORead.build()));
+        
         Log.i(Constants.PACKAGE_TAG_TEST, "-----------------------------------------");
-    }*/
+    }
     
     @Override
     protected void tearDown() throws Exception {

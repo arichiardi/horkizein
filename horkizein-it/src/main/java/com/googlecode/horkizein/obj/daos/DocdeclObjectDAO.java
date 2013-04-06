@@ -13,7 +13,7 @@
  ** See the License for the specific language governing permissions and
  ** limitations under the License.
  */
-package com.googlecode.horkizein.obj.builders;
+package com.googlecode.horkizein.obj.daos;
 
 import java.io.IOException;
 
@@ -24,37 +24,37 @@ import com.googlecode.horkizein.XmlPushable;
 import com.googlecode.horkizein.XmlTag;
 import com.googlecode.horkizein.XmlWritable;
 import com.googlecode.horkizein.XmlWriter;
-import com.googlecode.horkizein.obj.CommentObject;
+import com.googlecode.horkizein.obj.DocdeclObject;
 import com.googlecode.horkizein.test.Constants;
 
 import android.util.Log;
 
 /**
- * Implementation of the COMMENT xml section as a XmlPushable metadata object.
+ * Implementation of the DOCDECL xml section as a XmlPushable metadata object.
  */
-@XmlTag(XmlFiller.COMMENT_TAG)
-public class CommentObjectDAO implements XmlPushable<CommentObject>, XmlWriter {
+@XmlTag(XmlFiller.DOCDECL_TAG)
+public class DocdeclObjectDAO implements XmlPushable<DocdeclObject>, XmlWriter {
 
     // This object tag
-    public final static String TAG = XmlFiller.COMMENT_TAG;
+    public final static String TAG = XmlFiller.DOCDECL_TAG;
 
-    // Dependency
-    private final XmlSerializer mSerializer;
-    
     // watch dog
     private boolean mPushedStartTag;
     private boolean mPushedEndTag;
-
+    
     // the text inside this xml section
-    private String mCommentContent;
+    private String mDocdeclContent;
+
+    // Dependency
+    private final XmlSerializer mSerializer;
 
     /**
      * ctor
      * @param serializer The serializer.
      */
-    public CommentObjectDAO(XmlSerializer serializer) {
+    public DocdeclObjectDAO(XmlSerializer serializer) {
         mSerializer = serializer;
-        mCommentContent = "";
+        mDocdeclContent = "";
         mPushedEndTag = mPushedStartTag = false;
     }
 
@@ -75,7 +75,7 @@ public class CommentObjectDAO implements XmlPushable<CommentObject>, XmlWriter {
     @Override
     public void pushText(String tag, String text) {
         if (tag.equals(TAG) && mPushedStartTag == true) {
-            mCommentContent = text;
+            mDocdeclContent = text;
             Log.d (Constants.PACKAGE_TAG_TEST, TAG + " pushed: " + text);
         } else {
             Log.d(Constants.PACKAGE_TAG_TEST, TAG + "NOT MINE");
@@ -90,16 +90,6 @@ public class CommentObjectDAO implements XmlPushable<CommentObject>, XmlWriter {
         }
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == this) return true;
-        if((obj == null) || (obj.getClass() != this.getClass())) return false;
-
-        CommentObjectDAO o = (CommentObjectDAO)obj;
-        Log.d(Constants.PACKAGE_TAG_TEST, TAG + " 1: " + mCommentContent + "- 2: " + o.mCommentContent);
-        return (mCommentContent == o.mCommentContent || (mCommentContent != null && mCommentContent.equals(o.mCommentContent)));
-    }
-
     /**
      * Simple check to see if we push tags in the correct order.
      * @return True or false.
@@ -109,14 +99,14 @@ public class CommentObjectDAO implements XmlPushable<CommentObject>, XmlWriter {
     }
 
     @Override
-    public CommentObject build() {
-        return new CommentObject(mCommentContent);
+    public DocdeclObject build() {
+        return new DocdeclObject(mDocdeclContent);
     }
-
+    
 
     @Override
-    public XmlPushable<CommentObject> shallowClone() {
-        return new CommentObjectDAO(mSerializer);
+    public XmlPushable<DocdeclObject> shallowClone() {
+        return new DocdeclObjectDAO(mSerializer);
     }
 
     @Override

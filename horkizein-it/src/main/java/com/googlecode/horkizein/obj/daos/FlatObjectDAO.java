@@ -13,7 +13,7 @@
  ** See the License for the specific language governing permissions and
  ** limitations under the License.
  */
-package com.googlecode.horkizein.obj.builders;
+package com.googlecode.horkizein.obj.daos;
 
 import java.io.IOException;
 

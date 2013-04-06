@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import org.xmlpull.v1.XmlSerializer;
 
-import com.googlecode.horkizein.obj.builders.AbstractObjectImpl1DAO;
+import com.googlecode.horkizein.obj.daos.AbstractObjectImpl1DAO;
 
 /**
  * An implementation of AbstractObject.

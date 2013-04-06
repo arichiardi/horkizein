@@ -20,7 +20,7 @@ import java.io.IOException;
 import org.xmlpull.v1.XmlSerializer;
 
 import com.googlecode.horkizein.XmlWritable;
-import com.googlecode.horkizein.obj.builders.HelloWorldDAO;
+import com.googlecode.horkizein.obj.daos.HelloWorldDAO;
 
 /**
  * Horkizein implementation of "Hello World!". The class contains two tags, one for the C and one for the Java
@@ -30,7 +30,9 @@ import com.googlecode.horkizein.obj.builders.HelloWorldDAO;
 public class HelloWorldObject implements XmlWritable {
 
     public static final String TAG = "helloWorld";
-
+    public final static String JAVA_FAV_STRING = "java";
+    public final static String C_FAV_STRING = "c";
+    
     public static enum Favorite {
         JAVA, C
     }
@@ -97,11 +99,11 @@ public class HelloWorldObject implements XmlWritable {
     public void writeXml(XmlSerializer serializer) throws IOException, IllegalStateException, IllegalArgumentException {
         serializer.startTag("", TAG);
         switch (mFavoriteLanguage) {
-        case C:
-            serializer.attribute("", HelloWorldDAO.FAVOURITE_ATTR, "java");
-            break;
         case JAVA:
-            serializer.attribute("", HelloWorldDAO.FAVOURITE_ATTR, "c");
+            serializer.attribute("", HelloWorldDAO.FAVOURITE_ATTR, JAVA_FAV_STRING);
+            break;
+        case C:
+            serializer.attribute("", HelloWorldDAO.FAVOURITE_ATTR, C_FAV_STRING);
             break;
         }
         

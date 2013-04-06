@@ -13,7 +13,7 @@
  ** See the License for the specific language governing permissions and
  ** limitations under the License.
  */
-package com.googlecode.horkizein.obj.builders;
+package com.googlecode.horkizein.obj.daos;
 
 import java.io.IOException;
 
@@ -87,9 +87,9 @@ public class HelloWorldDAO implements XmlPushable<HelloWorldObject>, XmlWriter {
         if (wdPushedStartTag) {
             if (tag.equals(TAG) && name.equals(FAVOURITE_ATTR)) {
                 // ugly
-                if (value.equals("java") == true) {
+                if (value.equals(HelloWorldObject.JAVA_FAV_STRING) == true) {
                     mFavoriteLanguage = Favorite.JAVA;
-                } else if (value.equals("c") == true) {
+                } else if (value.equals(HelloWorldObject.C_FAV_STRING) == true) {
                     mFavoriteLanguage = Favorite.C;
                 }
             }

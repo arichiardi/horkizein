@@ -31,7 +31,7 @@ import com.googlecode.horkizein.obj.DocdeclObject;
 import com.googlecode.horkizein.obj.FlatObject;
 import com.googlecode.horkizein.obj.HelloWorldObject;
 import com.googlecode.horkizein.obj.TextObject;
-import com.googlecode.horkizein.obj.builders.ProcessingObjectDAO;
+import com.googlecode.horkizein.obj.daos.ProcessingObjectDAO;
 import com.googlecode.horkizein.test.Constants;
 import com.googlecode.horkizein.test.util.CustomKXmlParser;
 import com.googlecode.horkizein.test.util.XmlDataCommitter;

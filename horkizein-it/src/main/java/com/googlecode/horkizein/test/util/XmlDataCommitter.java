@@ -17,6 +17,8 @@ package com.googlecode.horkizein.test.util;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.xmlpull.v1.XmlSerializer;
@@ -63,19 +65,21 @@ public final class XmlDataCommitter {
 
     /**
      * A useful Android specific method that writes XmlWritables on file.
-     * @param objMap Map of value/dao objects.
+     * @param writerList Map of dao objects.
+     * @param writableList Map of value objects.
      * @throws IllegalArgumentException
      * @throws IllegalStateException
      * @throws IOException
      */
-    public void commitData(Map<XmlWritable, XmlWriter> objMap) throws IllegalArgumentException, IllegalStateException, IOException {
+    public void commitData(List<XmlWriter> writerList, List<XmlWritable> writableList) throws IllegalArgumentException, IllegalStateException, IOException {
+        assert(writableList.size() == writerList.size());
         BufferedOutputStream buf = new BufferedOutputStream(mContext.openFileOutput(mFileName, Context.MODE_PRIVATE));
         mSerializer.setOutput(buf, mEncoding);
         mSerializer.startDocument(mEncoding, true);
         // do it
-        for (XmlWritable object : objMap.keySet()) {
-            XmlWriter dao = objMap.get(object);
-            dao.write((XmlWritable)object);
+        for (int i=0; i < writerList.size(); ++i) {
+            XmlWriter dao = writerList.get(i);
+            dao.write(writableList.get(i));
         }
         mSerializer.endDocument();
         mSerializer.flush();

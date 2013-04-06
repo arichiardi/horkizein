@@ -1,4 +1,4 @@
-package com.googlecode.horkizein.obj.builders;
+package com.googlecode.horkizein.obj.daos;
 
 import com.googlecode.horkizein.XmlPushable;
 import com.googlecode.horkizein.XmlTag;

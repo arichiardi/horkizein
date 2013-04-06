@@ -13,7 +13,7 @@
  ** See the License for the specific language governing permissions and
  ** limitations under the License.
  */
-package com.googlecode.horkizein.obj.builders;
+package com.googlecode.horkizein.obj.daos;
 
 import java.io.IOException;
 
@@ -24,35 +24,37 @@ import com.googlecode.horkizein.XmlPushable;
 import com.googlecode.horkizein.XmlTag;
 import com.googlecode.horkizein.XmlWritable;
 import com.googlecode.horkizein.XmlWriter;
-import com.googlecode.horkizein.obj.ProcessingObject;
+import com.googlecode.horkizein.obj.CdsectObject;
 import com.googlecode.horkizein.test.Constants;
 
 import android.util.Log;
 
 /**
- * Implementation of the PROCESSING xml section as a XmlPushable metadata object.
+ * Implementation of the CDSECT xml section as a XmlPushable metadata object.
  */
-@XmlTag(XmlFiller.PROCESSING_TAG)
-public class ProcessingObjectDAO implements XmlPushable<ProcessingObject>, XmlWriter {
+@XmlTag(XmlFiller.CDSECT_TAG)
+public class CdsectObjectDAO implements XmlPushable<CdsectObject>, XmlWriter {
+
     // This object tag
-    public final static String TAG = XmlFiller.PROCESSING_TAG;
- 
+    public final static String TAG = XmlFiller.CDSECT_TAG;
+
     // Dependency
     private final XmlSerializer mSerializer;
+    
     // watch dog
     private boolean mPushedStartTag;
     private boolean mPushedEndTag;
 
     // the text inside this xml section
-    public String mProcessingContent;
+    public String mCdsectContent;
 
     /**
-     * Ctor.
+     * ctor
      * @param serializer The serializer.
      */
-    public ProcessingObjectDAO(XmlSerializer serializer) {
+    public CdsectObjectDAO(XmlSerializer serializer) {
         mSerializer = serializer;
-        mPushedEndTag = mPushedStartTag = false;
+        mCdsectContent = "";
     }
 
     @Override
@@ -69,8 +71,8 @@ public class ProcessingObjectDAO implements XmlPushable<ProcessingObject>, XmlWr
     @Override
     public void pushText(String tag, String text) {
         if (tag.equals(TAG) && mPushedStartTag == true) {
-            mProcessingContent = text;
-            Log.d (Constants.PACKAGE_TAG_TEST, TAG + " pushed: " + text);
+            mCdsectContent = text;
+            Log.d(Constants.PACKAGE_TAG_TEST, TAG + " pushed: " + text);
         } else {
             Log.d(Constants.PACKAGE_TAG_TEST, TAG + "NOT MINE");
         }
@@ -84,6 +86,16 @@ public class ProcessingObjectDAO implements XmlPushable<ProcessingObject>, XmlWr
         }
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if((obj == null) || (obj.getClass() != this.getClass())) return false;
+
+        CdsectObjectDAO o = (CdsectObjectDAO)obj;
+        Log.d(Constants.PACKAGE_TAG_TEST, TAG + " mCdsectContent: " + mCdsectContent + " - item.mCdsectContent: " + o.mCdsectContent);
+        return (mCdsectContent == o.mCdsectContent || (mCdsectContent != null && mCdsectContent.equals(o.mCdsectContent)));
+    }
+
     /**
      * Simple check to see if we push tags in the correct order.
      * @return True or false.
@@ -93,18 +105,18 @@ public class ProcessingObjectDAO implements XmlPushable<ProcessingObject>, XmlWr
     }
 
     @Override
-    public ProcessingObject build() {
-        return new ProcessingObject(mProcessingContent);
+    public CdsectObject build() {
+        return new CdsectObject(mCdsectContent);
     }
-
-    @Override
-    public XmlPushable<ProcessingObject> shallowClone() {
-        return new ProcessingObjectDAO(mSerializer);
-    }
-
+    
     @Override
     public void write(XmlWritable object) throws IOException, IllegalStateException, IllegalArgumentException {
         object.writeXml(mSerializer);
+    }
+
+    @Override
+    public XmlPushable<CdsectObject> shallowClone() {
+        return new CdsectObjectDAO(mSerializer);
     }
 }
 

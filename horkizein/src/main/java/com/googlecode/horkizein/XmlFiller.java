@@ -265,7 +265,7 @@ public final class XmlFiller {
             // Saves the builder.
             mPrototypeMap.put(rootTag, xmlPushable);
             // Creates the list of instances in the Filled Object map
-            mXmlPushableMap.put(rootTag, new ArrayList<XmlPushable<?>>());
+            mXmlPushableMap.put(rootTag, new LinkedList<XmlPushable<?>>());
 
             // Starts to recursively collect the additional tags
             collectTags(clazz, tagSet);
@@ -345,11 +345,11 @@ public final class XmlFiller {
      * @param tag The tag of a previously registered XmlPushable.
      * @return A filled instance of the specified tag, null if none was found.
      */
-    public <T, E extends XmlPushable<T>> T buildFirstOf(String tag) {
+    public <T> T buildFirstOf(String tag) {
         List<XmlPushable<?>> pushableList = mXmlPushableMap.get(tag);
         T built = null;
         if (pushableList != null) {
-            E pushable = (E) pushableList.get(0);
+            XmlPushable<T> pushable = (XmlPushable<T>) pushableList.get(0);
             if (pushable != null) {
                 built = pushable.build();
             }
@@ -374,10 +374,9 @@ public final class XmlFiller {
     public <T, E extends XmlPushable<T>> List<T> buildListOf(Class<E> clazz) {
         // Is annotated?
         if (!clazz.isAnnotationPresent(XmlTag.class)) throw new RuntimeException(clazz.getCanonicalName() + " is declared XmlPushable but it doesn't have any @XmlTag annotation.");
-        
         XmlTag xmlTag = clazz.getAnnotation(XmlTag.class);
         String rootTag = xmlTag.value();
-        return buildListOf(rootTag);
+        return this.<T>buildListOf(rootTag);
     }
     
     /**
@@ -393,7 +392,7 @@ public final class XmlFiller {
      * is not inherently thread-safe). Resetting XmlFiller will reset the internal data structure
      * and will let the client handle the references.
      */
-    public <T, E extends XmlPushable<T>> List<T> buildListOf(String tag) {
+    public <T> List<T> buildListOf(String tag) {
         List<XmlPushable<?>> pushableList = mXmlPushableMap.get(tag);
         List<T> returnedInstances = new ArrayList<T>();
         if (pushableList != null) {
