@@ -22,12 +22,13 @@
     <parent>
         <groupId>com.googlecode.horkizein</groupId>
         <artifactId>horkizein-project</artifactId>
-        <version>0.0.3-alpha</version>
+        <version>0.0.8-rc1</version>
     </parent>
 
     <artifactId>horkizein-it</artifactId>
     <name>Horkizein Open Source Integration Tests</name>
     <packaging>apk</packaging>
+    <version>0.0.8-rc1</version>
     
     <dependencies>
         <dependency>
@@ -42,7 +43,7 @@
         <dependency>
             <groupId>com.googlecode.horkizein</groupId>
             <artifactId>horkizein</artifactId>
-            <version>0.0.4-alpha</version>
+            <version>0.0.8-rc1</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -68,6 +69,14 @@
                     <undeployBeforeDeploy>true</undeployBeforeDeploy>
                 </configuration>
                 <extensions>true</extensions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>2.7</version>
+                <configuration>
+                  <skip>true</skip>
+                </configuration>
             </plugin>
         </plugins>
     </build>
