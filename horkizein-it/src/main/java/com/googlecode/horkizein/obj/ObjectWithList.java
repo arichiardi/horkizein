@@ -71,19 +71,19 @@ public class ObjectWithList implements XmlPushable, XmlWritable {
     }
 
     @Override
-    public void pushAttribute(String tag, String prefix, String name, String value) {
+    public void attribute(String tag, String prefix, String name, String value) {
         if (wdPushedListItemStartTag) {
             if (mCurrentItem != null) {
-                mCurrentItem.pushAttribute(tag, prefix, name, value);
-                Log.d(Constants.PACKAGE_TAG_TEST, "ObjectWithList.pushAttribute(): currentItem is not null");
+                mCurrentItem.attribute(tag, prefix, name, value);
+                Log.d(Constants.PACKAGE_TAG_TEST, "ObjectWithList.attribute(): currentItem is not null");
             } else {
-                Log.d(Constants.PACKAGE_TAG_TEST, "ObjectWithList.pushAttribute(): currentItem = null");
+                Log.d(Constants.PACKAGE_TAG_TEST, "ObjectWithList.attribute(): currentItem = null");
             }
         }
     }
 
     @Override
-    public void pushText(String tag, String text) {
+    public void text(String tag, String text) {
         if (wdPushedListItemStartTag) {
             if (mCurrentItem != null) {
                 mCurrentItem.pushText(tag, text);
@@ -95,7 +95,7 @@ public class ObjectWithList implements XmlPushable, XmlWritable {
     }
 
     @Override
-    public void pushStartTag(String tag) {
+    public void startTag(String tag) {
 
         if (tag.equals(TAG)) {
             wdPushedItemStartTagCount = 0;
@@ -110,16 +110,16 @@ public class ObjectWithList implements XmlPushable, XmlWritable {
 
         if (wdPushedListItemStartTag == true) {
             if (mCurrentItem != null) {
-                Log.d(Constants.PACKAGE_TAG_TEST, "ObjectWithList.pushStartTag(): currentItem is not null");
-                mCurrentItem.pushStartTag(tag);
+                Log.d(Constants.PACKAGE_TAG_TEST, "ObjectWithList.startTag(): currentItem is not null");
+                mCurrentItem.startTag(tag);
             } else {
-                Log.d(Constants.PACKAGE_TAG_TEST, "ObjectWithList.pushStartTag(): currentItem is null");
+                Log.d(Constants.PACKAGE_TAG_TEST, "ObjectWithList.startTag(): currentItem is null");
             }
         }
     }
 
     @Override
-    public void pushEndTag(String tag) {
+    public void endTag(String tag) {
 
         if (wdPushedListItemStartTag == true) {
             if (mCurrentItem != null) {

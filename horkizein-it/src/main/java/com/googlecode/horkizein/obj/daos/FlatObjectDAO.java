@@ -86,8 +86,8 @@ public class FlatObjectDAO implements XmlPushable<FlatObject>, XmlWriter {
     }
 
     @Override
-    public void pushAttribute(String tag, String prefix, String name, String value) {
-        Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushAttribute() - TAG: " + tag + " NAME: " + name +  " TEXT: " + value);
+    public void attribute(String tag, String prefix, String name, String value) {
+        Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".attribute() - TAG: " + tag + " NAME: " + name +  " TEXT: " + value);
 
         if (tag.equals(TAG)) {
             if (name.equals(BOOLEAN_ATTR)) {
@@ -107,7 +107,7 @@ public class FlatObjectDAO implements XmlPushable<FlatObject>, XmlWriter {
 
 
     @Override
-    public void pushText(String tag, String text) {
+    public void text(String tag, String text) {
         Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushText() - TAG: " + tag + " TEXT: " + text);
 
         if (wdPushedStartTag) {
@@ -128,7 +128,7 @@ public class FlatObjectDAO implements XmlPushable<FlatObject>, XmlWriter {
 
 
     @Override
-    public void pushEndTag(String tag) {
+    public void endTag(String tag) {
         Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushEndTag(" + tag + ")");
 
         if (tag.equals(BOOLEAN_TAG) && wdBooleanStartTag == true) {
@@ -148,8 +148,8 @@ public class FlatObjectDAO implements XmlPushable<FlatObject>, XmlWriter {
 
 
     @Override
-    public void pushStartTag(String tag) {
-        Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushStartTag(" + tag + ")");
+    public void startTag(String tag) {
+        Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".startTag(" + tag + ")");
 
         if (wdPushedStartTag) {
             if (tag.equals(BOOLEAN_TAG)) {

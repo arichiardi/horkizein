@@ -21,10 +21,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Collection;
 
-import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
-import com.googlecode.horkizein.XmlFiller;
+import com.googlecode.horkizein.XmlPushParser;
 import com.googlecode.horkizein.XmlPushable;
 import com.googlecode.horkizein.test.Constants;
 
@@ -37,12 +36,12 @@ public class XmlDataReader {
     
     private final Context mContext;
     private final String mFileName;
-    private final XmlFiller mFiller;
+    private final XmlPushParser mFiller;
     
-    public XmlDataReader(Context context, String filename, XmlFiller xmlFiller) {
+    public XmlDataReader(Context context, String filename, XmlPushParser XmlPushParser) {
         mContext = context;
         mFileName = filename;
-        mFiller = xmlFiller;
+        mFiller = XmlPushParser;
     }
 
     /**
@@ -76,7 +75,7 @@ public class XmlDataReader {
         InputStreamReader inputStream = new InputStreamReader(mContext.openFileInput(mFileName));
         BufferedReader bufReader = new BufferedReader(inputStream);
         // register
-        mFiller.registerNode(daoInstance);
+        mFiller.addNode(daoInstance);
         mFiller.setInput(bufReader);
         // fill
         mFiller.parse();
@@ -93,7 +92,7 @@ public class XmlDataReader {
      * @throws XmlPullParserException
      * @throws IOException
      */
-    public XmlFiller readMany(Collection<XmlPushable<?>> pushables) throws FileNotFoundException, XmlPullParserException, IOException {
+    public XmlPushParser readMany(Collection<XmlPushable<?>> pushables) throws FileNotFoundException, XmlPullParserException, IOException {
         // Prints the file for debugging.
         try {
             InputStreamReader inputStream = new InputStreamReader(mContext.openFileInput(mFileName));
@@ -114,7 +113,7 @@ public class XmlDataReader {
 
         // register
         for (XmlPushable<?> pushable : pushables) {
-            mFiller.registerNode(pushable);
+            mFiller.addNode(pushable);
         }
         mFiller.setInput(bufReader);
         // fill

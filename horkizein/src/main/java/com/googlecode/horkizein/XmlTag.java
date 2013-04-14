@@ -21,16 +21,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Declares the entry point for the hierarchy of classes that needs to be filled with
- * the data parsed by XmlFiller. This annotated node acts as root, with children
- * pushed directly to it. The annotation is not &#64;Inherited, meaning that 
- * it is responsibility of the each and every class to declare its own &#64;XmlTag.
- * its parent.<br/><br/>
+ * Declare the entry point for the hierarchy of classes that needs to be filled with
+ * the data parsed by XmlPushParser. This annotated node acts as root, with children
+ * pushed directly into it. The annotation is not &#64;Inherited, meaning that 
+ * it is responsibility of the each and every class to declare its own &#64;XmlTag.<br/><br/>
  * <i>Sample usage:</i>
  * <pre>
  * &#64;XmlTag (
  *   value = "helloWorld",
- *   additionalTags = { "c", "java", XmlFiller.CDSECT_TAG }
+ *   additionalTags = { "c", "java", XmlPushParser.CDSECT_TAG }
  * )
  * public class HelloWorldObject implements XmlPushable {
  * ...
@@ -42,8 +41,8 @@ import java.lang.annotation.Target;
 )
 public @interface XmlTag {
     /**
-     * Declares the root tag of this class. This tag will be used to identify
-     * this class during the parsing and for instance retrieval.<br/><br/>
+     * Declare the root tag of this class. This tag will be used to identify
+     * this class during the parsing and instance retrieval.<br/><br/>
      * <i>Sample usage (short):</i>
      * <pre>
      * &#64;XmlTag("flat_obj")
@@ -63,7 +62,7 @@ public @interface XmlTag {
     String value() default "";
     
     /**
-     * Declares the additional tag(s) this class accepts and handle when a push*() method is called.
+     * Declare the additional tag(s) this class accepts and handles.
      * The {@link  XmlTag#enclosedPushables} tags and {@link XmlTag#additionalTags} tags are merged.<br/><br/>
      * <i>Sample usage:</i>
      * <pre>
@@ -77,9 +76,9 @@ public @interface XmlTag {
      */
     String[] additionalTags() default { /* empty by default */ };
     /**
-     * Declares XmlPushable sub-classes whose tags the XmlFiller has to push back to the annotated object.
+     * Declare XmlPushable sub-classes whose tags the XmlPushParser has to push back to the annotated object.
      * These classes are inspected for {@link XmlTag} annotations and their tags recursively added to
-     * the list of pushed tags for this object.
+     * the list of pushed tags for this object.<br/>
      * The {@link  XmlTag#enclosedPushables} tags and {@link XmlTag#additionalTags} tags are merged.<br/><br/>
      * <i>Sample usage:</i>
      * <pre>

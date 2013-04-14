@@ -19,7 +19,7 @@ import java.io.IOException;
 
 import org.xmlpull.v1.XmlSerializer;
 
-import com.googlecode.horkizein.XmlFiller;
+import com.googlecode.horkizein.XmlPushParser;
 import com.googlecode.horkizein.XmlWritable;
 
 /**
@@ -27,7 +27,7 @@ import com.googlecode.horkizein.XmlWritable;
  */
 public class CommentObject implements XmlWritable {
     // This object tag
-    public final static String TAG = XmlFiller.COMMENT_TAG;
+    public final static String TAG = XmlPushParser.COMMENT_TAG;
 
     // The text inside this xml section
     public final String mContent;

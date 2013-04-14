@@ -16,10 +16,8 @@
 package com.googlecode.horkizein.test;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -29,7 +27,8 @@ import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 import org.xmlpull.v1.XmlSerializer;
 
-import com.googlecode.horkizein.XmlFiller;
+import com.googlecode.horkizein.XmlPushParser;
+import com.googlecode.horkizein.XmlPushParserImpl1;
 import com.googlecode.horkizein.XmlPushable;
 import com.googlecode.horkizein.XmlWritable;
 import com.googlecode.horkizein.XmlWriter;
@@ -70,12 +69,11 @@ public class EqualityTest extends AndroidTestCase {
     private static final String TAG = "EqualityTest";
 
     private static final String TEMPORARY_FILE = "temporary.xml";
-    private static final String METADATA_FILE = "metadata.xml";
 
     private FlatObject mFlatSrc;
     private List<FlatObject> mFlatList;
 
-    private XmlFiller mFiller;
+    private XmlPushParser mXmlPushParser;
     private XmlPullParser mParser;
     private XmlSerializer mSerializer;
     private XmlDataCommitter mDataCommitter;
@@ -102,8 +100,8 @@ public class EqualityTest extends AndroidTestCase {
             mParser = null;
         }
         assertNotNull(mParser);
-        mFiller = new XmlFiller(mParser);
-        mDataReader = new XmlDataReader(getContext(), TEMPORARY_FILE, mFiller);
+        mXmlPushParser = new XmlPushParserImpl1(mParser);
+        mDataReader = new XmlDataReader(getContext(), TEMPORARY_FILE, mXmlPushParser);
         // Reusable DAOs
         mDocdeclDAO = new DocdeclObjectDAO(mSerializer);
         mCommentDAO = new CommentObjectDAO(mSerializer);
@@ -252,7 +250,7 @@ public class EqualityTest extends AndroidTestCase {
 
         DocdeclObject docdecl = new DocdeclObject("version=\"1.0\" encoding=\"UTF-8\"");
         CommentObject commentNotMultiple32 = new CommentObject("This is a comment. This kind of comment has to be" +
-                " more than 32 char but with a length not multiple of 32 so as to test the XmlFiller merging alghoritm.");
+                " more than 32 char but with a length not multiple of 32 so as to test the XmlPushParser merging alghoritm.");
 
         // XmlWriter DAO list
         List<XmlWritable> writableList = new LinkedList<XmlWritable>();
@@ -274,9 +272,9 @@ public class EqualityTest extends AndroidTestCase {
         
         mDataReader.readMany(readMap); // deserializing
         
-        DocdeclObject docDst = mFiller.buildFirstOf(DocdeclObjectDAO.class);
-        FlatObject flatDst = mFiller.buildFirstOf(FlatObjectDAO.TAG);
-        CommentObject commDst = mFiller.buildFirstOf(CommentObjectDAO.class);
+        DocdeclObject docDst = mXmlPushParser.buildFirstOf(DocdeclObjectDAO.class);
+        FlatObject flatDst = mXmlPushParser.buildFirstOf(FlatObjectDAO.TAG);
+        CommentObject commDst = mXmlPushParser.buildFirstOf(CommentObjectDAO.class);
         
         assertTrue(docdecl.equals(docDst));
         assertTrue(mFlatSrc.equals(flatDst));
@@ -370,51 +368,25 @@ public class EqualityTest extends AndroidTestCase {
         readMap.add(mCommentDAO);
         mDataReader.readMany(readMap); // deserializing
         
-        List<DocdeclObject> docList = mFiller.buildListOf(DocdeclObjectDAO.class);
+        List<DocdeclObject> docList = mXmlPushParser.buildListOf(DocdeclObjectDAO.class);
         assertTrue(docList.size() == 1);
         assertEquals(docList.get(0), docdecl);
         
-        List<CommentObject> commList = mFiller.buildListOf(CommentObjectDAO.TAG);
+        List<CommentObject> commList = mXmlPushParser.buildListOf(CommentObjectDAO.TAG);
         assertTrue(commList.size() == 1);
         assertEquals(commList.get(0), comment);
         
-        List<FlatObject> flatList = mFiller.buildListOf(FlatObjectDAO.TAG);
+        List<FlatObject> flatList = mXmlPushParser.buildListOf(FlatObjectDAO.TAG);
         assertTrue(flatList.size() == 3);
         assertEquals(flatList.get(0), mFlatList.get(0));
         assertEquals(flatList.get(1), mFlatList.get(2));
         assertEquals(flatList.get(2), mFlatList.get(1));
         
-        List<ProcessingObject> procList = mFiller.buildListOf(ProcessingObjectDAO.class);
+        List<ProcessingObject> procList = mXmlPushParser.buildListOf(ProcessingObjectDAO.class);
         assertTrue(procList.size() == 2);
         assertEquals(procList.get(0), processing);
         assertEquals(procList.get(1), processing1);
         
-        Log.i(Constants.PACKAGE_TAG_TEST, "-----------------------------------------");
-    }
-
-    /**
-    * Tests the equality of an object (ObjectWithList) which HAS-A List (FlatList).
-    * @throws IllegalArgumentException
-    * @throws IllegalStateException
-    * @throws FileNotFoundException
-    * @throws XmlPullParserException
-    * @throws IOException
-    *//*
-    @MediumTest
-    public void testObjectWithListEquality() throws IllegalArgumentException, IllegalStateException, FileNotFoundException, XmlPullParserException, IOException {
-
-        Log.i(Constants.PACKAGE_TAG_TEST, "--- [" + TAG + ".testObjectWithListEquality] ---");
-
-        ObjectWithList mObjectWithListSrc = new ObjectWithList(mFlatList);
-
-        Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".testObjectWithListEquality() open Android file: " + TEMPORARY_FILE);
-        XmlDataCommitter.commitData(getContext(), TEMPORARY_FILE, "UTF-8", mObjectWithListSrc); // serializing
-
-        ObjectWithList mObjectWithListDst = XmlDataReader.read(mParser, getContext(), ObjectWithList.class, new ObjectWithListBuilder(), TEMPORARY_FILE);
-
-        Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".testObjectWithListEquality() equals test");
-        assertTrue(mObjectWithListDst.equals(mObjectWithListSrc));
-        assertTrue(mObjectWithListDst.tagCheck());
         Log.i(Constants.PACKAGE_TAG_TEST, "-----------------------------------------");
     }
 
@@ -448,7 +420,6 @@ public class EqualityTest extends AndroidTestCase {
     protected void tearDown() throws Exception {
         Log.i(Constants.PACKAGE_TAG_TEST, TAG + ".tearDown() delete file: " + TEMPORARY_FILE);
         mContext.deleteFile(TEMPORARY_FILE);
-        mContext.deleteFile(METADATA_FILE);
         super.tearDown();
     }
 }

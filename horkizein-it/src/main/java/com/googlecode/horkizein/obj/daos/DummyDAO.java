@@ -36,31 +36,31 @@ public class DummyDAO implements XmlPushable<DummyObject>, XmlWriter {
     }
     
     @Override
-    public void pushStartTag(String tag) {
-        Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushStartTag(" + tag + ")");
-        mAbstractDAO.pushStartTag(tag);
-        mInterfaceDAO.pushStartTag(tag);
+    public void startTag(String tag) {
+        Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".startTag(" + tag + ")");
+        mAbstractDAO.startTag(tag);
+        mInterfaceDAO.startTag(tag);
     }
 
     @Override
-    public void pushAttribute(String tag, String prefix, String name, String value) {
-        Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushAttribute() - TAG: " + tag + " NAME: " + name +  " TEXT: " + value);
-        mAbstractDAO.pushAttribute(tag, prefix, name, value);
-        mInterfaceDAO.pushAttribute(tag, prefix, name, value);
+    public void attribute(String tag, String prefix, String name, String value) {
+        Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".attribute() - TAG: " + tag + " NAME: " + name +  " TEXT: " + value);
+        mAbstractDAO.attribute(tag, prefix, name, value);
+        mInterfaceDAO.attribute(tag, prefix, name, value);
     }
 
     @Override
-    public void pushText(String tag, String text) {
+    public void text(String tag, String text) {
         Log.d(Constants.PACKAGE_TAG_TEST, TAG + " pushText(" + text + ")");
-        mAbstractDAO.pushText(tag, text);
-        mInterfaceDAO.pushText(tag, text);
+        mAbstractDAO.text(tag, text);
+        mInterfaceDAO.text(tag, text);
     }
 
     @Override
-    public void pushEndTag(String tag) {
+    public void endTag(String tag) {
         Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushEndTag(" + tag + ")");
-        mAbstractDAO.pushStartTag(tag);
-        mInterfaceDAO.pushStartTag(tag);
+        mAbstractDAO.startTag(tag);
+        mInterfaceDAO.startTag(tag);
     }
 
     @Override

@@ -17,10 +17,8 @@ package com.googlecode.horkizein;
 
 /**
  * XmlPushable object contract. The classes implementing this interface are intended
- * to be used as mutable builders for the target value objects. The build() method can be
- * implemented to create immutable instances, while clone() is necessary to copy and store
- * instances of XmlPushable in XmlFiller.
- * The {@link XmlTag} annotation is necessary for recursively pushing dependent objects.
+ * to be used as mutable builders for the target immutable value objects.<br/>
+ * XmlPushable classes need to be annotated with {@link XmlTag} for recursively pushing dependent tags.
  * @param <T> The (immutable) type to build.
  */
 public interface XmlPushable<T> extends XmlBuilder<T>, XmlPrototype<T> {
@@ -28,27 +26,27 @@ public interface XmlPushable<T> extends XmlBuilder<T>, XmlPrototype<T> {
      * Pushes the opening tag event.
      * @param tag Tag name.
      */
-    void pushStartTag(String tag);
+    void startTag(String tag);
 
     /**
-     * Pushes attribute name/value to the current object. The prefix has not been tested yet. 
+     * Pushes attribute name/value to the current object (prefix has not been tested yet). 
      * @param tag Tag name.
-     * @param prefix Attribute prefix (ignored at the moment).
+     * @param prefix Attribute prefix (ignored).
      * @param name Attribute name.
      * @param value Attribute value.
      */
-    void pushAttribute(String tag, String prefix, String name, String value);
+    void attribute(String tag, String prefix, String name, String value);
 
     /**
      * Pushes the tag text.
      * @param tag Tag name.
      * @param text Tag text.
      */
-    void pushText(String tag, String text);
+    void text(String tag, String text);
 
     /**
      * Pushes the closing tag event.
      * @param tag Tag name.
      */
-    void pushEndTag(String tag);
+    void endTag(String tag);
 }

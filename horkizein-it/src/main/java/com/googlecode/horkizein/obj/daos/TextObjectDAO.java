@@ -36,26 +36,26 @@ public class TextObjectDAO implements XmlPushable<TextObject>, XmlWriter {
     }
 
     @Override
-    public void pushStartTag(String tag) {
+    public void startTag(String tag) {
         if (tag.equals(TextObjectDAO.TAG)) {
             wdPushedStartTag = true;
         }
     }
 
     @Override
-    public void pushAttribute(String tag, String prefix, String name, String value) {
+    public void attribute(String tag, String prefix, String name, String value) {
         /* does nothing */
     }
 
     @Override
-    public void pushText(String tag, String text) {
+    public void text(String tag, String text) {
         if (wdPushedStartTag) {
             mText = text;
         }
     }
 
     @Override
-    public void pushEndTag(String tag) {
+    public void endTag(String tag) {
         if (tag.equals(TAG)) {
             wdPushedStartTag = false;
             wdPushedEndTag = true;

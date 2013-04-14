@@ -5,9 +5,8 @@ import java.io.IOException;
 import org.xmlpull.v1.XmlSerializer;
 
 /**
- * Common code for potential DAO classes. The code is so simple that it shouldn't really be used unless
- * (prefer Interfaces over Abstract classes). It is provided in case it is needed for composition (prefer
- * Composition over Inheritance).
+ * Common code for DAO classes. The code is so simple that it shouldn't really be used
+ * (always prefer Interfaces over Abstract classes).
  */
 public class XmlWriterImpl implements XmlWriter {
     

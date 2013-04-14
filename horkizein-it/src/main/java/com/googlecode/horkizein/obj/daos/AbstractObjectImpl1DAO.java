@@ -47,20 +47,20 @@ public class AbstractObjectImpl1DAO extends AbstractObjectDAO {
     }
 
     @Override
-    public void pushStartTag(String tag) {
-        Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushStartTag(" + tag + ")");
+    public void startTag(String tag) {
+        Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".startTag(" + tag + ")");
     }
 
     @Override
-    public void pushAttribute(String tag, String prefix, String name, String value) {
-        Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushAttribute() - TAG: " + tag + " NAME: " + name +  " TEXT: " + value);
+    public void attribute(String tag, String prefix, String name, String value) {
+        Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".attribute() - TAG: " + tag + " NAME: " + name +  " TEXT: " + value);
         if (tag.equals(TAG) && name.equals(INT_ATTRIBUTE)) {
             mInt = Integer.parseInt(value);
         }
     }
 
     @Override
-    public void pushText(String tag, String text) {
+    public void text(String tag, String text) {
         Log.d(Constants.PACKAGE_TAG_TEST, TAG + " pushText(" + text + ")");
         if (tag.equals(TAG)) {
             mString = text;
@@ -68,7 +68,7 @@ public class AbstractObjectImpl1DAO extends AbstractObjectDAO {
     }
 
     @Override
-    public void pushEndTag(String tag) {
+    public void endTag(String tag) {
         Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushEndTag(" + tag + ")");
     }
 

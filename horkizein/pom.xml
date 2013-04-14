@@ -15,13 +15,13 @@
     <parent>
         <groupId>com.googlecode.horkizein</groupId>
         <artifactId>horkizein-project</artifactId>
-        <version>0.0.6-alpha</version>
+        <version>0.0.8-rc1</version>
     </parent>
 
     <artifactId>horkizein</artifactId>
     <packaging>jar</packaging>
     <name>Horkizein Open Source Android Library</name>
-    <version>0.0.8-alpha</version>
+    <version>0.0.8-rc1</version>
 
     <dependencies>
         <dependency>

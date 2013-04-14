@@ -13,7 +13,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.googlecode.horkizein</groupId>
     <artifactId>horkizein-project</artifactId>
-    <version>0.0.6-alpha</version>
+    <version>0.0.8-rc1</version>
     <packaging>pom</packaging>
     <name>Horkizein Open Source Parent Project</name>
     <description>An open source XML binding library for the Android Platform.</description>

@@ -37,38 +37,38 @@ public class NoTextObjectDAO implements XmlPushable<NoTextObject>, XmlWriter {
     }
     
     @Override
-    public void pushStartTag(String tag) {
+    public void startTag(String tag) {
         if (tag.equals(TAG)) {
             wdPushedStartTag = true;
         }
         if (wdPushedStartTag) {
             if (tag.equals(TextObjectDAO.TAG)) {
                 wdPushedTextObjStartTag = true;
-                mTextObjectDAO.pushStartTag(tag);
+                mTextObjectDAO.startTag(tag);
             }
         }
     }
 
     @Override
-    public void pushAttribute(String tag, String prefix, String name, String value) {
+    public void attribute(String tag, String prefix, String name, String value) {
         /* it doesn't matter */
     }
 
     @Override
-    public void pushText(String tag, String text) {
+    public void text(String tag, String text) {
         if (wdPushedStartTag) {
             if (tag.equals(TAG)) {
                 mSupposedlyNoText = text;
             } else if (tag.equals(TextObject.TAG) && wdPushedTextObjStartTag == true) {
-                mTextObjectDAO.pushText(tag, text);
+                mTextObjectDAO.text(tag, text);
             }
         }
     }
 
     @Override
-    public void pushEndTag(String tag) {
+    public void endTag(String tag) {
         if (wdPushedStartTag == true) {
-            mTextObjectDAO.pushEndTag(tag);
+            mTextObjectDAO.endTag(tag);
             if (tag.equals(TextObject.TAG)) {
                 wdPushedTextObjStartTag = false;
                 wdPushedTextObjEndTag = true;

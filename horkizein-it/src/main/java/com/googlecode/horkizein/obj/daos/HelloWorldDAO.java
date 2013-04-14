@@ -19,7 +19,7 @@ import java.io.IOException;
 
 import org.xmlpull.v1.XmlSerializer;
 
-import com.googlecode.horkizein.XmlFiller;
+import com.googlecode.horkizein.XmlPushParser;
 import com.googlecode.horkizein.XmlPushable;
 import com.googlecode.horkizein.XmlTag;
 import com.googlecode.horkizein.XmlWritable;
@@ -37,7 +37,7 @@ import android.util.Log;
  */
 @XmlTag (
     value = HelloWorldDAO.TAG,
-    additionalTags = { HelloWorldDAO.C_TAG,  HelloWorldDAO.JAVA_TAG, XmlFiller.CDSECT_TAG }
+    additionalTags = { HelloWorldDAO.C_TAG,  HelloWorldDAO.JAVA_TAG, XmlPushParser.CDSECT_TAG }
 )
 public class HelloWorldDAO implements XmlPushable<HelloWorldObject>, XmlWriter {
 
@@ -52,7 +52,6 @@ public class HelloWorldDAO implements XmlPushable<HelloWorldObject>, XmlWriter {
     // Init value
     private static final String C_TEXT = "This is the C implementation.";
     private static final String JAVA_TEXT =  "This is the Java implementation.";
-    private static final String NULL = "null";
 
     // watch dog
     private boolean wdPushedStartTag;
@@ -82,8 +81,8 @@ public class HelloWorldDAO implements XmlPushable<HelloWorldObject>, XmlWriter {
     }
 
     @Override
-    public void pushAttribute(String tag, String prefix, String name, String value) {
-        Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushAttribute() - TAG: " + tag + " NAME: " + name +  " TEXT: " + value);
+    public void attribute(String tag, String prefix, String name, String value) {
+        Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".attribute() - TAG: " + tag + " NAME: " + name +  " TEXT: " + value);
         if (wdPushedStartTag) {
             if (tag.equals(TAG) && name.equals(FAVOURITE_ATTR)) {
                 // ugly
@@ -97,8 +96,8 @@ public class HelloWorldDAO implements XmlPushable<HelloWorldObject>, XmlWriter {
     }
 
     @Override
-    public void pushStartTag(String tag) {
-        Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushStartTag() - TAG: " + tag);
+    public void startTag(String tag) {
+        Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".startTag() - TAG: " + tag);
         if (tag.equals(TAG)) {
             wdPushedStartTag = true;
         }
@@ -111,16 +110,16 @@ public class HelloWorldDAO implements XmlPushable<HelloWorldObject>, XmlWriter {
             }
 
             if (wdIsCStartTag == true) {
-                mHelloWorld_c.pushStartTag(tag);
+                mHelloWorld_c.startTag(tag);
             }
             if (wdIsJavaStartTag == true) {
-                mHelloWorld_java.pushStartTag(tag);
+                mHelloWorld_java.startTag(tag);
             }
         }
     }
 
     @Override
-    public void pushText(String tag, String text) {
+    public void text(String tag, String text) {
         Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushText() - TAG: " + tag + " TEXT: " + text);
         if (wdPushedStartTag) {
             //if (tag.equals(TAG)) {
@@ -130,23 +129,23 @@ public class HelloWorldDAO implements XmlPushable<HelloWorldObject>, XmlWriter {
                 if (tag.equals(C_TAG)) {
                     mCText = text;
                 }
-                mHelloWorld_c.pushText(tag, text);
+                mHelloWorld_c.text(tag, text);
             }
             if (wdIsJavaStartTag == true) {
                 if (tag.equals(JAVA_TAG)) {
                     mJavaText = text;
                 }
-                mHelloWorld_java.pushText(tag, text);
+                mHelloWorld_java.text(tag, text);
             }
         }
     }
 
     @Override
-    public void pushEndTag(String tag) {
+    public void endTag(String tag) {
         Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushEndTag() - TAG: " + tag);
         if(wdPushedStartTag) {
             if (wdIsCStartTag == true) {
-                mHelloWorld_c.pushEndTag(tag);
+                mHelloWorld_c.endTag(tag);
                 // watch dog
                 if (tag.equals(C_TAG)) {
                     wdIsCEndTag = true;
@@ -154,7 +153,7 @@ public class HelloWorldDAO implements XmlPushable<HelloWorldObject>, XmlWriter {
                 }
             }
             if (wdIsJavaStartTag == true) {
-                mHelloWorld_java.pushEndTag(tag);
+                mHelloWorld_java.endTag(tag);
                 // watch dog
                 if (tag.equals(JAVA_TAG)) {
                     wdIsJavaEndTag = true;

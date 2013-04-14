@@ -19,7 +19,7 @@ import java.io.IOException;
 
 import org.xmlpull.v1.XmlSerializer;
 
-import com.googlecode.horkizein.XmlFiller;
+import com.googlecode.horkizein.XmlPushParser;
 import com.googlecode.horkizein.XmlPushable;
 import com.googlecode.horkizein.XmlTag;
 import com.googlecode.horkizein.XmlWritable;
@@ -32,10 +32,10 @@ import android.util.Log;
 /**
  * Implementation of the PROCESSING xml section as a XmlPushable metadata object.
  */
-@XmlTag(XmlFiller.PROCESSING_TAG)
+@XmlTag(XmlPushParser.PROCESSING_TAG)
 public class ProcessingObjectDAO implements XmlPushable<ProcessingObject>, XmlWriter {
     // This object tag
-    public final static String TAG = XmlFiller.PROCESSING_TAG;
+    public final static String TAG = XmlPushParser.PROCESSING_TAG;
  
     // Dependency
     private final XmlSerializer mSerializer;
@@ -56,18 +56,18 @@ public class ProcessingObjectDAO implements XmlPushable<ProcessingObject>, XmlWr
     }
 
     @Override
-    public void pushAttribute(String tag, String prefix, String name, String value) { /* do nothing */ }
+    public void attribute(String tag, String prefix, String name, String value) { /* do nothing */ }
 
     @Override
-    public void pushStartTag(String tag) {
-        Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushStartTag(" + tag + ")");
+    public void startTag(String tag) {
+        Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".startTag(" + tag + ")");
         if (tag.equals(TAG)) {
             mPushedStartTag = true;
         }
     }
 
     @Override
-    public void pushText(String tag, String text) {
+    public void text(String tag, String text) {
         if (tag.equals(TAG) && mPushedStartTag == true) {
             mProcessingContent = text;
             Log.d (Constants.PACKAGE_TAG_TEST, TAG + " pushed: " + text);
@@ -77,7 +77,7 @@ public class ProcessingObjectDAO implements XmlPushable<ProcessingObject>, XmlWr
     }
 
     @Override
-    public void pushEndTag(String tag) {
+    public void endTag(String tag) {
         Log.d(Constants.PACKAGE_TAG_TEST, TAG + ".pushEndTag(" + tag + ")");
         if (tag.equals(TAG) && mPushedStartTag == true) {
             mPushedEndTag = true;
