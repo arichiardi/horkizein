@@ -13,8 +13,6 @@ public class NoTextObject implements XmlWritable {
     private final String mMyText; // it is always empty
     private final TextObject mTextObject;
     
-    private String mSupposedlyNoText = "s0me TeXt, 4 T3st1ng";
-
     public NoTextObject(String myText, TextObject textObject) { 
         mMyText = myText;
         mTextObject = textObject;
@@ -26,7 +24,7 @@ public class NoTextObject implements XmlWritable {
         if((o == null) || (o.getClass() != this.getClass())) return false;
 
         NoTextObject n = (NoTextObject)o;
-        return (mSupposedlyNoText == n.mSupposedlyNoText || (mSupposedlyNoText != null && mSupposedlyNoText.equals(n.mSupposedlyNoText)) &&
+        return (mMyText == n.mMyText || (mMyText != null && mMyText.equals(n.mMyText)) &&
                  mTextObject == n.mTextObject || (mTextObject != null && mTextObject.equals(n.mTextObject)));
     }
     

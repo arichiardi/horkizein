@@ -30,9 +30,6 @@ public final class HorkizeinTestRunner extends InstrumentationTestRunner {
         InstrumentationTestSuite suite = new InstrumentationTestSuite(this);
         // Object Read Write Tests
         suite.addTestSuite(EqualityTest.class);
-        // Object Read Write Tests - Custom Parser
-        // (the Custom parser splits TEXT  events that contain more than X chars)
-        //suite.addTestSuite(EqualityCustomParserTest.class);
         // Object Error Tests
         suite.addTestSuite(ErrorTest.class);
         // Performance Tests
