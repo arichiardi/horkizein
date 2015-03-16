@@ -1,0 +1,18 @@
+## Introduction ##
+
+The most important feature of the Horkizein library is flexibility. You can combine multiple classes and take advantage of the common XmlPushable interface. This document shows the UML class diagram for reading an object which contains an instance of the previously described flat object.
+
+## XML Reading ##
+
+A quick summary of XmlPushable interface's methods:
+  * `String` `getTag()`: returns the tag associated with the subclass. This string is used to univocally identify the object when XmlFiller parses the Xml.
+  * `void` `pushStartTag(String tag)`: pushes the opening tag just pulled from the parser to the registered XmlPushable. Signals the start of a new tag.
+  * `void` `pushAttribute(String tag, String name, String value)`: pushes tag's attributes to the registered XmlPushable.
+  * `void` `pushText(String tag, String text)`: pushes tag's content to the registered XmlPushable.
+  * `void` `pushEndTag(String tag)`: pushes the closing tag to the registered XmlPushable. Signals the end of a the current tag.
+<br>
+And here is the UML class diagram:<br><br>
+<img src='http://wiki.horkizein.googlecode.com/git/img/nested1_obj.png' /><br><br></li></ul>
+
+The UML class diagram is more complicated because I have decided to add a <a href='http://en.wikipedia.org/wiki/Factory_method_pattern'>Factory Method</a> creator that could come in handy for multiple nested objects.<br>
+However, the parent object here, NestedObject1, contains just an instance of FlatObject. Consequently FlatObjectCreator, who is responsible for creating this sole child and doesn't expose factory methods with different parameters, is a bit out of place.<br>
