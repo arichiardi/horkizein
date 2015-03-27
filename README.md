@@ -9,16 +9,16 @@ It conveys the meaning of "to bind by an oath", "to put someone on oath" and thi
 
 We "horkizein" our Java classes in two ways:
  * *Design* *binding* both recently developed OO design best practices and Design Pattern principles recommend an extensive usage of composition and interfaces (over abstract classes and inheritance) to improve code resilience, flexibility and maintainability. Someone says that a good design lays out a contract between classes, including conditions and obligations, but I prefer to romantically picture it as a collaboration bond. The Horkizein Open Source Library defines the bond a Java object needs to cooperate with the Android ```XmlPullParser``` interface.
- * *Xml* *Data* *Binding* this name defines the huge amount of tools modern software use for either materializing Xml files into computer memory (de-serialize) or generating Xml documents from objects (serialize). There is no romanticism this time, the Horkizein Open Source Library `*`is`*` an Xml Data Binding library.
+ * *Xml* *Data* *Binding* this name defines the huge amount of tools modern software use for either materializing Xml files into computer memory (de-serialize) or generating Xml documents from objects (serialize). There is no romanticism this time, the Horkizein Open Source Library **is** an Xml Data Binding library.
 
 To use Horkizein you need to download the jar files, branch the source or add the library using the following Maven dependency in your pom.xml:<br/>
-    {
-       <dependency>
-           <groupId>com.googlecode.horkizein</groupId>
-           <artifactId>horkizein</artifactId>
-           <version>${horkizein.version}</version>
-       </dependency>
-    }
+```
+<dependency>
+   <groupId>com.googlecode.horkizein</groupId>
+   <artifactId>horkizein</artifactId>
+   <version>${horkizein.version}</version>
+</dependency>
+```
 
 What you will get:
  * A very simple mechanism to bind your objects (just interfaces and annotations, custom compiler coming).
@@ -41,6 +41,6 @@ What you won't find:
  * Documentation on the new feature in progress. Please follow the examples in horkizein-it project for now.
 
 ### Notes and widgets
-The logo is the result of two-hour brain busting with metal puzzles. Thanks to [https://plus.google.com/110366719421604144194/posts Artem Kolyuka] for the contribution.
+The logo is the result of two-hour brain busting with metal puzzles. Thanks to [Artem Kolyuka](https://plus.google.com/110366719421604144194/posts) for the contribution.
 
 -ar
