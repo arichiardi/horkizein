@@ -1,0 +1,9 @@
+#summary Samples category
+#labels Featured
+
+== Note ==
+
+All samples shown here can be found in the `horkizein-it` folder, as part of the testing package.
+
+ * [SampleFlatObject Flat Object]
+ * [SampleNestedObject1 Nested Object (first)]

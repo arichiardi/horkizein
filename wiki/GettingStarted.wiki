@@ -1,0 +1,51 @@
+#summary How to configure an environment to build the Horkizein Library
+#labels Featured
+
+== Introduction ==
+
+Horkizein source code is wrapped in a Maven project. The quickest way to start working on the project is to use the Eclipse IDE and some of its plugins.
+You can obviously compile and execute Horkizein using Maven from the command line, but you have to know what you are doing.
+
+== Prerequisites ==
+
+In order to compile the Horkizein library you need the following software:
+
+ * *JDK* 1.5+
+ * *Eclipse* Helios or later
+ * *Android* *SDK* (`r07` or later), with API level 7 (2.1 Platform), see http://developer.android.com/sdk/installing.html
+ * *An* *Eclipse* *Maven* *Plugin* ([http://docs.codehaus.org/display/MAVENUSER/Eclipse+Integration comparison]):
+  * Eclipse m2e (or m2eclipse), stable ergo my choice, see http://www.eclipse.org/m2e
+  * Eclipse IAM/q4e, see the project page at http://code.google.com/p/q4e
+ * (optional) Maven 2.2.1+ installed (Maven 3.0+ recommended), see http://maven.apache.org/download.html
+  
+
+== Environment ==
+
+First of all, it's mandatory to set some environment variables in your operative system, so that Eclipse can use the Android tools.<br>
+You have to include the Android `tools` folder in your `PATH` environment variable as well as set the `ANDROID_HOME` variable.<br><br>
+If you are on Linux/Unix-based operative systems (MacOS included), add those few lines to your `.bashrc` or create a simple launch script for Eclipse:
+|| `export` `PATH=$PATH:/path-to-folder/android-sdk-linux_86/tools` ||
+|| `export` `ANDROID_HOME=/path-to-folder/android-sdk-linux_86` ||
+
+If you develop on Windows, add those instead:
+|| `set` `PATH=%PATH%;path-to-folder\android-sdk\tools` ||
+|| `set` `ANDROID_HOME=path-to-folder\android-sdk` ||
+
+Besides, if you want to compile from the command line you need to include the Maven binaries folder to your `PATH` as well.<br><br>
+Linux:
+|| `export` `PATH=$PATH:/path-to-folder/apache-maven\bin` ||
+
+Windows:
+|| `set` `PATH=%PATH%;path-to-folder\apache-maven\bin` ||
+
+== Import ==
+
+Before contributing some code, you first have to clone the git repository on your local machine. There is plenty of articles about that and you can even find out how to clone under this project's Source section.
+After cloning, there are two ways to import files into Eclise: you can either materialize the project from a remote git repository or directly import it from your brand new cloned folder. The first way is easier to accomplish and requires the project to have an [http://maven.apache.org/pom.html#SCM SCM] tag in the pom.xml. There is a very useful tutorial [https://docs.sonatype.org/display/M2ECLIPSE/Importing+Maven+projects here] so I will stick to the latter.<br><br>
+Go to _File_ _->_ _Import_ and when the Import Wizard comes out select _Existing Maven Projects_. Use the git clone folder as _Root_ _Directory_ and wait. After processing, the window will display three pom.xml files: the root one is for the parent module, `\horkizein\pom.xml` is for the library, `\horkizein-it\pom.xml` is for the test suite. Be sure to tick _Resolve_ _Workspace_ _Projects_ in order to resolve dependencies without using mvn install every time. I have also run up against a little problem while importing Horkizein: multi-module Maven projects are not always mirrored correctly by the M2E Eclipse plugin. To get around this, you have to specify a _Name_ _Template_, `[`artifactId`]`-`[`version`]` works for me.<br><br>
+[http://wiki.horkizein.googlecode.com/git/img/import_step0.png]
+<br><br>
+Press _Next_ and a new window will show the missing dependencies. You can safely resolve the dependencies later, Maven will handle them. Select _Resolve_ _Later_ on each artefact and then the _Finish_ button.<br><br>
+On completion, you should be able to see the following structure in your _Navigator_: <br><br>
+[http://wiki.horkizein.googlecode.com/git/img/import_complete.png]
+<br><br>
